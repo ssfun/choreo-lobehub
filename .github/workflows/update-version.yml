@@ -1,4 +1,4 @@
-name: Auto Update LobeHub Version
+name: Auto Update Open-WebUI Version
 
 on:
   schedule:
@@ -36,128 +36,124 @@ jobs:
           import sys
           import html
 
+          # --- 配置 ---
           file_path = 'README.md'
           api_url = 'https://api.github.com/repos/lobehub/lobehub/releases/latest'
 
           def get_semver(ver_str):
-              # 支持 v2.0.2 vs v2.0.0-next.389 比较
-              clean_ver = ver_str.lstrip('v').split('-')[0]  # 去掉 -next.389
-              nums = [int(x) for x in clean_ver.split('.') if x.isdigit()]
-              return nums + [0] * (3 - len(nums))  # 补齐 [major, minor, patch]
+              clean_ver = ver_str.lstrip('v')
+              return [int(x) for x in clean_ver.split('.') if x.isdigit()]
 
           def send_telegram(token, chat_id, version, body):
               if not token or not chat_id:
                   print('::warning::Telegram secrets not set.')
                   return
               
-              decoded_body = html.unescape(body)
-              print(f'   Decoded preview: {decoded_body[:100]}...')
+              # 1. HTML 全局转义：先把所有 < > & 等符号转义，防止破坏 HTML 结构
+              # 这一步会将 URL 中的 & 变成 &amp;，但浏览器和 Telegram 都能识别
+              safe_body = html.escape(body)
+
+              # 2. 链接转换逻辑 (关键修改)
+              # 使用 lambda 函数代替字符串引用，彻底解决 YAML 中的反斜杠转义问题
+              # 匹配逻辑：[任意非]字符](以http开头的链接)
+              pattern = r'\[([^\]]+)\]\((https?://[^)]+)\)'
               
-              # 超级简单清理：只保留纯文本 + 关键链接
-              plain_text = re.sub(r'<[^>]+>', '', decoded_body)  # 移除所有 HTML
+              def link_replacer(match):
+                  text = match.group(1)
+                  url = match.group(2)
+                  return f'<a href=\"{url}\">{text}</a>'
+
+              body_with_links = re.sub(pattern, link_replacer, safe_body)
+
+              # 3. 构建消息
+              text_content = f'🚀 <b>LobeHub (Choreo) Update Detected!</b>\n\n<b>New Version:</b> {version}\n\n{body_with_links}'
               
-              # 保留 issue/commit 引用格式
-              plain_text = re.sub(r'\[#(\d+)\]\([^)]+\)', r'#\1', plain_text)
-              plain_text = re.sub(r'\[([a-f0-9]{7,})\]\([^)]+\)', r'\1', plain_text)
-              
-              # 清理空行
-              plain_text = re.sub(r'\n\s*\n\s*\n+', '\n\n', plain_text).strip()
-              
-              # Markdown 格式（最稳定）
-              title_link = f'[v{version}](https://github.com/lobehub/lobe-chat/releases/tag/{version})'
-              text_content = f'🚀 *LobeHub (Choreo) Update Detected!*\n\n*New Version:* {title_link}\n\n{plain_text}'
-              
-              if len(text_content) > 4096:
-                  text_content = text_content[:4090] + '\n\n*(truncated)*'
-              
+              # 4. 截断保护
+              if len(text_content) > 4000:
+                  text_content = text_content[:4000] + '\n...(content truncated)...'
+
               url = f'https://api.telegram.org/bot{token}/sendMessage'
+              
+              # 5. 配置 Payload
               payload = {
                   'chat_id': chat_id,
                   'text': text_content,
-                  'parse_mode': 'Markdown',
-                  'disable_web_page_preview': False,
+                  'parse_mode': 'HTML',     # 必须是 HTML
+                  'disable_web_page_preview': True
               }
+              
               headers = {'Content-Type': 'application/json'}
               
               try:
                   req = urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers)
                   urllib.request.urlopen(req)
-                  print('-> Telegram OK (Markdown)')
-                  return
+                  print(f'-> Telegram notification sent to {chat_id}')
               except Exception as e:
-                  print(f'::error::Markdown failed: {e}')
-              
-              # Fallback: 纯文本
-              payload['parse_mode'] = ''
-              payload['text'] = f'LobeHub {version}\n\n{plain_text[:2000]}'
-              try:
-                  req = urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers)
-                  urllib.request.urlopen(req)
-                  print('-> Pure text OK')
-              except Exception as e2:
-                  print(f'::error::All failed: {e2}')
+                  print(f'::error::HTML Send Failed: {e}')
+                  # 只有当 HTML 解析彻底失败时，才降级为纯文本
+                  del payload['parse_mode']
+                  # 纯文本模式下，还原原始 body (不需要 html 转义的版本)
+                  payload['text'] = f'Open WebUI Update: {version}\n\n{body}'
+                  try:
+                      urllib.request.urlopen(urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers))
+                      print('-> Sent as plain text fallback.')
+                  except Exception as e2:
+                      print(f'::error::Fallback failed: {e2}')
 
           try:
+              # 1. 检查文件
               if not os.path.exists(file_path):
-                  print('::error::README.md not found')
+                  print('::error::README.md not found!')
                   sys.exit(1)
 
               with open(file_path, 'r', encoding='utf-8') as f:
                   content = f.read()
 
-              # 匹配 # Version 下的版本号，支持多行格式
-              ver_match = re.search(r'# Version\s*\n?\s*(v[^\s\n]+)', content, flags=re.MULTILINE)
+              # 2. 获取本地版本
+              ver_match = re.search(r'# Version\s+(v[\d\.]+)', content)
               if not ver_match:
                   print('::warning::Cannot find current version in README format.')
                   sys.exit(0)
-              local_ver = ver_match.group(1).strip()
-              print(f'Local Version: {local_ver}')
+              local_ver = ver_match.group(1)
+              print(f'   Local Version: {local_ver}')
 
-              # 获取最新正式版 release
+              # 3. 获取远程版本
               req = urllib.request.Request(api_url)
-              token = os.environ.get('GITHUB_TOKEN')
-              if token:
-                  req.add_header('Authorization', f'token {token}')
+              if os.environ.get('GITHUB_TOKEN'):
+                  req.add_header('Authorization', f'token {os.environ.get('GITHUB_TOKEN')}')
+              
+              with urllib.request.urlopen(req) as response:
+                  data = json.loads(response.read().decode())
+                  remote_ver = data['tag_name']
+                  remote_body = data['body']
+              print(f'   Remote Version: {remote_ver}')
 
-              with urllib.request.urlopen(req) as resp:
-                  data = json.loads(resp.read().decode())
-
-              remote_ver = data['tag_name']
-              remote_body = data.get('body') or ''
-              print(f'Remote Version: {remote_ver}')
-
+              # 4. 对比与执行
               if get_semver(remote_ver) > get_semver(local_ver):
-                  print('-> New release found! Updating...')
+                  print(f'-> New version found! Updating...')
 
-                  # 更新 Version 行
-                  content = re.sub(
-                      r'(# Version\s*\n?\s*)v[^\s\n]+',
-                      r'\1' + remote_ver,
-                      content,
-                      count=1,
-                      flags=re.MULTILINE,
-                  )
-
-                  # 更新 Releases 部分
-                  content = re.sub(
-                      r'(# Releases\s*)([\s\S]*)',
-                      '# Releases\n\n' + remote_body,
-                      content,
-                      count=1,
-                  )
+                  # 更新 README - Version
+                  content = re.sub(r'(# Version\s+)(v[\d\.]+)', f'\\g<1>{remote_ver}', content, count=1)
+                  # 更新 README - Releases
+                  # 这里要小心：写入 README 的应该是原始 Markdown (remote_body)，而不是转义后的 HTML
+                  content = re.sub(r'(# Releases\s*)([\s\S]*)', f'# Releases\n\n{remote_body}', content, count=1)
 
                   with open(file_path, 'w', encoding='utf-8') as f:
                       f.write(content)
-
-                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                      f.write('updated=true\nnew_version=' + remote_ver + '\n')
-
+                  
+                  # 输出 Output
+                  with open(os.environ['GITHUB_OUTPUT'], 'a') as gh_out:
+                      gh_out.write('updated=true\n')
+                      gh_out.write(f'new_version={remote_ver}\n')
+                  
+                  # 发送通知 (传入原始 body，函数内会处理转义)
                   send_telegram(
-                      os.environ.get('TELEGRAM_TOKEN'),
-                      os.environ.get('TELEGRAM_TO'),
-                      remote_ver,
-                      remote_body,
+                      os.environ.get('TELEGRAM_TOKEN'), 
+                      os.environ.get('TELEGRAM_TO'), 
+                      remote_ver, 
+                      remote_body
                   )
+                  
               else:
                   print('-> Local version is up to date.')
 
