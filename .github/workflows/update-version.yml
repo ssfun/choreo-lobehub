@@ -1,4 +1,4 @@
-name: Auto Update Open-WebUI Version
+name: Auto Update LobeHub Version
 
 on:
   schedule:
