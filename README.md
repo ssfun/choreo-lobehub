@@ -2,7 +2,7 @@
 
 # Version
 
-v2.0.0-next.38-next.388-next.388
+v2.0.0-next.388
 
 # Releases
 
