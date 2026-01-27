@@ -2,17 +2,17 @@
 
 # Version
 
-v2.0.0-next.389
+v2.0.2
 
 # Releases
 
-## [Version&nbsp;2.0.0-next.389](https://github.com/lobehub/lobe-chat/compare/v2.0.0-next.388...v2.0.0-next.389)
+### [Version&nbsp;2.0.2](https://github.com/lobehub/lobe-chat/compare/v2.0.1...v2.0.2)
 <sup>Released on **2026-01-27**</sup>
 
 
 #### 🐛 Bug Fixes
 
-- **misc**: Tts and translate error.
+- **misc**: Slove the recentTopicLinkError.
 
 
 <br/>
@@ -26,7 +26,7 @@ v2.0.0-next.389
 
 #### What's fixed
 
-* **misc**: Tts and translate error, closes [#11871](https://github.com/lobehub/lobe-chat/issues/11871) ([b63c791](https://github.com/lobehub/lobe-chat/commit/b63c791))
+* **misc**: Slove the recentTopicLinkError, closes [#11896](https://github.com/lobehub/lobe-chat/issues/11896) ([b358413](https://github.com/lobehub/lobe-chat/commit/b358413))
 
 </details>
 
