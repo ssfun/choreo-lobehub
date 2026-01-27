@@ -40,8 +40,10 @@ jobs:
           api_url = 'https://api.github.com/repos/lobehub/lobehub/releases/latest'
 
           def get_semver(ver_str):
-              clean_ver = ver_str.lstrip('v')
-              return [int(x) for x in re.split(r'[^0-9]', clean_ver) if x.isdigit()]
+              # 支持 v2.0.2 vs v2.0.0-next.389 比较
+              clean_ver = ver_str.lstrip('v').split('-')[0]  # 去掉 -next.389
+              nums = [int(x) for x in clean_ver.split('.') if x.isdigit()]
+              return nums + [0] * (3 - len(nums))  # 补齐 [major, minor, patch]
 
           def send_telegram(token, chat_id, version, body):
               if not token or not chat_id:
@@ -50,57 +52,50 @@ jobs:
               
               decoded_body = html.unescape(body)
               print(f'   Decoded preview: {decoded_body[:100]}...')
-
-              # 去掉 GitHub 自动生成的头部：## [Version ...] + <sup>Released ...</sup>
-              header_pat = r'^##\s+\[Version[^\n]*\n(?:<sup>.*?</sup>\n)?\s*\n*'
-              changelog_body = re.sub(header_pat, '', decoded_body, flags=re.MULTILINE)
-
-              # 清理不需要的标签
-              cleaned = re.sub(r'<details>.*?</details>', '', changelog_body, flags=re.DOTALL | re.IGNORECASE)
-              cleaned = re.sub(r'<br\s*/?>', '\n', cleaned, flags=re.IGNORECASE)
-              cleaned = re.sub(r'\n\s*\n\s*\n+', '\n\n', cleaned)
-              cleaned = re.sub(r'<div align="right">.*?</div>', '', cleaned, flags=re.DOTALL | re.IGNORECASE)
-              cleaned = re.sub(r'\[!?\]\(#readme-top\)', '', cleaned)
-              cleaned = re.sub(r'!\[[^\]]*\]\([^)]+\)', '', cleaned)  # 去掉图片
-
-              # Markdown 链接转 HTML 链接
-              def link_replacer(m):
-                  text, url = m.group(1), m.group(2)
-                  return f'<a href="{url}">{text}</a>'
-              cleaned = re.sub(r'\[([^\]]+)\]\((https?://[^)\s]+)\)', link_replacer, cleaned)
-
-              # 转义剩余内容
-              final_body = html.escape(cleaned)
-
-              # 标题里的版本号做成可点击链接
-              title_link = f'<a href="https://github.com/lobehub/lobehub/releases/tag/{version}">{version}</a>'
-              text_content = f'🚀 <b>LobeHub (Choreo) Update Detected!</b>\n\n<b>New Version:</b> {title_link}\n\n{final_body}'
-
-              if len(text_content) > 4000:
-                  text_content = text_content[:4000] + '\n\n<i>(truncated)</i>'
-
+              
+              # 超级简单清理：只保留纯文本 + 关键链接
+              plain_text = re.sub(r'<[^>]+>', '', decoded_body)  # 移除所有 HTML
+              
+              # 保留 issue/commit 引用格式
+              plain_text = re.sub(r'\[#(\d+)\]\([^)]+\)', r'#\1', plain_text)
+              plain_text = re.sub(r'\[([a-f0-9]{7,})\]\([^)]+\)', r'\1', plain_text)
+              
+              # 清理空行
+              plain_text = re.sub(r'\n\s*\n\s*\n+', '\n\n', plain_text).strip()
+              
+              # Markdown 格式（最稳定）
+              title_link = f'[v{version}](https://github.com/lobehub/lobe-chat/releases/tag/{version})'
+              text_content = f'🚀 *LobeHub (Choreo) Update Detected!*\n\n*New Version:* {title_link}\n\n{plain_text}'
+              
+              if len(text_content) > 4096:
+                  text_content = text_content[:4090] + '\n\n*(truncated)*'
+              
               url = f'https://api.telegram.org/bot{token}/sendMessage'
               payload = {
                   'chat_id': chat_id,
                   'text': text_content,
-                  'parse_mode': 'HTML',
+                  'parse_mode': 'Markdown',
                   'disable_web_page_preview': False,
               }
               headers = {'Content-Type': 'application/json'}
-
+              
               try:
                   req = urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers)
                   urllib.request.urlopen(req)
-                  print('-> Telegram OK')
+                  print('-> Telegram OK (Markdown)')
+                  return
               except Exception as e:
-                  print(f'::error::Telegram failed: {e}')
-                  payload.pop('parse_mode', None)
-                  payload['text'] = f'LobeHub {version}\n\n{cleaned[:2000]}'
-                  try:
-                      urllib.request.urlopen(urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers))
-                      print('-> Fallback OK')
-                  except Exception as e2:
-                      print(f'::error::Fallback failed: {e2}')
+                  print(f'::error::Markdown failed: {e}')
+              
+              # Fallback: 纯文本
+              payload['parse_mode'] = ''
+              payload['text'] = f'LobeHub {version}\n\n{plain_text[:2000]}'
+              try:
+                  req = urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers)
+                  urllib.request.urlopen(req)
+                  print('-> Pure text OK')
+              except Exception as e2:
+                  print(f'::error::All failed: {e2}')
 
           try:
               if not os.path.exists(file_path):
@@ -110,17 +105,15 @@ jobs:
               with open(file_path, 'r', encoding='utf-8') as f:
                   content = f.read()
 
-              # 匹配 README 里的版本，例如：
-              # # Version
-              # v2.0.0-next.388
-              ver_match = re.search(r'# Version\s*\n\s*(v[^\s]+)', content, flags=re.MULTILINE)
+              # 匹配 # Version 下的版本号，支持多行格式
+              ver_match = re.search(r'# Version\s*\n?\s*(v[^\s\n]+)', content, flags=re.MULTILINE)
               if not ver_match:
                   print('::warning::Cannot find current version in README format.')
                   sys.exit(0)
               local_ver = ver_match.group(1).strip()
               print(f'Local Version: {local_ver}')
 
-              # latest：最新非 pre-release 的正式版 [web:2][file:1]
+              # 获取最新正式版 release
               req = urllib.request.Request(api_url)
               token = os.environ.get('GITHUB_TOKEN')
               if token:
@@ -136,9 +129,9 @@ jobs:
               if get_semver(remote_ver) > get_semver(local_ver):
                   print('-> New release found! Updating...')
 
-                  # 更新 README 中的版本号行
+                  # 更新 Version 行
                   content = re.sub(
-                      r'(# Version\s*\n\s*)v[^\s]+',
+                      r'(# Version\s*\n?\s*)v[^\s\n]+',
                       r'\1' + remote_ver,
                       content,
                       count=1,
@@ -157,8 +150,7 @@ jobs:
                       f.write(content)
 
                   with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                      f.write('updated=true\n')
-                      f.write('new_version=' + remote_ver + '\n')
+                      f.write('updated=true\nnew_version=' + remote_ver + '\n')
 
                   send_telegram(
                       os.environ.get('TELEGRAM_TOKEN'),
