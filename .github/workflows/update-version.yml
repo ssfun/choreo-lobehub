@@ -111,7 +111,7 @@ jobs:
               with open(file_path, 'r', encoding='utf-8') as f:
                   content = f.read()
 
-              ver_match = re.search(r'# Version\\\\s+(v[\\\\d\\\\.]+)', content)
+              ver_match = re.search(r'# Version\s*(v[^[:space:]]+)', content, re.MULTILINE | re.DOTALL)
               if not ver_match:
                   print('::warning::Cannot find current version in README format.')
                   sys.exit(0)
@@ -138,7 +138,7 @@ jobs:
               if get_semver(remote_ver) > get_semver(local_ver):
                   print(f'-> New pre-release found! Updating...')
 
-                  content = re.sub(r'(# Version\\\\s+)(v[\\\\d\\\\.]+)', f'\\\\g<1>{remote_ver}', content, count=1)
+                  content = re.sub(r'(# Version\s*)(v[^[:space:]]+)', f'\\g<1>{remote_ver}', content, count=1, flags=re.MULTILINE | re.DOTALL)
                   content = re.sub(r'(# Releases\\\\s*)([\\\\s\\\\S]*)', f'# Releases\\\\n\\\\n{remote_body}', content, count=1)
 
                   with open(file_path, 'w', encoding='utf-8') as f:
