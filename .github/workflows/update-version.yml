@@ -48,36 +48,39 @@ jobs:
               if not token or not chat_id:
                   print('::warning::Telegram secrets not set.')
                   return
-              
+    
               # 1. 解码 HTML 实体
               decoded_body = html.unescape(body)
               print(f'   Decoded body preview: {decoded_body[:100]}...')
-              
-              # 2. 清理 GitHub 标签
-              cleaned = re.sub(r'<details>.*?</details>', '', decoded_body, flags=re.DOTALL | re.IGNORECASE)
+    
+              # 2. **关键：跳过 GitHub header，只取 changelog 部分**
+              # 匹配开头的 "## [Version ...]\n<sup>Released...</sup>\n\n" 到第一个 #### 标题
+              header_pattern = r'^##\s+\[Version[^\n]*?\n(?:<sup>.*?</sup>\n)*\s*\n+'
+              changelog_body = re.sub(header_pattern, '', decoded_body, flags=re.MULTILINE)
+    
+              # 3. 清理标签
+              cleaned = re.sub(r'<details>.*?</details>', '', changelog_body, flags=re.DOTALL | re.IGNORECASE)
               cleaned = re.sub(r'<br\s*/?>', '\n', cleaned, flags=re.IGNORECASE)
               cleaned = re.sub(r'\n\s*\n\s*\n+', '\n\n', cleaned)
               cleaned = re.sub(r'<div align=\"right\">.*?</div>', '', cleaned, flags=re.DOTALL | re.IGNORECASE)
               cleaned = re.sub(r'\[!?\]\(#readme-top\)', '', cleaned)
-              
-              # 3. Markdown 链接转 HTML
+    
+              # 4. 链接转换
               link_pattern = r'\[([^\]]+)\]\((https?://[^)\s]+)\)'
               def link_replacer(match):
                   text = match.group(1)
-                  url = match.group(2)
+                            url = match.group(2)
                   return f'<a href=\"{url}\">{text}</a>'
               cleaned = re.sub(link_pattern, link_replacer, cleaned)
-              
-              # 4. 最终转义
+    
+              # 5. 转义 + 构建
               final_body = html.escape(cleaned)
-              
-              # 5. 构建消息
               title_link = f'<a href=\"https://github.com/lobehub/lobe-chat/releases/tag/{version}\">{version}</a>'
               text_content = f'🚀 <b>LobeHub (Choreo) Update Detected!</b>\\n\\n<b>New Version:</b> {title_link}\\n\\n{final_body}'
-              
+    
               if len(text_content) > 4000:
                   text_content = text_content[:4000] + '\\n\\n<i>(truncated)</i>'
-              
+    
               url = f'https://api.telegram.org/bot{token}/sendMessage'
               payload = {
                   'chat_id': chat_id,
@@ -86,79 +89,20 @@ jobs:
                   'disable_web_page_preview': False
               }
               headers = {'Content-Type': 'application/json'}
-              
+    
               try:
                   req = urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers)
                   urllib.request.urlopen(req)
-                  print('-> Telegram notification sent (optimized HTML)')
+                  print('-> Telegram sent (header cleaned)')
               except Exception as e:
                   print(f'::error::Send failed: {e}')
                   payload['parse_mode'] = None
                   payload['text'] = f'LobeHub Pre-Release: {version}\\n\\n{cleaned[:2000]}...'
                   try:
                       urllib.request.urlopen(urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers))
-                      print('-> Sent plain text fallback.')
+                      print('-> Plain text fallback.')
                   except Exception as e2:
                       print(f'::error::Fallback failed: {e2}')
-
-          try:
-              if not os.path.exists(file_path):
-                  print('::error::README.md not found!')
-                  sys.exit(1)
-
-              with open(file_path, 'r', encoding='utf-8') as f:
-                  content = f.read()
-
-              ver_match = re.search(r'# Version\\s+(v[\\d\\.]+)', content)
-              if not ver_match:
-                  print('::warning::Cannot find current version in README format.')
-                  sys.exit(0)
-              local_ver = ver_match.group(1)
-              print(f'   Local Version: {local_ver}')
-
-              # 获取最新 pre-release
-              req = urllib.request.Request(api_url)
-              if os.environ.get('GITHUB_TOKEN'):
-                  req.add_header('Authorization', f'token {os.environ.get(\"GITHUB_TOKEN\")}')
-              
-              with urllib.request.urlopen(req) as response:
-                  releases = json.loads(response.read().decode())
-
-              pre = next((r for r in releases if r.get('prerelease')), None)
-              if not pre:
-                  print('::warning::No pre-release found, skip.')
-                  sys.exit(0)
-
-              remote_ver = pre['tag_name']
-              remote_body = pre.get('body') or ''
-              print(f'   Remote Pre-Release Version: {remote_ver}')
-
-              if get_semver(remote_ver) > get_semver(local_ver):
-                  print(f'-> New pre-release found! Updating...')
-
-                  content = re.sub(r'(# Version\\s+)(v[\\d\\.]+)', f'\\g<1>{remote_ver}', content, count=1)
-                  content = re.sub(r'(# Releases\\s*)([\\s\\S]*)', f'# Releases\\n\\n{remote_body}', content, count=1)
-
-                  with open(file_path, 'w', encoding='utf-8') as f:
-                      f.write(content)
-                  
-                  with open(os.environ['GITHUB_OUTPUT'], 'a') as gh_out:
-                      gh_out.write('updated=true\\n')
-                      gh_out.write(f'new_version={remote_ver}\\n')
-                  
-                  send_telegram(
-                      os.environ.get('TELEGRAM_TOKEN'), 
-                      os.environ.get('TELEGRAM_TO'), 
-                      remote_ver, 
-                      remote_body
-                  )
-              else:
-                  print('-> Local version is up to date.')
-
-          except Exception as e:
-              print(f'::error::Script failed: {e}')
-              sys.exit(1)
-          "
 
       - name: Commit and Push changes
         if: steps.update_script.outputs.updated == 'true'
