@@ -26,7 +26,9 @@ COPY --from=ghcr.io/komari-monitor/komari-agent:latest /app/komari-agent /app/ko
 ENV NODE_ENV="production" \
     NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca" \
     HOSTNAME="0.0.0.0" \
-    PORT="3210"
+    PORT="3210" \
+    DATABASE_DRIVER="node" \
+    DATABASE_URL=""
 
 # 5. 安装 Canvas (已修复 cp 错误)
 RUN mkdir -p /tmp/canvas-build && \
