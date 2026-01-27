@@ -46,12 +46,22 @@ jobs:
 
           def clean_markdown_for_telegram(text):
               if not text: return ''
+              
+              # [新增修复] 1. 优先替换 HTML 实体空格 &nbsp; 为普通空格
+              text = text.replace('&nbsp;', ' ')
+              
+              # 2. 移除 HTML 注释
               text = re.sub(r'', '', text, flags=re.DOTALL)
+              # 3. 移除底部的 div (Back to top)
               text = re.sub(r'<div[^>]*>.*?</div>', '', text, flags=re.DOTALL)
+              # 4. 移除折叠标签但保留内容
               text = re.sub(r'</?(details|summary|kbd)>', '', text)
+              # 5. 移除图片
               text = re.sub(r'!\[.*?\]\(.*?\)', '', text)
               text = re.sub(r'<img[^>]*>', '', text)
+              # 6. 将 <br> 替换为换行
               text = re.sub(r'<br\s*/?>', '\n', text)
+              
               return text
 
           def send_telegram(token, chat_id, version, raw_body):
@@ -59,13 +69,22 @@ jobs:
                   print('::warning::Telegram secrets not set.')
                   return
 
+              # 1. 清洗 (这里现在会处理掉 &nbsp;)
               cleaned_text = clean_markdown_for_telegram(raw_body)
+              
+              # 2. 转义 (防止内容中的 < > & 破坏 Telegram 格式)
+              # 此时 &nbsp; 已经被替换为空格，不会再变成 &amp;nbsp;
               safe_text = html.escape(cleaned_text)
 
+              # 3. 格式化增强
+              # 标题加粗
               safe_text = re.sub(r'(?m)^#{1,6}\s+(.*)$', r'<b>\1</b>', safe_text)
+              # 还原链接
               link_pattern = r'\[([^\]]+)\]\((https?://[^)]+)\)'
               safe_text = re.sub(link_pattern, r'<a href=\"\2\">\1</a>', safe_text)
+              # 处理 sup
               safe_text = re.sub(r'&lt;sup&gt;(.*?)&lt;/sup&gt;', r'<i>\1</i>', safe_text)
+              # 移除多余换行
               safe_text = re.sub(r'\n{3,}', '\n\n', safe_text)
 
               text_content = f'🚀 <b>LobeHub (Choreo) Update Detected!</b>\n\n<b>New Version:</b> {version}\n\n{safe_text}'
@@ -104,10 +123,8 @@ jobs:
               local_ver = ver_match.group(1)
               print(f'   Local Version: {local_ver}')
 
-              # --- 3. 获取远程版本 (修复部分) ---
+              # 获取远程版本
               req = urllib.request.Request(api_url)
-              
-              # 安全获取 Token，避免 Quote 冲突
               gh_token = os.environ.get(\"GITHUB_TOKEN\")
               if gh_token:
                   req.add_header('Authorization', f'token {gh_token}')
