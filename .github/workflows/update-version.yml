@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.x'
 
-            - name: Check, Update and Notify
+      - name: Check, Update and Notify
         id: update_script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
