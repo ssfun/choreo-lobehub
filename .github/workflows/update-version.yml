@@ -36,7 +36,6 @@ jobs:
           import sys
           import html
 
-          # --- 配置 ---
           file_path = 'README.md'
           api_url = 'https://api.github.com/repos/lobehub/lobehub/releases'
 
@@ -49,126 +48,113 @@ jobs:
                   print('::warning::Telegram secrets not set.')
                   return
               
-              # 1. 解码 HTML 实体
               decoded_body = html.unescape(body)
-              print(f'   Decoded body preview: {decoded_body[:100]}...')
+              print(f'   Decoded preview: {decoded_body[:100]}...')
               
-              # 2. 跳过 GitHub header，只取 changelog
-              header_pattern = r'^##\\s+\\[Version[^\\n]*?\\n(?:<sup>.*?</sup>\\\\n)*\\s*\\\\n+'
-              changelog_body = re.sub(header_pattern, '', decoded_body, flags=re.MULTILINE)
+              # 跳过 header
+              header_pat = r'''^##\s+\[Version[^\n]*?\n(?:<sup>.*?</sup>\n)*\s*\n+'''
+              changelog_body = re.sub(header_pat, '', decoded_body, flags=re.MULTILINE)
               
-              # 3. 清理标签
+              # 清理
               cleaned = re.sub(r'<details>.*?</details>', '', changelog_body, flags=re.DOTALL | re.IGNORECASE)
-              cleaned = re.sub(r'<br\\\\s*/?>', '\\n', cleaned, flags=re.IGNORECASE)
-              cleaned = re.sub(r'\\\\n\\\\s*\\\\n\\\\s*\\\\n+', '\\\\n\\\\n', cleaned)
-              cleaned = re.sub(r'<div align=\\\"right\\\">.*?</div>', '', cleaned, flags=re.DOTALL | re.IGNORECASE)
-              cleaned = re.sub(r'\\[!??\\]\\\\\\(#readme-top\\\\\\)', '', cleaned)
+              cleaned = re.sub(r'<br\s*/?>', '\n', cleaned, flags=re.IGNORECASE)
+              cleaned = re.sub(r'\n\s*\n\s*\n+', '\n\n', cleaned)
+              cleaned = re.sub(r'<div align=\"right\">.*?</div>', '', cleaned, flags=re.DOTALL | re.IGNORECASE)
+              cleaned = re.sub(r'\[!?\]\(#readme-top\)', '', cleaned)
               
-              # 4. Markdown 链接转 HTML
-              link_pattern = r'\\[([^\\]]+)\\]\\\\\\((https?://[^)\\\\s]+)\\\\\\)'
+              # 链接转换
               def link_replacer(match):
-                  text = match.group(1)
-                  url = match.group(2)
-                  return f'<a href=\\\"{url}\\\">{text}</a>'
-              cleaned = re.sub(link_pattern, link_replacer, cleaned)
+                  return f'<a href=\"{match.group(2)}\">{match.group(1)}</a>'
+              cleaned = re.sub(r'\[([^\]]+)\]\((https?://[^)\s]+)\)', link_replacer, cleaned)
               
-              # 5. 转义 + 构建消息
               final_body = html.escape(cleaned)
-              title_link = f'<a href=\\\"https://github.com/lobehub/lobe-chat/releases/tag/{version}\\\">{version}</a>'
-              text_content = f'🚀 <b>LobeHub (Choreo) Update Detected!</b>\\\\n\\\\n<b>New Version:</b> {title_link}\\\\n\\\\n{final_body}'
+              title_link = f'<a href=\"https://github.com/lobehub/lobe-chat/releases/tag/{version}\">{version}</a>'
+              text_content = f'🚀 <b>LobeHub (Choreo) Update Detected!</b>\n\n<b>New:</b> {title_link}\n\n{final_body}'
               
               if len(text_content) > 4000:
-                  text_content = text_content[:4000] + '\\\\n\\\\n<i>(truncated)</i>'
+                  text_content = text_content[:4000] + '\n\n<i>(truncated)</i>'
               
               url = f'https://api.telegram.org/bot{token}/sendMessage'
-              payload = {
-                  'chat_id': chat_id,
-                  'text': text_content,
-                  'parse_mode': 'HTML',
-                  'disable_web_page_preview': False
-              }
+              payload = {'chat_id': chat_id, 'text': text_content, 'parse_mode': 'HTML', 'disable_web_page_preview': False}
               headers = {'Content-Type': 'application/json'}
               
               try:
                   req = urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers)
                   urllib.request.urlopen(req)
-                  print('-> Telegram sent (header cleaned)')
+                  print('-> Telegram OK')
               except Exception as e:
-                  print(f'::error::Send failed: {e}')
-                  payload['parse_mode'] = None
-                  payload['text'] = f'LobeHub Pre-Release: {version}\\\\n\\\\n{cleaned[:2000]}...'
-                  try:
-                      urllib.request.urlopen(urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers))
-                      print('-> Plain text fallback.')
-                  except Exception as e2:
-                      print(f'::error::Fallback failed: {e2}')
+                  print(f'::error::Telegram failed: {e}')
+                  payload.pop('parse_mode')
+                  payload['text'] = f'LobeHub {version}\n\n{cleaned[:2000]}'
+                  urllib.request.urlopen(urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers))
+                  print('-> Fallback OK')
 
           try:
               if not os.path.exists(file_path):
-                  print('::error::README.md not found!')
+                  print('::error::No README.md')
                   sys.exit(1)
 
               with open(file_path, 'r', encoding='utf-8') as f:
                   content = f.read()
 
-              ver_match = re.search(r'# Version\s*(v[^[:space:]]+)', content, re.MULTILINE | re.DOTALL)
+              # 修复：宽松匹配，支持 next.388
+              ver_match = re.search(r'# Version\s*(v[^\n\s]+)', content.strip())
               if not ver_match:
-                  print('::warning::Cannot find current version in README format.')
+                  print('::warning::No version found in README')
                   sys.exit(0)
               local_ver = ver_match.group(1)
-              print(f'   Local Version: {local_ver}')
+              print(f'Local: {local_ver}')
 
-              # 获取最新 pre-release
               req = urllib.request.Request(api_url)
-              if os.environ.get('GITHUB_TOKEN'):
-                  req.add_header('Authorization', f'token {os.environ.get(\"GITHUB_TOKEN\")}')
+              if token := os.environ.get('GITHUB_TOKEN'):
+                  req.add_header('Authorization', f'token {token}')
               
-              with urllib.request.urlopen(req) as response:
-                  releases = json.loads(response.read().decode())
+              with urllib.request.urlopen(req) as resp:
+                  releases = json.loads(resp.read().decode())
 
-              pre = next((r for r in releases if r.get('prerelease')), None)
-              if not pre:
-                  print('::warning::No pre-release found, skip.')
+              pre_release = next((r for r in releases if r.get('prerelease')), None)
+              if not pre_release:
+                  print('::warning::No pre-release')
                   sys.exit(0)
 
-              remote_ver = pre['tag_name']
-              remote_body = pre.get('body') or ''
-              print(f'   Remote Pre-Release Version: {remote_ver}')
+              remote_ver = pre_release['tag_name']
+              remote_body = pre_release.get('body', '')
+              print(f'Remote pre: {remote_ver}')
 
               if get_semver(remote_ver) > get_semver(local_ver):
-                  print(f'-> New pre-release found! Updating...')
-
-                  content = re.sub(r'(# Version\s*)(v[^[:space:]]+)', f'\\g<1>{remote_ver}', content, count=1, flags=re.MULTILINE | re.DOTALL)
-                  content = re.sub(r'(# Releases\\\\s*)([\\\\s\\\\S]*)', f'# Releases\\\\n\\\\n{remote_body}', content, count=1)
-
+                  print('-> Updating...')
+                  
+                  # 修复：避免 \g 转义，用字符串替换
+                  version_line_pat = r'(# Version\s*)(v[^\n\s]+)'
+                  version_match = re.search(version_line_pat, content)
+                  if version_match:
+                      content = content.replace(version_match.group(0), f'{version_match.group(1)}{remote_ver}')
+                  
+                  # Releases 替换
+                  content = re.sub(r'(# Releases\s*)([\s\S]*)', f'# Releases\n\n{remote_body}', content, count=1)
+                  
                   with open(file_path, 'w', encoding='utf-8') as f:
                       f.write(content)
                   
-                  with open(os.environ['GITHUB_OUTPUT'], 'a') as gh_out:
-                      gh_out.write('updated=true\\\\n')
-                      gh_out.write(f'new_version={remote_ver}\\\\n')
+                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                      f.write('updated=true\nnew_version=' + remote_ver + '\n')
                   
-                  send_telegram(
-                      os.environ.get('TELEGRAM_TOKEN'), 
-                      os.environ.get('TELEGRAM_TO'), 
-                      remote_ver, 
-                      remote_body
-                  )
+                  send_telegram(os.environ.get('TELEGRAM_TOKEN'), os.environ.get('TELEGRAM_TO'), remote_ver, remote_body)
               else:
-                  print('-> Local version is up to date.')
+                  print('Up to date')
 
           except Exception as e:
-              print(f'::error::Script failed: {e}')
+              print(f'::error::Failed: {e}')
               sys.exit(1)
           "
 
-      - name: Commit and Push changes
+      - name: Commit changes
         if: steps.update_script.outputs.updated == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git commit -m "docs: update to ${{ steps.update_script.outputs.new_version }} (pre-release)"
+          git commit -m "docs: update to ${{ steps.update_script.outputs.new_version }} (pre)"
           git push
 
   cleanup-runs:
@@ -176,8 +162,7 @@ jobs:
     needs: check-and-update
     if: always()
     steps:
-      - name: Delete old workflow runs
-        uses: Mattraks/delete-workflow-runs@v2
+      - uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
