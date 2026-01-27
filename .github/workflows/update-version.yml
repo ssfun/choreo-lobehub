@@ -45,26 +45,13 @@ jobs:
               return [int(x) for x in clean_ver.split('.') if x.isdigit()]
 
           def clean_markdown_for_telegram(text):
-              if not text:
-                  return ''
-              
-              # 1. 移除 HTML 注释 text = re.sub(r'', '', text, flags=re.DOTALL)
-              
-              # 2. 移除底部的 Back to top 图片/链接块 (匹配 <div align=right>...</div>)
+              if not text: return ''
+              text = re.sub(r'', '', text, flags=re.DOTALL)
               text = re.sub(r'<div[^>]*>.*?</div>', '', text, flags=re.DOTALL)
-              
-              # 3. 移除折叠标签，保留内容 (<details>, <summary>)
               text = re.sub(r'</?(details|summary|kbd)>', '', text)
-              
-              # 4. 移除 Markdown 图片 (![...](...)) 和 HTML 图片
               text = re.sub(r'!\[.*?\]\(.*?\)', '', text)
               text = re.sub(r'<img[^>]*>', '', text)
-              
-              # 5. 将 <br> 替换为换行
               text = re.sub(r'<br\s*/?>', '\n', text)
-              
-              # 6. 处理 Markdown 链接 [text](url) -> 仅提取 text 或者保留格式
-              # 为了 Telegram 安全，我们先转义，再手动恢复链接和加粗
               return text
 
           def send_telegram(token, chat_id, version, raw_body):
@@ -72,46 +59,27 @@ jobs:
                   print('::warning::Telegram secrets not set.')
                   return
 
-              # --- 预处理消息体 ---
-              # 先清洗掉不需要的 HTML 结构和图片
               cleaned_text = clean_markdown_for_telegram(raw_body)
-              
-              # HTML 转义 (防止内容中的 < > & 破坏 Telegram 格式)
               safe_text = html.escape(cleaned_text)
 
-              # --- 格式化增强 (在转义后进行) ---
-              
-              # 1. 标题加粗: 将 ### Title 转换为 <b>Title</b>
-              # (?m) 开启多行模式
               safe_text = re.sub(r'(?m)^#{1,6}\s+(.*)$', r'<b>\1</b>', safe_text)
-              
-              # 2. 还原并格式化链接: [Text](Url) -> <a href='Url'>Text</a>
-              # 注意：Url 之前被 html.escape 转义过 (例如 & 变成了 &amp;)，这对 href 是合法的
               link_pattern = r'\[([^\]]+)\]\((https?://[^)]+)\)'
-              safe_text = re.sub(link_pattern, r'<a href="\2">\1</a>', safe_text)
-              
-              # 3. 处理 sup 标签 (通常用于发布日期)
+              safe_text = re.sub(link_pattern, r'<a href=\"\2\">\1</a>', safe_text)
               safe_text = re.sub(r'&lt;sup&gt;(.*?)&lt;/sup&gt;', r'<i>\1</i>', safe_text)
-
-              # 4. 移除多余的连续换行
               safe_text = re.sub(r'\n{3,}', '\n\n', safe_text)
 
-              # 构建最终消息
               text_content = f'🚀 <b>LobeHub (Choreo) Update Detected!</b>\n\n<b>New Version:</b> {version}\n\n{safe_text}'
               
-              # 截断保护
               if len(text_content) > 4000:
-                  text_content = text_content[:4000] + '\n...(content truncated)...'
+                  text_content = text_content[:4000] + '\n...(truncated)...'
 
               url = f'https://api.telegram.org/bot{token}/sendMessage'
-              
               payload = {
                   'chat_id': chat_id,
                   'text': text_content,
                   'parse_mode': 'HTML',
                   'disable_web_page_preview': True
               }
-              
               headers = {'Content-Type': 'application/json'}
               
               try:
@@ -120,17 +88,8 @@ jobs:
                   print(f'-> Telegram notification sent to {chat_id}')
               except Exception as e:
                   print(f'::error::HTML Send Failed: {e}')
-                  # 降级重试 (纯文本)
-                  del payload['parse_mode']
-                  payload['text'] = f'Update: {version}\n\n{cleaned_text}'[:4000]
-                  try:
-                      urllib.request.urlopen(urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers))
-                      print('-> Sent as plain text fallback.')
-                  except Exception as e2:
-                      print(f'::error::Fallback failed: {e2}')
 
           try:
-              # 1. 检查文件
               if not os.path.exists(file_path):
                   print('::error::README.md not found!')
                   sys.exit(1)
@@ -138,18 +97,20 @@ jobs:
               with open(file_path, 'r', encoding='utf-8') as f:
                   content = f.read()
 
-              # 2. 获取本地版本
               ver_match = re.search(r'# Version\s+(v[\d\.]+)', content)
               if not ver_match:
-                  print('::warning::Cannot find current version in README format.')
+                  print('::warning::Cannot find current version.')
                   sys.exit(0)
               local_ver = ver_match.group(1)
               print(f'   Local Version: {local_ver}')
 
-              # 3. 获取远程版本
+              # --- 3. 获取远程版本 (修复部分) ---
               req = urllib.request.Request(api_url)
-              if os.environ.get('GITHUB_TOKEN'):
-                  req.add_header('Authorization', f'token {os.environ.get("GITHUB_TOKEN")}')
+              
+              # 安全获取 Token，避免 Quote 冲突
+              gh_token = os.environ.get(\"GITHUB_TOKEN\")
+              if gh_token:
+                  req.add_header('Authorization', f'token {gh_token}')
               
               with urllib.request.urlopen(req) as response:
                   data = json.loads(response.read().decode())
@@ -157,33 +118,25 @@ jobs:
                   remote_body = data['body']
               print(f'   Remote Version: {remote_ver}')
 
-              # 4. 对比与执行
               if get_semver(remote_ver) > get_semver(local_ver):
                   print(f'-> New version found! Updating...')
 
-                  # [修复1] 更新 README - Version
-                  # 使用 r'\g<1>' + remote_ver 避免 f-string 中的反斜杠转义问题
                   content = re.sub(r'(# Version\s+)(v[\d\.]+)', r'\g<1>' + remote_ver, content, count=1)
-                  
-                  # 更新 README - Releases (保持原始内容，不清洗，因为 README 支持 HTML)
                   content = re.sub(r'(# Releases\s*)([\s\S]*)', f'# Releases\n\n{remote_body}', content, count=1)
 
                   with open(file_path, 'w', encoding='utf-8') as f:
                       f.write(content)
                   
-                  # 输出 Output
                   with open(os.environ['GITHUB_OUTPUT'], 'a') as gh_out:
                       gh_out.write('updated=true\n')
                       gh_out.write(f'new_version={remote_ver}\n')
                   
-                  # 发送通知 (使用清洗后的逻辑)
                   send_telegram(
                       os.environ.get('TELEGRAM_TOKEN'), 
                       os.environ.get('TELEGRAM_TO'), 
                       remote_ver, 
                       remote_body
                   )
-                  
               else:
                   print('-> Local version is up to date.')
 
