@@ -37,11 +37,11 @@ jobs:
           import html
 
           file_path = 'README.md'
-          api_url = 'https://api.github.com/repos/lobehub/lobehub/releases'
+          api_url = 'https://api.github.com/repos/lobehub/lobehub/releases/latest'
 
           def get_semver(ver_str):
               clean_ver = ver_str.lstrip('v')
-              return [int(x) for x in clean_ver.split('.') if x.isdigit()]
+              return [int(x) for x in re.split(r'[^0-9]', clean_ver) if x.isdigit()]
 
           def send_telegram(token, chat_id, version, body):
               if not token or not chat_id:
@@ -50,111 +50,137 @@ jobs:
               
               decoded_body = html.unescape(body)
               print(f'   Decoded preview: {decoded_body[:100]}...')
-              
-              # 跳过 header
-              header_pat = r'''^##\s+\[Version[^\n]*?\n(?:<sup>.*?</sup>\n)*\s*\n+'''
+
+              # 去掉 GitHub 自动生成的头部：## [Version ...] + <sup>Released ...</sup>
+              header_pat = r'^##\s+\[Version[^\n]*\n(?:<sup>.*?</sup>\n)?\s*\n*'
               changelog_body = re.sub(header_pat, '', decoded_body, flags=re.MULTILINE)
-              
-              # 清理
+
+              # 清理不需要的标签
               cleaned = re.sub(r'<details>.*?</details>', '', changelog_body, flags=re.DOTALL | re.IGNORECASE)
               cleaned = re.sub(r'<br\s*/?>', '\n', cleaned, flags=re.IGNORECASE)
               cleaned = re.sub(r'\n\s*\n\s*\n+', '\n\n', cleaned)
-              cleaned = re.sub(r'<div align=\"right\">.*?</div>', '', cleaned, flags=re.DOTALL | re.IGNORECASE)
+              cleaned = re.sub(r'<div align="right">.*?</div>', '', cleaned, flags=re.DOTALL | re.IGNORECASE)
               cleaned = re.sub(r'\[!?\]\(#readme-top\)', '', cleaned)
-              
-              # 链接转换
-              def link_replacer(match):
-                  return f'<a href=\"{match.group(2)}\">{match.group(1)}</a>'
+              cleaned = re.sub(r'!\[[^\]]*\]\([^)]+\)', '', cleaned)  # 去掉图片
+
+              # Markdown 链接转 HTML 链接
+              def link_replacer(m):
+                  text, url = m.group(1), m.group(2)
+                  return f'<a href="{url}">{text}</a>'
               cleaned = re.sub(r'\[([^\]]+)\]\((https?://[^)\s]+)\)', link_replacer, cleaned)
-              
+
+              # 转义剩余内容
               final_body = html.escape(cleaned)
-              title_link = f'<a href=\"https://github.com/lobehub/lobe-chat/releases/tag/{version}\">{version}</a>'
-              text_content = f'🚀 <b>LobeHub (Choreo) Update Detected!</b>\n\n<b>New:</b> {title_link}\n\n{final_body}'
-              
+
+              # 标题里的版本号做成可点击链接
+              title_link = f'<a href="https://github.com/lobehub/lobehub/releases/tag/{version}">{version}</a>'
+              text_content = f'🚀 <b>LobeHub (Choreo) Update Detected!</b>\n\n<b>New Version:</b> {title_link}\n\n{final_body}'
+
               if len(text_content) > 4000:
                   text_content = text_content[:4000] + '\n\n<i>(truncated)</i>'
-              
+
               url = f'https://api.telegram.org/bot{token}/sendMessage'
-              payload = {'chat_id': chat_id, 'text': text_content, 'parse_mode': 'HTML', 'disable_web_page_preview': False}
+              payload = {
+                  'chat_id': chat_id,
+                  'text': text_content,
+                  'parse_mode': 'HTML',
+                  'disable_web_page_preview': False,
+              }
               headers = {'Content-Type': 'application/json'}
-              
+
               try:
                   req = urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers)
                   urllib.request.urlopen(req)
                   print('-> Telegram OK')
               except Exception as e:
                   print(f'::error::Telegram failed: {e}')
-                  payload.pop('parse_mode')
+                  payload.pop('parse_mode', None)
                   payload['text'] = f'LobeHub {version}\n\n{cleaned[:2000]}'
-                  urllib.request.urlopen(urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers))
-                  print('-> Fallback OK')
+                  try:
+                      urllib.request.urlopen(urllib.request.Request(url, data=json.dumps(payload).encode(), headers=headers))
+                      print('-> Fallback OK')
+                  except Exception as e2:
+                      print(f'::error::Fallback failed: {e2}')
 
           try:
               if not os.path.exists(file_path):
-                  print('::error::No README.md')
+                  print('::error::README.md not found')
                   sys.exit(1)
 
               with open(file_path, 'r', encoding='utf-8') as f:
                   content = f.read()
 
-              # 修复：宽松匹配，支持 next.388
-              ver_match = re.search(r'# Version\s*(v[^\n\s]+)', content.strip())
+              # 匹配 README 里的版本，例如：
+              # # Version
+              # v2.0.0-next.388
+              ver_match = re.search(r'# Version\s*\n\s*(v[^\s]+)', content, flags=re.MULTILINE)
               if not ver_match:
-                  print('::warning::No version found in README')
+                  print('::warning::Cannot find current version in README format.')
                   sys.exit(0)
-              local_ver = ver_match.group(1)
-              print(f'Local: {local_ver}')
+              local_ver = ver_match.group(1).strip()
+              print(f'Local Version: {local_ver}')
 
+              # latest：最新非 pre-release 的正式版 [web:2][file:1]
               req = urllib.request.Request(api_url)
-              if token := os.environ.get('GITHUB_TOKEN'):
+              token = os.environ.get('GITHUB_TOKEN')
+              if token:
                   req.add_header('Authorization', f'token {token}')
-              
+
               with urllib.request.urlopen(req) as resp:
-                  releases = json.loads(resp.read().decode())
+                  data = json.loads(resp.read().decode())
 
-              pre_release = next((r for r in releases if r.get('prerelease')), None)
-              if not pre_release:
-                  print('::warning::No pre-release')
-                  sys.exit(0)
-
-              remote_ver = pre_release['tag_name']
-              remote_body = pre_release.get('body', '')
-              print(f'Remote pre: {remote_ver}')
+              remote_ver = data['tag_name']
+              remote_body = data.get('body') or ''
+              print(f'Remote Version: {remote_ver}')
 
               if get_semver(remote_ver) > get_semver(local_ver):
-                  print('-> Updating...')
-                  
-                  # 修复：避免 \g 转义，用字符串替换
-                  version_line_pat = r'(# Version\s*)(v[^\n\s]+)'
-                  version_match = re.search(version_line_pat, content)
-                  if version_match:
-                      content = content.replace(version_match.group(0), f'{version_match.group(1)}{remote_ver}')
-                  
-                  # Releases 替换
-                  content = re.sub(r'(# Releases\s*)([\s\S]*)', f'# Releases\n\n{remote_body}', content, count=1)
-                  
+                  print('-> New release found! Updating...')
+
+                  # 更新 README 中的版本号行
+                  content = re.sub(
+                      r'(# Version\s*\n\s*)v[^\s]+',
+                      r'\1' + remote_ver,
+                      content,
+                      count=1,
+                      flags=re.MULTILINE,
+                  )
+
+                  # 更新 Releases 部分
+                  content = re.sub(
+                      r'(# Releases\s*)([\s\S]*)',
+                      '# Releases\n\n' + remote_body,
+                      content,
+                      count=1,
+                  )
+
                   with open(file_path, 'w', encoding='utf-8') as f:
                       f.write(content)
-                  
+
                   with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                      f.write('updated=true\nnew_version=' + remote_ver + '\n')
-                  
-                  send_telegram(os.environ.get('TELEGRAM_TOKEN'), os.environ.get('TELEGRAM_TO'), remote_ver, remote_body)
+                      f.write('updated=true\n')
+                      f.write('new_version=' + remote_ver + '\n')
+
+                  send_telegram(
+                      os.environ.get('TELEGRAM_TOKEN'),
+                      os.environ.get('TELEGRAM_TO'),
+                      remote_ver,
+                      remote_body,
+                  )
               else:
-                  print('Up to date')
+                  print('-> Local version is up to date.')
 
           except Exception as e:
-              print(f'::error::Failed: {e}')
+              print(f'::error::Script failed: {e}')
               sys.exit(1)
           "
 
-      - name: Commit changes
+      - name: Commit and Push changes
         if: steps.update_script.outputs.updated == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git commit -m "docs: update to ${{ steps.update_script.outputs.new_version }} (pre)"
+          git commit -m "docs: update to ${{ steps.update_script.outputs.new_version }}"
           git push
 
   cleanup-runs:
@@ -162,7 +188,8 @@ jobs:
     needs: check-and-update
     if: always()
     steps:
-      - uses: Mattraks/delete-workflow-runs@v2
+      - name: Delete old workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
