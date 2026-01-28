@@ -2,17 +2,17 @@
 
 # Version
 
-v2.0.2
+v2.0.6
 
 # Releases
 
-### [Version&nbsp;2.0.2](https://github.com/lobehub/lobe-chat/compare/v2.0.1...v2.0.2)
+### [Version&nbsp;2.0.6](https://github.com/lobehub/lobe-chat/compare/v2.0.5...v2.0.6)
 <sup>Released on **2026-01-27**</sup>
 
 
 #### 🐛 Bug Fixes
 
-- **misc**: Slove the recentTopicLinkError.
+- **misc**: The klavis in onboarding connect timeout fixed.
 
 
 <br/>
@@ -26,7 +26,7 @@ v2.0.2
 
 #### What's fixed
 
-* **misc**: Slove the recentTopicLinkError, closes [#11896](https://github.com/lobehub/lobe-chat/issues/11896) ([b358413](https://github.com/lobehub/lobe-chat/commit/b358413))
+* **misc**: The klavis in onboarding connect timeout fixed, closes [#11918](https://github.com/lobehub/lobe-chat/issues/11918) ([bc165be](https://github.com/lobehub/lobe-chat/commit/bc165be))
 
 </details>
 
