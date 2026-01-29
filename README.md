@@ -2,17 +2,17 @@
 
 # Version
 
-v2.0.6
+v2.0.8
 
 # Releases
 
-### [Version&nbsp;2.0.6](https://github.com/lobehub/lobe-chat/compare/v2.0.5...v2.0.6)
-<sup>Released on **2026-01-27**</sup>
+### [Version&nbsp;2.0.8](https://github.com/lobehub/lobe-chat/compare/v2.0.7...v2.0.8)
+<sup>Released on **2026-01-28**</sup>
 
 
 #### 🐛 Bug Fixes
 
-- **misc**: The klavis in onboarding connect timeout fixed.
+- **misc**: Fix inbox agent in mobile.
 
 
 <br/>
@@ -26,7 +26,7 @@ v2.0.6
 
 #### What's fixed
 
-* **misc**: The klavis in onboarding connect timeout fixed, closes [#11918](https://github.com/lobehub/lobe-chat/issues/11918) ([bc165be](https://github.com/lobehub/lobe-chat/commit/bc165be))
+* **misc**: Fix inbox agent in mobile, closes [#11929](https://github.com/lobehub/lobe-chat/issues/11929) ([42f5c0b](https://github.com/lobehub/lobe-chat/commit/42f5c0b))
 
 </details>
 
