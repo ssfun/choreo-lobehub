@@ -2,17 +2,17 @@
 
 # Version
 
-v2.0.8
+v2.0.13
 
 # Releases
 
-### [Version&nbsp;2.0.8](https://github.com/lobehub/lobe-chat/compare/v2.0.7...v2.0.8)
-<sup>Released on **2026-01-28**</sup>
+### [Version&nbsp;2.0.13](https://github.com/lobehub/lobe-chat/compare/v2.0.12...v2.0.13)
+<sup>Released on **2026-01-29**</sup>
 
 
-#### 🐛 Bug Fixes
+#### 💄 Styles
 
-- **misc**: Fix inbox agent in mobile.
+- **misc**: Fix usage table display issues.
 
 
 <br/>
@@ -24,9 +24,9 @@ v2.0.8
 
 
 
-#### What's fixed
+#### Styles
 
-* **misc**: Fix inbox agent in mobile, closes [#11929](https://github.com/lobehub/lobe-chat/issues/11929) ([42f5c0b](https://github.com/lobehub/lobe-chat/commit/42f5c0b))
+* **misc**: Fix usage table display issues, closes [#10108](https://github.com/lobehub/lobe-chat/issues/10108) ([4bd82c3](https://github.com/lobehub/lobe-chat/commit/4bd82c3))
 
 </details>
 
