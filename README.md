@@ -2,17 +2,17 @@
 
 # Version
 
-v2.0.13
+v2.1.2
 
 # Releases
 
-### [Version&nbsp;2.0.13](https://github.com/lobehub/lobe-chat/compare/v2.0.12...v2.0.13)
-<sup>Released on **2026-01-29**</sup>
+### [Version&nbsp;2.1.2](https://github.com/lobehub/lobe-chat/compare/v2.1.1...v2.1.2)
+<sup>Released on **2026-01-30**</sup>
 
 
-#### 💄 Styles
+#### 🐛 Bug Fixes
 
-- **misc**: Fix usage table display issues.
+- **misc**: Fix feishu sso provider.
 
 
 <br/>
@@ -24,9 +24,9 @@ v2.0.13
 
 
 
-#### Styles
+#### What's fixed
 
-* **misc**: Fix usage table display issues, closes [#10108](https://github.com/lobehub/lobe-chat/issues/10108) ([4bd82c3](https://github.com/lobehub/lobe-chat/commit/4bd82c3))
+* **misc**: Fix feishu sso provider, closes [#11970](https://github.com/lobehub/lobe-chat/issues/11970) ([ffd9fff](https://github.com/lobehub/lobe-chat/commit/ffd9fff))
 
 </details>
 
