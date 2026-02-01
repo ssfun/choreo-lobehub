@@ -2,17 +2,17 @@
 
 # Version
 
-v2.1.2
+v2.1.5
 
 # Releases
 
-### [Version&nbsp;2.1.2](https://github.com/lobehub/lobe-chat/compare/v2.1.1...v2.1.2)
-<sup>Released on **2026-01-30**</sup>
+### [Version&nbsp;2.1.5](https://github.com/lobehub/lobe-chat/compare/v2.1.4...v2.1.5)
+<sup>Released on **2026-01-31**</sup>
 
 
 #### 🐛 Bug Fixes
 
-- **misc**: Fix feishu sso provider.
+- **misc**: Slove the group member agents cant set skills problem.
 
 
 <br/>
@@ -26,7 +26,7 @@ v2.1.2
 
 #### What's fixed
 
-* **misc**: Fix feishu sso provider, closes [#11970](https://github.com/lobehub/lobe-chat/issues/11970) ([ffd9fff](https://github.com/lobehub/lobe-chat/commit/ffd9fff))
+* **misc**: Slove the group member agents cant set skills problem, closes [#12021](https://github.com/lobehub/lobe-chat/issues/12021) ([2302940](https://github.com/lobehub/lobe-chat/commit/2302940))
 
 </details>
 
