@@ -2,17 +2,17 @@
 
 # Version
 
-v2.1.5
+v2.1.8
 
 # Releases
 
-### [Version&nbsp;2.1.5](https://github.com/lobehub/lobe-chat/compare/v2.1.4...v2.1.5)
-<sup>Released on **2026-01-31**</sup>
+### [Version&nbsp;2.1.8](https://github.com/lobehub/lobe-chat/compare/v2.1.7...v2.1.8)
+<sup>Released on **2026-02-01**</sup>
 
 
-#### 🐛 Bug Fixes
+#### 💄 Styles
 
-- **misc**: Slove the group member agents cant set skills problem.
+- **misc**: Improve tasks display.
 
 
 <br/>
@@ -24,9 +24,9 @@ v2.1.5
 
 
 
-#### What's fixed
+#### Styles
 
-* **misc**: Slove the group member agents cant set skills problem, closes [#12021](https://github.com/lobehub/lobe-chat/issues/12021) ([2302940](https://github.com/lobehub/lobe-chat/commit/2302940))
+* **misc**: Improve tasks display, closes [#12032](https://github.com/lobehub/lobe-chat/issues/12032) ([3423ad1](https://github.com/lobehub/lobe-chat/commit/3423ad1))
 
 </details>
 
