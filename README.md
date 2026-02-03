@@ -2,17 +2,17 @@
 
 # Version
 
-v2.1.8
+v2.1.11
 
 # Releases
 
-### [Version&nbsp;2.1.8](https://github.com/lobehub/lobe-chat/compare/v2.1.7...v2.1.8)
-<sup>Released on **2026-02-01**</sup>
+### [Version&nbsp;2.1.11](https://github.com/lobehub/lobe-chat/compare/v2.1.10...v2.1.11)
+<sup>Released on **2026-02-02**</sup>
 
 
-#### 💄 Styles
+#### 🐛 Bug Fixes
 
-- **misc**: Improve tasks display.
+- **misc**: Hide password features when AUTH_DISABLE_EMAIL_PASSWORD is set.
 
 
 <br/>
@@ -24,9 +24,9 @@ v2.1.8
 
 
 
-#### Styles
+#### What's fixed
 
-* **misc**: Improve tasks display, closes [#12032](https://github.com/lobehub/lobe-chat/issues/12032) ([3423ad1](https://github.com/lobehub/lobe-chat/commit/3423ad1))
+* **misc**: Hide password features when AUTH_DISABLE_EMAIL_PASSWORD is set, closes [#12023](https://github.com/lobehub/lobe-chat/issues/12023) ([e2fd28e](https://github.com/lobehub/lobe-chat/commit/e2fd28e))
 
 </details>
 
