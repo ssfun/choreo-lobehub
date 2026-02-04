@@ -2,17 +2,17 @@
 
 # Version
 
-v2.1.11
+v2.1.13
 
 # Releases
 
-### [Version&nbsp;2.1.11](https://github.com/lobehub/lobe-chat/compare/v2.1.10...v2.1.11)
-<sup>Released on **2026-02-02**</sup>
+### [Version&nbsp;2.1.13](https://github.com/lobehub/lobe-chat/compare/v2.1.12...v2.1.13)
+<sup>Released on **2026-02-03**</sup>
 
 
 #### 🐛 Bug Fixes
 
-- **misc**: Hide password features when AUTH_DISABLE_EMAIL_PASSWORD is set.
+- **docker**: Add librt.so.1 to fix PDF parsing.
 
 
 <br/>
@@ -26,7 +26,7 @@ v2.1.11
 
 #### What's fixed
 
-* **misc**: Hide password features when AUTH_DISABLE_EMAIL_PASSWORD is set, closes [#12023](https://github.com/lobehub/lobe-chat/issues/12023) ([e2fd28e](https://github.com/lobehub/lobe-chat/commit/e2fd28e))
+* **docker**: Add librt.so.1 to fix PDF parsing, closes [#12039](https://github.com/lobehub/lobe-chat/issues/12039) ([4a6be92](https://github.com/lobehub/lobe-chat/commit/4a6be92))
 
 </details>
 
