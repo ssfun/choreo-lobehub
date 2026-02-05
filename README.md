@@ -2,17 +2,17 @@
 
 # Version
 
-v2.1.13
+v2.1.18
 
 # Releases
 
-### [Version&nbsp;2.1.13](https://github.com/lobehub/lobe-chat/compare/v2.1.12...v2.1.13)
-<sup>Released on **2026-02-03**</sup>
+### [Version&nbsp;2.1.18](https://github.com/lobehub/lobe-chat/compare/v2.1.17...v2.1.18)
+<sup>Released on **2026-02-04**</sup>
 
 
 #### 🐛 Bug Fixes
 
-- **docker**: Add librt.so.1 to fix PDF parsing.
+- **model-runtime**: Fix moonshot interleaved thinking and circular dependency.
 
 
 <br/>
@@ -26,7 +26,7 @@ v2.1.13
 
 #### What's fixed
 
-* **docker**: Add librt.so.1 to fix PDF parsing, closes [#12039](https://github.com/lobehub/lobe-chat/issues/12039) ([4a6be92](https://github.com/lobehub/lobe-chat/commit/4a6be92))
+* **model-runtime**: Fix moonshot interleaved thinking and circular dependency, closes [#12112](https://github.com/lobehub/lobe-chat/issues/12112) ([3f1a198](https://github.com/lobehub/lobe-chat/commit/3f1a198))
 
 </details>
 
