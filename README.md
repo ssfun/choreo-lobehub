@@ -2,38 +2,46 @@
 
 # Version
 
-v2.1.26
+v2.1.28
 
 # Releases
 
-### [Version&nbsp;2.1.26](https://github.com/lobehub/lobe-chat/compare/v2.1.25...v2.1.26)
-<sup>Released on **2026-02-10**</sup>
+## 📦 Hotfix v2.1.28
 
+This hotfix was automatically published from PR #12260.
 
-#### 💄 Styles
+### Changes
+See PR description: https://github.com/lobehub/lobehub/pull/12260
 
-- **misc**: Update i18n.
+### Commit Message
+## 🩹 Hotfix v2.1.28
 
+This PR starts a hotfix release from `main`.
 
-<br/>
+### Release Process
+1. ✅ Hotfix branch created from main
+2. ✅ Pushed to remote
+3. 🔄 Waiting for PR review and merge
+4. ⏳ Auto tag + GitHub Release will be created after merge
 
+---
+Created by hotfix script
 
+## Summary by Sourcery
 
-<details>
-<summary><kbd>Improvements and Fixes</kbd></summary>
+Introduce a dedicated hotfix workflow that automates creating hotfix branches, PRs, version bumps, and GitHub releases while aligning auto-tag and release processes with these hotfix semantics.
 
+New Features:
+- Add a hotfix workflow script and npm command to generate hotfix branches, push them, and open PRs against main with standardized titles and bodies.
+- Extend the auto-tag workflow to detect hotfix PRs by branch naming, compute patch versions, update package.json, and create hotfix-specific tags and GitHub releases.
 
+Enhancements:
+- Simplify settings content staticization by always including business tab components instead of gating them by an environment flag.
+- Adjust the release workflow to validate package.json version against the tag instead of mutating it during release, and update the release branch creation script to stop creating marker commits.
+- Update dependency on @lobehub/ui to the latest minor version.
 
-#### Styles
+Build:
+- Add a package.json script entry to run the new hotfix workflow CLI.
 
-* **misc**: Update i18n, closes [#12227](https://github.com/lobehub/lobe-chat/issues/12227) ([37b06c4](https://github.com/lobehub/lobe-chat/commit/37b06c4))
-
-</details>
-
-
-<div align="right">
-
-[![](https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square)](#readme-top)
-
-</div>
-
+CI:
+- Enhance the auto-tag GitHub Actions workflow to share tagging context via environment variables, tag the version-bump commit instead of the PR merge commit, and tailor release notes and tag messages for release vs hotfix PRs.
