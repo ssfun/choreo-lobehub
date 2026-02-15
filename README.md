@@ -2,19 +2,19 @@
 
 # Version
 
-v2.1.28
+v2.1.30
 
 # Releases
 
-## 📦 Hotfix v2.1.28
+## 📦 Release v2.1.30
 
-This hotfix was automatically published from PR #12260.
+This release was automatically published from PR #12321.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/12260
+See PR description: https://github.com/lobehub/lobehub/pull/12321
 
 ### Commit Message
-## 🩹 Hotfix v2.1.28
+## 🩹 Hotfix v2.1.30
 
 This PR starts a hotfix release from `main`.
 
@@ -29,19 +29,13 @@ Created by hotfix script
 
 ## Summary by Sourcery
 
-Introduce a dedicated hotfix workflow that automates creating hotfix branches, PRs, version bumps, and GitHub releases while aligning auto-tag and release processes with these hotfix semantics.
-
-New Features:
-- Add a hotfix workflow script and npm command to generate hotfix branches, push them, and open PRs against main with standardized titles and bodies.
-- Extend the auto-tag workflow to detect hotfix PRs by branch naming, compute patch versions, update package.json, and create hotfix-specific tags and GitHub releases.
+Adjust release automation, linting configuration, and user panel UI behavior for hotfix v2.1.30.
 
 Enhancements:
-- Simplify settings content staticization by always including business tab components instead of gating them by an environment flag.
-- Adjust the release workflow to validate package.json version against the tag instead of mutating it during release, and update the release branch creation script to stop creating marker commits.
-- Update dependency on @lobehub/ui to the latest minor version.
-
-Build:
-- Add a package.json script entry to run the new hotfix workflow CLI.
+- Update UserPanel popover styling and behavior, including a skeleton loading state and adjusted placement and triggers.
+- Refine PanelContent component typing and navigation event handling in the sidebar header layout.
+- Extend lint-staged configuration to integrate eslint suppression pruning and ensure suppression files are committed for multiple file types.
 
 CI:
-- Enhance the auto-tag GitHub Actions workflow to share tagging context via environment variables, tag the version-bump commit instead of the PR merge commit, and tailor release notes and tag messages for release vs hotfix PRs.
+- Simplify GitHub release creation to run for all tag types in the auto-tag workflow.
+- Harden the desktop stable release workflow to safely handle missing release body content.
