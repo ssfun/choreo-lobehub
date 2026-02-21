@@ -2,40 +2,17 @@
 
 # Version
 
-v2.1.30
+v2.1.31
 
 # Releases
 
-## 📦 Release v2.1.30
+## 📦 Release v2.1.31
 
-This release was automatically published from PR #12321.
 
-### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/12321
-
-### Commit Message
-## 🩹 Hotfix v2.1.30
-
-This PR starts a hotfix release from `main`.
-
-### Release Process
-1. ✅ Hotfix branch created from main
-2. ✅ Pushed to remote
-3. 🔄 Waiting for PR review and merge
-4. ⏳ Auto tag + GitHub Release will be created after merge
-
----
-Created by hotfix script
-
-## Summary by Sourcery
-
-Adjust release automation, linting configuration, and user panel UI behavior for hotfix v2.1.30.
-
-Enhancements:
-- Update UserPanel popover styling and behavior, including a skeleton loading state and adjusted placement and triggers.
-- Refine PanelContent component typing and navigation event handling in the sidebar header layout.
-- Extend lint-staged configuration to integrate eslint suppression pruning and ensure suppression files are committed for multiple file types.
-
-CI:
-- Simplify GitHub release creation to run for all tag types in the auto-tag workflow.
-- Harden the desktop stable release workflow to safely handle missing release body content.
+1. 更新的文生图，图生图模型列表，`z-image` `wan2.5` `wan2.6` `qwen-image-plus/max` `qwen-image-edit-plus/max`
+2. 新增 `image2image` endpoint，为老版本图生图模型进行兼容
+3. 默认使用 `multimodal-generation` endpoint（新模型目前调研下来都是用这个了，同时支持图生图和文生图）
+4. 支持多区域 Dashscope URL，跟随 baseUrl 参数，自动切分 `/compatible-mode/v1` 默认北京区域
+    北京 https://dashscope.aliyuncs.com
+    新加坡 https://dashscope-intl.aliyuncs.com
+    弗吉尼亚 https://dashscope-us.aliyuncs.com
