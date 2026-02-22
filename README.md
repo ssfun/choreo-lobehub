@@ -2,17 +2,47 @@
 
 # Version
 
-v2.1.31
+v2.1.33
 
 # Releases
 
-## 📦 Release v2.1.31
+This release includes **82 commits** and **854 changed files**. Key user-facing updates are below.
 
+### 🚀 New Features and Enhancements
 
-1. 更新的文生图，图生图模型列表，`z-image` `wan2.5` `wan2.6` `qwen-image-plus/max` `qwen-image-edit-plus/max`
-2. 新增 `image2image` endpoint，为老版本图生图模型进行兼容
-3. 默认使用 `multimodal-generation` endpoint（新模型目前调研下来都是用这个了，同时支持图生图和文生图）
-4. 支持多区域 Dashscope URL，跟随 baseUrl 参数，自动切分 `/compatible-mode/v1` 默认北京区域
-    北京 https://dashscope.aliyuncs.com
-    新加坡 https://dashscope-intl.aliyuncs.com
-    弗吉尼亚 https://dashscope-us.aliyuncs.com
+- Added **Agent Benchmark** support for more systematic agent performance evaluation.
+- Introduced the **video generation** feature end-to-end, including entry points, sidebar “new” badge support, and skeleton loading for topic switching.
+- Expanded memory capabilities: support for memory effort/tool permission configuration and improved timeout calculation for memory analysis tasks.
+- Added desktop editor support for image upload via file picker.
+
+### 🤖 Models and Provider Expansion
+
+- Added a new provider: **Straico**.
+- Added/updated support for:
+  - Claude Sonnet 4.6
+  - Gemini 3.1 Pro Preview
+  - Qwen3.5 series
+  - Grok Imagine (`grok-imagine-image`)
+  - MiniMax 2.5
+- Added related i18n copy and model parameter adaptations.
+
+### 🖥️ Desktop Improvements
+
+- Integrated `electron-liquid-glass` (macOS Tahoe).
+- Improved DMG background assets and desktop release workflow.
+
+### 🛠️ Stability, Security, and UX Fixes
+
+- Fixed multiple video generation pipeline issues: precharge refund handling, webhook token verification, pricing parameter usage, asset cleanup, and type safety.
+- Fixed `sanitizeFileName` path traversal risks and added unit tests.
+- Fixed MCP media URL generation with duplicated `APP_URL` prefix.
+- Fixed Qwen3 embedding failures caused by batch-size limits.
+- Fixed multiple UI/interaction issues, including mobile header agent selector/topic count, ChatInput scrolling behavior, and tooltip stacking context.
+- Fixed missing `@napi-rs/canvas` native bindings in Docker standalone builds.
+- Improved GitHub Copilot authentication retry behavior and response error handling in edge cases.
+
+### 🙏 Thanks to Committers
+
+Huge thanks to these contributors (alphabetical):
+
+@AmAzing129 @Coooolfan @Innei @ONLY-yours @Zhouguanyang @arvinxx @eaten-cake @hezhijie0327 @nekomeowww @rdmclin2 @rivertwilight @sxjeru @tjx666
