@@ -2,47 +2,28 @@
 
 # Version
 
-v2.1.33
+v2.1.34
 
 # Releases
 
-This release includes **82 commits** and **854 changed files**. Key user-facing updates are below.
+## 📦 Release v2.1.34
 
-### 🚀 New Features and Enhancements
+This release was automatically published from PR #12532.
 
-- Added **Agent Benchmark** support for more systematic agent performance evaluation.
-- Introduced the **video generation** feature end-to-end, including entry points, sidebar “new” badge support, and skeleton loading for topic switching.
-- Expanded memory capabilities: support for memory effort/tool permission configuration and improved timeout calculation for memory analysis tasks.
-- Added desktop editor support for image upload via file picker.
+### Changes
+See PR description: https://github.com/lobehub/lobehub/pull/12532
 
-### 🤖 Models and Provider Expansion
+Scope agent evaluation benchmarks and new bot provider bindings by user while introducing infrastructure for external chat platform integrations.
 
-- Added a new provider: **Straico**.
-- Added/updated support for:
-  - Claude Sonnet 4.6
-  - Gemini 3.1 Pro Preview
-  - Qwen3.5 series
-  - Grok Imagine (`grok-imagine-image`)
-  - MiniMax 2.5
-- Added related i18n copy and model parameter adaptations.
+New Features:
+- Add agent bot provider database schema and model to store per-agent external platform bindings with encrypted credentials.
+- Introduce agent agency configuration types and persist agencyConfig on agents for Discord and Slack bot settings.
 
-### 🖥️ Desktop Improvements
+Bug Fixes:
+- Associate agent evaluation benchmarks with a userId and restrict create, query, update, delete, and lookup operations to the owning user while still allowing access to system benchmarks.
 
-- Integrated `electron-liquid-glass` (macOS Tahoe).
-- Improved DMG background assets and desktop release workflow.
+Enhancements:
+- Export new agentBotProvider schema and agency configuration types through existing database and type index barrels.
 
-### 🛠️ Stability, Security, and UX Fixes
-
-- Fixed multiple video generation pipeline issues: precharge refund handling, webhook token verification, pricing parameter usage, asset cleanup, and type safety.
-- Fixed `sanitizeFileName` path traversal risks and added unit tests.
-- Fixed MCP media URL generation with duplicated `APP_URL` prefix.
-- Fixed Qwen3 embedding failures caused by batch-size limits.
-- Fixed multiple UI/interaction issues, including mobile header agent selector/topic count, ChatInput scrolling behavior, and tooltip stacking context.
-- Fixed missing `@napi-rs/canvas` native bindings in Docker standalone builds.
-- Improved GitHub Copilot authentication retry behavior and response error handling in edge cases.
-
-### 🙏 Thanks to Committers
-
-Huge thanks to these contributors (alphabetical):
-
-@AmAzing129 @Coooolfan @Innei @ONLY-yours @Zhouguanyang @arvinxx @eaten-cake @hezhijie0327 @nekomeowww @rdmclin2 @rivertwilight @sxjeru @tjx666
+Tests:
+- Extend agent evaluation benchmark model tests to cover user-scoped behavior, including isolation between different users and handling of system benchmarks.
