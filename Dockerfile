@@ -56,11 +56,17 @@ COPY --from=lobehub/lobehub:latest /app /app
 COPY --from=builder /src/komari-agent /app/komari-agent
 
 # =======================================================
-# 🛡️ 修复安全漏洞
+# 🛡️ 修复安全漏洞 (隔离安装，避免破坏原依赖树)
 # =======================================================
-WORKDIR /app
-# 强制升级 fast-xml-parser 修复 CVE-2026-25896
-RUN npm install fast-xml-parser@5.3.5
+RUN mkdir -p /tmp/xml-fix && \
+    cd /tmp/xml-fix && \
+    npm init -y && \
+    npm install fast-xml-parser@5.3.5 && \
+    # 删除存在漏洞的旧包
+    rm -rf /app/node_modules/fast-xml-parser && \
+    # 移入安全的新包
+    cp -r node_modules/fast-xml-parser /app/node_modules/ && \
+    rm -rf /tmp/xml-fix
 
 # 4. 环境变量
 ENV NODE_ENV="production" \
