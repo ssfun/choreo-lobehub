@@ -55,6 +55,13 @@ RUN ln -sf /usr/local/bin/node /bin/node
 COPY --from=lobehub/lobehub:latest /app /app
 COPY --from=builder /src/komari-agent /app/komari-agent
 
+# =======================================================
+# 🛡️ 修复安全漏洞
+# =======================================================
+WORKDIR /app
+# 强制升级 fast-xml-parser 修复 CVE-2026-25896
+RUN npm install fast-xml-parser@5.3.5
+
 # 4. 环境变量
 ENV NODE_ENV="production" \
     NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca" \
