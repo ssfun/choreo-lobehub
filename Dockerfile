@@ -84,6 +84,8 @@ RUN mkdir -p /tmp/db-fix && \
     cd /tmp/db-fix && \
     npm init -y && \
     npm install pg drizzle-orm && \
+    # 👇 关键修复：先拔掉原有的软链接钉子
+    rm -rf /app/node_modules/pg /app/node_modules/drizzle-orm && \
     cp -r node_modules/* /app/node_modules/ && \
     rm -rf /tmp/db-fix
 
