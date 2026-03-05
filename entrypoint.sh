@@ -7,31 +7,11 @@ KOMARI_SECRET=${KOMARI_SECRET:-""}
 KOMARI_SERVER=${KOMARI_SERVER:-""}
 
 # ==============================
-# 0. 【核心】初始化可写环境
+# 0. 初始化运行时缓存环境
 # ==============================
-echo "[Init] Initializing runtime environment..."
+echo "[Init] Creating writable cache directory in /tmp..."
+mkdir -p /tmp/next_cache
 
-# 1. 清理并创建环境
-rm -rf /tmp/next
-mkdir -p /tmp/next
-mkdir -p /tmp/next/cache
-
-# 2. 复制构建产物 (移花接木)
-# 使用 tar 管道复制，保留所有属性
-echo "[Init] Copying build assets to /tmp/next..."
-cd /app/.next_source && tar cf - . | (cd /tmp/next && tar xf -)
-
-# ==============================
-# 🔍 启动前自检
-# ==============================
-if [ -f "/tmp/next/BUILD_ID" ]; then
-    echo "[Check] ✅ Build assets ready in /tmp/next"
-else
-    echo "[Check] ❌ FATAL: Build assets failed to copy!"
-    ls -la /tmp/next
-fi
-
-# 返回 app 目录
 cd /app
 
 # ==============================
