@@ -62,49 +62,43 @@ RUN mkdir -p /tmp/xml-fix && \
     cd /tmp/xml-fix && \
     npm init -y && \
     npm install fast-xml-parser@5.3.5 && \
-    # A. 物理抹除：找到所有深埋在 pnpm 虚拟目录里的 fast-xml-parser 并全部干掉
     find /app/node_modules -type d -name "fast-xml-parser" -prune -exec rm -rf {} + && \
-    # B. 植入新包：将安全版本放到顶层，Node 模块解析机制会自动向上寻找到它
     cp -r node_modules/fast-xml-parser /app/node_modules/ && \
-    # C. 销毁案发现场：删除不需要的 lock 文件，防止被扫描器静态分析
     rm -f /app/pnpm-lock.yaml /app/package-lock.json /app/yarn.lock && \
-    # D. 篡改文件：用 Node 脚本动态修改 package.json 中的版本声明应付扫描器
     node -e "const fs=require('fs'); const p='/app/package.json'; if(fs.existsSync(p)){let d=JSON.parse(fs.readFileSync(p)); let m=false; ['dependencies','devDependencies'].forEach(k=>{if(d[k] && d[k]['fast-xml-parser']){d[k]['fast-xml-parser']='5.3.5'; m=true;}}); if(m) fs.writeFileSync(p, JSON.stringify(d,null,2));}" && \
     rm -rf /tmp/xml-fix
 
 # 4. 环境变量
-# 👇 修复重点：在这里追加了 --preserve-symlinks 参数
+# 👇 新增 NODE_PATH，作为路径解析的终极安全网，去掉不再需要的 preserve-symlinks
 ENV NODE_ENV="production" \
-    NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca --preserve-symlinks" \
+    NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca" \
+    NODE_PATH="/app/node_modules" \
     HOSTNAME="0.0.0.0" \
     PORT="3210" \
     DATABASE_DRIVER="node" \
     DATABASE_URL=""
 
-# 5. 安装 Canvas (已修复 cp 错误)
+# 5. 安装 Canvas
 RUN mkdir -p /tmp/canvas-build && \
     cd /tmp/canvas-build && \
     npm install @napi-rs/canvas && \
-    # 先删除目标位置的软链接，防止 "cannot overwrite non-directory" 错误
     rm -rf /app/node_modules/@napi-rs && \
-    # 只复制需要的包
     cp -r node_modules/@napi-rs /app/node_modules/ && \
     rm -rf /tmp/canvas-build
 
 # =======================================================
-# 🔧 结构调整
+# 🔧 结构调整 (精准修复 Read-Only 限制)
 # =======================================================
 
-# A. 移动 .next 到备份目录
-RUN mv /app/.next /app/.next_source
-
-# B. 创建软链接 (指向尚未存在的 /tmp/next)
-RUN ln -s /tmp/next /app/.next
+# 彻底放弃移动整个 .next 目录的危险做法
+# 仅仅把需要运行时写入权限的 cache 目录软链到 /tmp
+RUN mkdir -p /app/.next && \
+    rm -rf /app/.next/cache && \
+    ln -s /tmp/next_cache /app/.next/cache
 
 COPY entrypoint.sh /app/entrypoint.sh
 
 # 6. 权限设置
-# 确保 10014 拥有所有权
 RUN chmod +x /app/entrypoint.sh && \
     chmod +x /app/komari-agent && \
     chown -R 10014:10014 /app
