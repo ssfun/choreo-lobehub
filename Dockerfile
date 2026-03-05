@@ -73,8 +73,9 @@ RUN mkdir -p /tmp/xml-fix && \
     rm -rf /tmp/xml-fix
 
 # 4. 环境变量
+# 👇 修复重点：在这里追加了 --preserve-symlinks 参数
 ENV NODE_ENV="production" \
-    NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca" \
+    NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca --preserve-symlinks" \
     HOSTNAME="0.0.0.0" \
     PORT="3210" \
     DATABASE_DRIVER="node" \
