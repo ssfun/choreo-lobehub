@@ -1,5 +1,5 @@
 # ==========================================
-# 阶段 1: 构建阶段 (Builder)
+# 阶段 1: 构建 Komari Agent (Builder)
 # ==========================================
 FROM golang:alpine AS builder
 
@@ -69,7 +69,6 @@ RUN mkdir -p /tmp/xml-fix && \
     rm -rf /tmp/xml-fix
 
 # 4. 环境变量
-# 👇 新增 NODE_PATH，作为路径解析的终极安全网，去掉不再需要的 preserve-symlinks
 ENV NODE_ENV="production" \
     NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca" \
     NODE_PATH="/app/node_modules" \
@@ -77,6 +76,16 @@ ENV NODE_ENV="production" \
     PORT="3210" \
     DATABASE_DRIVER="node" \
     DATABASE_URL=""
+
+# =======================================================
+# 🗄️ 修复数据库驱动的幽灵依赖
+# =======================================================
+RUN mkdir -p /tmp/db-fix && \
+    cd /tmp/db-fix && \
+    npm init -y && \
+    npm install pg drizzle-orm && \
+    cp -r node_modules/* /app/node_modules/ && \
+    rm -rf /tmp/db-fix
 
 # 5. 安装 Canvas
 RUN mkdir -p /tmp/canvas-build && \
@@ -89,9 +98,6 @@ RUN mkdir -p /tmp/canvas-build && \
 # =======================================================
 # 🔧 结构调整 (精准修复 Read-Only 限制)
 # =======================================================
-
-# 彻底放弃移动整个 .next 目录的危险做法
-# 仅仅把需要运行时写入权限的 cache 目录软链到 /tmp
 RUN mkdir -p /app/.next && \
     rm -rf /app/.next/cache && \
     ln -s /tmp/next_cache /app/.next/cache
