@@ -12,8 +12,6 @@ KOMARI_SERVER=${KOMARI_SERVER:-""}
 echo "[Init] Creating writable cache directory in /tmp..."
 mkdir -p /tmp/next_cache
 
-cd /app
-
 # ==============================
 # 1. 启动 Komari Agent
 # ==============================
