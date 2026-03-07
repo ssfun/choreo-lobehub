@@ -2,74 +2,54 @@
 
 # Version
 
-v2.1.36
+v2.1.38
 
 # Releases
 
-## 📦 Release v2.1.36
+## 📦 Release v2.1.38
 
-This release was automatically published from PR #12714.
+This release was automatically published from PR #12757.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/12714
+See PR description: https://github.com/lobehub/lobehub/pull/12757
 
 ### Commit Message
-#### 💻 Change Type
+This release includes **31 commits**. Key updates are below.
 
-<!-- For change type, change [ ] to [x]. -->
+### New Features and Enhancements
 
-- [ ] ✨ feat
-- [x] 🐛 fix
-- [ ] ♻️ refactor
-- [ ] 💄 style
-- [ ] 👷 build
-- [ ] ⚡️ perf
-- [ ] ✅ test
-- [ ] 📝 docs
-- [ ] 🔨 chore
+- Added **Telegram bot access** support.
+- Added **electron page tabs** functionality for desktop.
+- Added **device code auth flow** for authentication.
+- Added **GPT-5.4** model support.
+- Show **last used auth provider** on sign-in page for better UX.
+- Support **clearing hotkey bindings** in desktop ShortcutManager.
+- Added **Gemini 3.1 Flash Lite Preview** model and thinkingLevel5 extend param.
+- Added **auto aspect ratio and image search** support for Nano Banana 2.
+- User memories now default to inject user persona instead of identities.
 
-#### 🔗 Related Issue
+### Desktop Improvements
 
-<!-- Link to the issue that is fixed by this PR -->
+- Unified **update channel switching** with S3 distribution.
+- Added **S3 publish for canary/nightly** and S3 cleanup (keep latest 15).
+- Added electron page tabs functionality.
 
-<!-- Example: Fixes #xxx, Closes #xxx, Related to #xxx -->
+### Stability and Fixes
 
-#### 🔀 Description of Change
+- Fixed agents fork not working in community deploy.
+- Fixed animation for single-line messages between reasoning and tool calls.
+- Fixed Discord bot conflict with keyPrefix.
+- Fixed skew plugin issue.
+- Fixed `userMemories` database failure on extra structure mismatch.
+- Fixed old LobeHub plugins update issue.
+- Fixed context-engine tool type recovery from manifest when models strip suffixes.
+- Added `await` to `handleResponseAPIMode` for proper error handling.
+- Fixed M2M token for community agents/MCP/skill list.
+- Fixed scripts to support Win32.
+- Improved gateway and device gateway CI.
 
-<!-- Thank you for your Pull Request. Please provide a description above. -->
+### Credits
 
-#### 🧪 How to Test
+Huge thanks to these contributors (alphabetical):
 
-<!-- Please describe how you tested your changes -->
-
-<!-- For AI features, please include test prompts or scenarios -->
-
-- [ ] Tested locally
-- [ ] Added/updated tests
-- [ ] No tests needed
-
-#### 📸 Screenshots / Videos
-
-<!-- If this PR includes UI changes, please provide screenshots or videos -->
-
-| Before | After |
-| ------ | ----- |
-| ...    | ...   |
-
-#### 📝 Additional Information
-
-<!-- Add any other context about the Pull Request here. -->
-
-<!-- Breaking changes? Migration guide? Performance impact? -->
-
-## Summary by Sourcery
-
-Ensure marketplace-related API calls include the required MP token when querying assistants, MCP lists, and skills, and bump the package version.
-
-Bug Fixes:
-- Inject the MP token before fetching the assistant list from the market API.
-- Inject the MP token before fetching the MCP list from the market API.
-- Inject the MP token before performing skill search requests via the market API.
-
-Build:
-- Bump package version from 2.1.34 to 2.1.35.
+@arvinxx @huangkairan @Innei @LiJian @Luis-Sambrano @nekomeowww @rdmclin2 @ReneWang @sxjeru @tjx666
