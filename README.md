@@ -2,54 +2,29 @@
 
 # Version
 
-v2.1.38
+v2.1.39
 
 # Releases
 
-## 📦 Release v2.1.38
+## 📦 Release v2.1.39
 
-This release was automatically published from PR #12757.
+This release was automatically published from PR #12862.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/12757
+See PR description: https://github.com/lobehub/lobehub/pull/12862
 
 ### Commit Message
-This release includes **31 commits**. Key updates are below.
+This release includes a **database schema migration** adding a `key_hash` column to the `api_keys` table for authentication lookup.
 
-### New Features and Enhancements
+### Migration 0089: Add API Key Hash Column
 
-- Added **Telegram bot access** support.
-- Added **electron page tabs** functionality for desktop.
-- Added **device code auth flow** for authentication.
-- Added **GPT-5.4** model support.
-- Show **last used auth provider** on sign-in page for better UX.
-- Support **clearing hotkey bindings** in desktop ShortcutManager.
-- Added **Gemini 3.1 Flash Lite Preview** model and thinkingLevel5 extend param.
-- Added **auto aspect ratio and image search** support for Nano Banana 2.
-- User memories now default to inject user persona instead of identities.
+- Added `key_hash` column (`varchar(128)`, unique) to `api_keys` table
+- Enables hash-based API key authentication lookup
 
-### Desktop Improvements
+### Notes for Self-hosted Users
 
-- Unified **update channel switching** with S3 distribution.
-- Added **S3 publish for canary/nightly** and S3 cleanup (keep latest 15).
-- Added electron page tabs functionality.
+- The migration runs automatically on application startup
+- No manual intervention required
+- The migration is backwards-compatible — existing API keys will continue to work
 
-### Stability and Fixes
-
-- Fixed agents fork not working in community deploy.
-- Fixed animation for single-line messages between reasoning and tool calls.
-- Fixed Discord bot conflict with keyPrefix.
-- Fixed skew plugin issue.
-- Fixed `userMemories` database failure on extra structure mismatch.
-- Fixed old LobeHub plugins update issue.
-- Fixed context-engine tool type recovery from manifest when models strip suffixes.
-- Added `await` to `handleResponseAPIMode` for proper error handling.
-- Fixed M2M token for community agents/MCP/skill list.
-- Fixed scripts to support Win32.
-- Improved gateway and device gateway CI.
-
-### Credits
-
-Huge thanks to these contributors (alphabetical):
-
-@arvinxx @huangkairan @Innei @LiJian @Luis-Sambrano @nekomeowww @rdmclin2 @ReneWang @sxjeru @tjx666
+The migration owner: @arvinxx — responsible for this database schema change, reach out for any migration-related issues.
