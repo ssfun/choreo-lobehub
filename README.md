@@ -2,29 +2,28 @@
 
 # Version
 
-v2.1.39
+v2.1.40
 
 # Releases
 
-## 📦 Release v2.1.39
+## 📦 Release v2.1.40
 
-This release was automatically published from PR #12862.
+This release was automatically published from PR #12939.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/12862
+See PR description: https://github.com/lobehub/lobehub/pull/12939
 
 ### Commit Message
-This release includes a **database schema migration** adding a `key_hash` column to the `api_keys` table for authentication lookup.
+This release includes a **database schema migration** adding **1 new column** to the `topics` table.
 
-### Migration 0089: Add API Key Hash Column
+### Migration: Add description column to topics table
 
-- Added `key_hash` column (`varchar(128)`, unique) to `api_keys` table
-- Enables hash-based API key authentication lookup
+- Added `description` (text, nullable) column to the `topics` table
+- Uses idempotent `ADD COLUMN IF NOT EXISTS` syntax
 
 ### Notes for Self-hosted Users
 
 - The migration runs automatically on application startup
 - No manual intervention required
-- The migration is backwards-compatible — existing API keys will continue to work
 
-The migration owner: @arvinxx — responsible for this database schema change, reach out for any migration-related issues.
+The migration owner: @tjx666 — responsible for this database schema change, reach out for any migration-related issues.
