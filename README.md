@@ -2,103 +2,64 @@
 
 # Version
 
-v2.1.41
+v2.1.42
 
 # Releases
 
-## 📦 Release v2.1.41
+## 📦 Release v2.1.42
 
-This release was automatically published from PR #12956.
+This release was automatically published from PR #12974.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/12956
+See PR description: https://github.com/lobehub/lobehub/pull/12974
 
 ### Commit Message
-This release includes **~400 commits**. Key updates are below.
+#### 💻 Change Type
 
-### New Features and Enhancements
+- [ ] ✨ feat
+- [x] 🐛 fix
+- [ ] ♻️ refactor
+- [ ] 💄 style
+- [ ] 👷 build
+- [ ] ⚡️ perf
+- [ ] ✅ test
+- [ ] 📝 docs
+- [ ] 🔨 chore
 
-- **Bot Platform Integration**: Added abstract bot platform layer with **QQ Bot**, **Telegram Bot**, **Lark/Feishu Bot**, and **Discord Bot** integrations, including remote device support for IM integration.
-- **LobeHub CLI**: Full CLI implementation across 5 phases — agent run/status, generate (text/image/video/TTS/ASR), doc, search, device, bot integration, cron, topic share, agent KB/file/pin, thread, and eval commands.
-- **Agent Skills**: Added built-in skills management, skill store, agent browser automation skill, and tool detection.
-- **Video Generation**: End-to-end video generation feature with free quota, webhook handling, and skeleton loading.
-- **Agent Benchmark**: Added benchmark support with external scoring mode and dedicated DB schema.
-- **Memory Settings**: Support for memory effort/tool permission configuration, user persona injection, and improved memory analysis.
-- **Batch Topic Deletion** from file support.
-- **Runtime Config** support for flexible deployment configuration.
-- **V1 API** and **Response API** support (including OpenAI Responses API).
-- **Device Code Auth Flow** for CLI authentication.
-- **Emoji Reactions** for messages.
-- **Starter Suggested Questions** and recommend agents.
-- **Page Tabs** for Electron desktop.
-- **Sort Topics by Updated Time** option.
-- **Change Email Address** in profile settings.
-- **Model Detail Dropdown** in model switch panel.
-- Added **unread completion indicator** for agents and topics.
+#### 🔗 Related Issue
 
-### Models and Provider Expansion
+N/A
 
-- New providers: **Straico**, **LongCat (美团)**.
-- Added/updated model support:
-  - **GPT-5.4** series
-  - **Claude Sonnet 4.6** and **Claude Opus 4.6** (including Bedrock)
-  - **Gemini 3.1 Pro Preview** and **Gemini 3.1 Flash Lite Preview**
-  - **Qwen3.5** series (including Flash, OSS, and SiliconCloud models)
-  - **Grok 4.20** series and **Grok Imagine** image generation
-  - **Kimi K2.5** thinking models
-  - **MiniMax 2.5** / **MiniMax M2.5**
-  - **Nano Banana 2**
-  - **Seedream 5 Lite** / **Seedance 2.0**
-  - **NVIDIA** new models
-  - **GLM-5**, **GLM-4.6V**, **GLM-Image** for Zhipu
-  - Additional Qwen image-to-image and text-to-image models
-- Added video input support for SiliconCloud provider.
-- Use Response API for Grok as default.
+#### 🔀 Description of Change
 
-### Desktop Improvements
+- create `stable*.yml` from `latest*.yml` during stable desktop S3 publishing
+- keep canary and nightly behavior unchanged
+- preserve the existing version-prefixed manifest URLs used for archived assets
 
-- Integrated `electron-liquid-glass` for macOS Tahoe.
-- Unified canary with stable app name/icon, added channel tag in About.
-- Support clearing hotkey bindings in ShortcutManager.
-- Subscription pages embedding with webview.
-- Enhanced desktop menu and navigation system.
-- Proactive token refresh on app startup and activation.
-- DMG background image configuration.
-- S3 publish for canary/nightly with cleanup.
-- Unified update channel switching with S3 distribution.
+#### 🧪 How to Test
 
-### Architecture and Infrastructure
+- [x] Tested locally
+- [ ] Added/updated tests
+- [x] No tests needed
 
-- **Vite SPA Migration**: Migrated frontend from Next.js App Router to Vite SPA, restructured SPA routes to `src/routes` and `src/router`.
-- **Response API Support** across agent runtime.
-- Refactored client agent runtime and centralized tool availability checks.
-- Added Redis pipeline support and Lua script execution.
-- Database migrations: `pg_search` extension, video generation schema, agent skills schema, benchmark schema, topics description column, API key hash column, ID migration to nanoid.
-- Preload bundled i18n resources with lazy-load for target language.
-- Simplified build config, removed webpack customization, and resolved Vercel OOM.
-- Class-based Zustand actions with `flattenActions` migration.
-- Extracted `@lobechat/local-file-shell` shared package.
-- Resolved all ESLint suppressions and enabled `consistent-type-imports` rule.
+Validated the release shell flow locally by simulating stable manifest generation and confirming `stable.yml` and `stable-mac.yml` are created with version-prefixed URLs.
 
-### Stability, Security, and UX Fixes
+#### 📸 Screenshots / Videos
 
-- Fixed model provider popup problems and ModelSelect crash.
-- Fixed tool engine, input-loading, and MCP tool install loading issues.
-- Hardened Anthropic message building and sampling parameter handling.
-- Fixed Vertex AI 400 error from duplicate tool function declarations.
-- Fixed context window exceeded error detection from message text.
-- Added rate limit custom rules for password reset and email verification.
-- Fixed `sanitizeFileName` path traversal risks.
-- Fixed multiple Docker build issues (`@napi-rs/canvas`, `librt.so.1`, `ffmpeg-static`).
-- Fixed desktop advanced mode, onboarding redirect, and auth modal during onboarding.
-- Added unsaved changes guard to prevent data loss on navigation.
-- Fixed SiliconCloud thinking mode toggle issue.
-- Improved Moonshot interleaved thinking and circular dependency.
-- Fixed multimodal `content_part` images rendered as base64 text.
-- Security: upgraded `next-mdx-remote` to v6 for CVE-2026-0969.
+| Before | After |
+| ------ | ----- |
+| N/A | N/A |
 
-### Credits
+#### 📝 Additional Information
 
-Huge thanks to these contributors (alphabetical):
+This is a hotfix for stable desktop release publishing to S3. Electron Builder emits `latest*.yml` for stable releases by default, while our update server expects `stable*.yml` under the `stable/` channel path.
 
-@AmAzing- @AntoineRoux @BrandonStudio @CanisMinor @Coooolfan @eronez @Hardy @huangkairan @Innei @Kingsword @LiJian @LuisSambrano @MarcellGu @MikeLambert @Neko @rdmclin2 @Rdmclin2 @RenéWang @RuxiaoYin @RylanCai @Shinji-Li @Sun13138 @sxjeru @VarunChawla @WangYK @YuTengjing @Zephyr @ZhijieHe
+## Summary by Sourcery
+
+Ensure stable desktop releases published to S3 include correctly named update manifests for the stable channel.
+
+Bug Fixes:
+- Generate stable*.yml manifests from latest*.yml during stable channel S3 publishing so the update server can resolve stable update metadata correctly.
+
+CI:
+- Adjust desktop S3 publish GitHub Action to create stable*.yml manifests before URL rewriting and upload, keeping canary and nightly behavior unchanged.
