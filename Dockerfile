@@ -57,6 +57,9 @@ RUN mkdir -p /tmp/fix-deps && cd /tmp/fix-deps && \
     node -e "const fs=require('fs'); const p='/app/package.json'; if(fs.existsSync(p)){let d=JSON.parse(fs.readFileSync(p)); let m=false; ['dependencies','devDependencies'].forEach(k=>{if(d[k] && d[k]['fast-xml-parser']){d[k]['fast-xml-parser']='5.3.5'; m=true;}}); if(m) fs.writeFileSync(p, JSON.stringify(d,null,2));}" && \
     cd / && rm -rf /tmp/fix-deps
 
+# 4.5. 跳过 pg_search 扩展迁移（Supabase 不支持该扩展）
+RUN echo '-- skipped: pg_search not available on this platform' > /app/migrations/0090_enable_pg_search.sql
+
 # 5. 应对只读文件系统的缓存重定向
 RUN mkdir -p /app/.next && \
     rm -rf /app/.next/cache && \
