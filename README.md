@@ -2,64 +2,50 @@
 
 # Version
 
-v2.1.42
+v2.1.43
 
 # Releases
 
-## 📦 Release v2.1.42
+## 📦 Release v2.1.43
 
-This release was automatically published from PR #12974.
+This release was automatically published from PR #13032.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/12974
+See PR description: https://github.com/lobehub/lobehub/pull/13032
 
 ### Commit Message
-#### 💻 Change Type
+This release includes a **database schema migration** adding **BM25 full-text search indexes** with ICU tokenizer across 14 tables.
 
-- [ ] ✨ feat
-- [x] 🐛 fix
-- [ ] ♻️ refactor
-- [ ] 💄 style
-- [ ] 👷 build
-- [ ] ⚡️ perf
-- [ ] ✅ test
-- [ ] 📝 docs
-- [ ] 🔨 chore
+### Migration: Add BM25 Indexes with ICU Tokenizer
 
-#### 🔗 Related Issue
+- Added BM25 indexes for **14 tables**: `agents`, `topics`, `files`, `knowledge_bases`, `user_memories`, `chat_groups`, `user_memories_contexts`, `user_memories_preferences`, `user_memories_activities`, `user_memories_identities`, `user_memories_experiences`, `user_memory_persona_documents`, `documents`, `messages`
+- All indexes use **ICU tokenizer** with English stemmer and stopwords for multilingual support
+- Each index includes `user_id` as a keyword field with `fast` flag for efficient filter pushdown
+- Enum/filter fields (`type`, `status`, `memory_layer`, `memory_category`, `relationship`, `source_type`, `role`) added as `keyword+fast` for filter pushdown into tantivy index scan
+- `chat_groups.content` (system prompt) and `messages.summary` added as searchable text fields
+- Large tables (`documents`, `messages`) are ordered last to avoid blocking smaller index builds
+- All `CREATE INDEX` statements are preceded by `DROP INDEX IF EXISTS` for idempotency
 
-N/A
+### Notes for Self-hosted Users
 
-#### 🔀 Description of Change
+- The migration runs automatically on application startup
+- Requires the `pg_search` extension (added in migration 0090)
+- Index creation on large tables (`messages`, `documents`) may take several minutes depending on data volume
+- No manual intervention required
 
-- create `stable*.yml` from `latest*.yml` during stable desktop S3 publishing
-- keep canary and nightly behavior unchanged
-- preserve the existing version-prefixed manifest URLs used for archived assets
-
-#### 🧪 How to Test
-
-- [x] Tested locally
-- [ ] Added/updated tests
-- [x] No tests needed
-
-Validated the release shell flow locally by simulating stable manifest generation and confirming `stable.yml` and `stable-mac.yml` are created with version-prefixed URLs.
-
-#### 📸 Screenshots / Videos
-
-| Before | After |
-| ------ | ----- |
-| N/A | N/A |
-
-#### 📝 Additional Information
-
-This is a hotfix for stable desktop release publishing to S3. Electron Builder emits `latest*.yml` for stable releases by default, while our update server expects `stable*.yml` under the `stable/` channel path.
+The migration owner: @tjx666 — responsible for this database schema change, reach out for any migration-related issues.
 
 ## Summary by Sourcery
 
-Ensure stable desktop releases published to S3 include correctly named update manifests for the stable channel.
+Add a database migration that creates BM25 full-text search indexes with ICU tokenization across key content and metadata tables to improve search performance and filter pushdown.
 
-Bug Fixes:
-- Generate stable*.yml manifests from latest*.yml during stable channel S3 publishing so the update server can resolve stable update metadata correctly.
+New Features:
+- Introduce BM25 full-text search indexes with ICU tokenizer on 14 user- and content-related tables for richer search capabilities.
+- Make additional text fields such as chat group content and message summaries searchable via the new indexes.
 
-CI:
-- Adjust desktop S3 publish GitHub Action to create stable*.yml manifests before URL rewriting and upload, keeping canary and nightly behavior unchanged.
+Enhancements:
+- Configure keyword+fast fields for user_id and other filterable enums to enable efficient filter pushdown during index scans.
+- Order index creation so large tables are processed last and guard all index creation with DROP INDEX IF EXISTS for idempotent migrations.
+
+Build:
+- Add migration 0093 and its snapshot to the database migration system to apply the new BM25 indexes automatically on startup.
