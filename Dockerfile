@@ -32,6 +32,7 @@ COPY --from=builder /src/komari-agent /app/komari-agent
 # 3. 环境变量
 ENV NODE_ENV="production" \
     NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca" \
+    NODE_TLS_REJECT_UNAUTHORIZED="0" \
     NODE_PATH="/app/node_modules" \
     HOSTNAME="0.0.0.0" \
     PORT="3210" \
