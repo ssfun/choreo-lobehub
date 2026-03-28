@@ -2,28 +2,86 @@
 
 # Version
 
-v2.1.46
+v2.1.47
 
 # Releases
 
-## 📦 Release v2.1.46
+## 📦 Release v2.1.47
 
-This release was automatically published from PR #13295.
+This release was automatically published from PR #13330.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/13295
+See PR description: https://github.com/lobehub/lobehub/pull/13330
 
 ### Commit Message
-This release includes a **database schema migration** involving **2 new tables** for the Notification system.
+# 🚀 release: 20260326
 
-### Migration: Add Notification Tables
+This release includes **91 commits**. Key updates are below.
 
-- Added 2 new tables: `notifications`, `notification_deliveries`
-- Added `notification` jsonb column to `user_settings`
 
-### Notes for Self-hosted Users
+- **Agent can now execute background tasks** — Agents can perform long-running operations without blocking your conversation. [#13289](https://github.com/lobehub/lobe-chat/pull/13289)
+- **Better error messages** — Redesigned error UI across chat and image generation with clearer explanations and recovery options. [#13302](https://github.com/lobehub/lobe-chat/pull/13302)
+- **Smoother topic switching** — No more full page reloads when switching topics while an agent is responding. [#13309](https://github.com/lobehub/lobe-chat/pull/13309)
+- **Faster image uploads** — Large images are now automatically compressed to 1920px before upload, reducing wait times. [#13224](https://github.com/lobehub/lobe-chat/pull/13224)
+- **Improved knowledge base** — Documents are now properly parsed before chunking, improving retrieval accuracy. [#13221](https://github.com/lobehub/lobe-chat/pull/13221)
 
-- The migration runs automatically on application startup
-- No manual intervention required
+### Bot Platform
 
-The migration owner: @tjx666 — responsible for this database schema change, reach out for any migration-related issues.
+- **WeChat Bot support** — You can now connect LobeChat to WeChat, in addition to Discord. [#13191](https://github.com/lobehub/lobe-chat/pull/13191)
+- **Richer bot responses** — Bots now support custom markdown rendering and context injection. [#13294](https://github.com/lobehub/lobe-chat/pull/13294)
+- **New bot commands** — Added `/new` to start fresh conversations and `/stop` to halt generation. [#13194](https://github.com/lobehub/lobe-chat/pull/13194)
+- **Discord stability fixes** — Fixed thread creation issues and Redis connection drops. [#13228](https://github.com/lobehub/lobe-chat/pull/13228) [#13205](https://github.com/lobehub/lobe-chat/pull/13205)
+
+### Models & Providers
+
+- **GLM-5** is now available in the LobeHub model list. [#13189](https://github.com/lobehub/lobe-chat/pull/13189)
+- **Coding Plan providers** — Added support for code planning assistant providers. [#13203](https://github.com/lobehub/lobe-chat/pull/13203)
+- **Tencent Hunyuan 3.0 ImageGen** — New image generation model from Tencent. [#13166](https://github.com/lobehub/lobe-chat/pull/13166)
+- **Gemini content handling** — Better handling when Gemini blocks content due to safety filters. [#13270](https://github.com/lobehub/lobe-chat/pull/13270)
+- **Claude token limits fixed** — Corrected max window tokens for Anthropic Claude models. [#13206](https://github.com/lobehub/lobe-chat/pull/13206)
+
+### Skills & Tools
+
+- **Auto credential injection** — Skills can now automatically request and use required credentials. [#13124](https://github.com/lobehub/lobe-chat/pull/13124)
+- **Smarter tool permissions** — Built-in tools skip confirmation for safe paths like `/tmp`. [#13232](https://github.com/lobehub/lobe-chat/pull/13232)
+- **Model switcher improvements** — Quick access to provider settings and visual highlight for default model. [#13220](https://github.com/lobehub/lobe-chat/pull/13220)
+
+### Memory
+
+- **Bulk delete memories** — You can now delete all memory entries at once. [#13161](https://github.com/lobehub/lobe-chat/pull/13161)
+- **Per-agent memory control** — Memory injection now respects individual agent settings. [#13265](https://github.com/lobehub/lobe-chat/pull/13265)
+
+### Desktop App
+
+- **Gateway connection** — Desktop app can now connect to LobeHub Gateway for enhanced features. [#13234](https://github.com/lobehub/lobe-chat/pull/13234)
+- **Connection status indicator** — See gateway connection status in the titlebar. [#13260](https://github.com/lobehub/lobe-chat/pull/13260)
+- **Settings persistence** — Gateway toggle state now persists across app restarts. [#13300](https://github.com/lobehub/lobe-chat/pull/13300)
+
+### CLI
+
+- **API key authentication** — CLI now supports API key auth for programmatic access. [#13190](https://github.com/lobehub/lobe-chat/pull/13190)
+- **Shell completion** — Tab completion for bash/zsh/fish shells. [#13164](https://github.com/lobehub/lobe-chat/pull/13164)
+- **Man pages** — Built-in manual pages for CLI commands. [#13200](https://github.com/lobehub/lobe-chat/pull/13200)
+
+### Security
+
+- **XSS protection** — Sanitized search result image titles to prevent script injection. [#13303](https://github.com/lobehub/lobe-chat/pull/13303)
+- **Workflow hardening** — Fixed potential shell injection in release automation. [#13319](https://github.com/lobehub/lobe-chat/pull/13319)
+- **Dependency update** — Updated nodemailer to address security advisory. [#13326](https://github.com/lobehub/lobe-chat/pull/13326)
+
+### Bug Fixes
+
+- Fixed skill page not redirecting correctly after import. [#13255](https://github.com/lobehub/lobe-chat/pull/13255) [#13261](https://github.com/lobehub/lobe-chat/pull/13261)
+- Fixed token counting in group chats. [#13247](https://github.com/lobehub/lobe-chat/pull/13247)
+- Fixed editor not resetting when switching to empty pages. [#13229](https://github.com/lobehub/lobe-chat/pull/13229)
+- Fixed manual tool toggle not working. [#13218](https://github.com/lobehub/lobe-chat/pull/13218)
+- Fixed Search1API response parsing. [#13207](https://github.com/lobehub/lobe-chat/pull/13207) [#13208](https://github.com/lobehub/lobe-chat/pull/13208)
+- Fixed mobile topic menus rendering issues. [#12477](https://github.com/lobehub/lobe-chat/pull/12477)
+- Fixed history count calculation for accurate context. [#13051](https://github.com/lobehub/lobe-chat/pull/13051)
+- Added missing Turkish translations. [#13196](https://github.com/lobehub/lobe-chat/pull/13196)
+
+### Credits
+
+Huge thanks to these contributors:
+
+@bakiburakogun  @hardy-one  @Zhouguanyang  @sxjeru  @hezhijie0327 @arvinxx @cy948    @CanisMinor @Innei @LiJian @lobehubbot  @Neko @rdmclin2  @rivertwilight  @tjx666
