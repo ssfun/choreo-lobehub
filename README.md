@@ -2,86 +2,67 @@
 
 # Version
 
-v2.1.47
+v2.1.48
 
 # Releases
 
-## 📦 Release v2.1.47
+## 📦 Release v2.1.48
 
-This release was automatically published from PR #13330.
+This release was automatically published from PR #13626.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/13330
+See PR description: https://github.com/lobehub/lobehub/pull/13626
 
 ### Commit Message
-# 🚀 release: 20260326
+# 🚀 release: 20260407
 
-This release includes **91 commits**. Key updates are below.
+This release includes **148 commits**. Key updates are below.
 
-
-- **Agent can now execute background tasks** — Agents can perform long-running operations without blocking your conversation. [#13289](https://github.com/lobehub/lobe-chat/pull/13289)
-- **Better error messages** — Redesigned error UI across chat and image generation with clearer explanations and recovery options. [#13302](https://github.com/lobehub/lobe-chat/pull/13302)
-- **Smoother topic switching** — No more full page reloads when switching topics while an agent is responding. [#13309](https://github.com/lobehub/lobe-chat/pull/13309)
-- **Faster image uploads** — Large images are now automatically compressed to 1920px before upload, reducing wait times. [#13224](https://github.com/lobehub/lobe-chat/pull/13224)
-- **Improved knowledge base** — Documents are now properly parsed before chunking, improving retrieval accuracy. [#13221](https://github.com/lobehub/lobe-chat/pull/13221)
-
-### Bot Platform
-
-- **WeChat Bot support** — You can now connect LobeChat to WeChat, in addition to Discord. [#13191](https://github.com/lobehub/lobe-chat/pull/13191)
-- **Richer bot responses** — Bots now support custom markdown rendering and context injection. [#13294](https://github.com/lobehub/lobe-chat/pull/13294)
-- **New bot commands** — Added `/new` to start fresh conversations and `/stop` to halt generation. [#13194](https://github.com/lobehub/lobe-chat/pull/13194)
-- **Discord stability fixes** — Fixed thread creation issues and Redis connection drops. [#13228](https://github.com/lobehub/lobe-chat/pull/13228) [#13205](https://github.com/lobehub/lobe-chat/pull/13205)
+- **Response API tool execution is more capable and reliable** — Added hosted builtin tools + client-side function tools and improved tool-call streaming/completion behavior. [#13406](https://github.com/lobehub/lobehub/pull/13406) [#13414](https://github.com/lobehub/lobehub/pull/13414) [#13506](https://github.com/lobehub/lobehub/pull/13506) [#13555](https://github.com/lobehub/lobehub/pull/13555)
+- **Input and composition UX upgraded** — Added AI input auto-completion and multiple chat-input stability fixes. [#13458](https://github.com/lobehub/lobehub/pull/13458) [#13551](https://github.com/lobehub/lobehub/pull/13551) [#13481](https://github.com/lobehub/lobehub/pull/13481)
+- **Model/provider compatibility improved** — Better Gemini/Google tool schema handling and additional model updates. [#13429](https://github.com/lobehub/lobehub/pull/13429) [#13465](https://github.com/lobehub/lobehub/pull/13465) [#13613](https://github.com/lobehub/lobehub/pull/13613)
+- **Desktop and CLI reliability improved** — Gateway WebSocket support and desktop runtime upgrades. [#13608](https://github.com/lobehub/lobehub/pull/13608) [#13550](https://github.com/lobehub/lobehub/pull/13550) [#13557](https://github.com/lobehub/lobehub/pull/13557)
+- **Security hardening continued** — Fixed auth and sanitization risks and upgraded vulnerable dependencies. [#13535](https://github.com/lobehub/lobehub/pull/13535) [#13529](https://github.com/lobehub/lobehub/pull/13529) [#13479](https://github.com/lobehub/lobehub/pull/13479)
 
 ### Models & Providers
 
-- **GLM-5** is now available in the LobeHub model list. [#13189](https://github.com/lobehub/lobe-chat/pull/13189)
-- **Coding Plan providers** — Added support for code planning assistant providers. [#13203](https://github.com/lobehub/lobe-chat/pull/13203)
-- **Tencent Hunyuan 3.0 ImageGen** — New image generation model from Tencent. [#13166](https://github.com/lobehub/lobe-chat/pull/13166)
-- **Gemini content handling** — Better handling when Gemini blocks content due to safety filters. [#13270](https://github.com/lobehub/lobe-chat/pull/13270)
-- **Claude token limits fixed** — Corrected max window tokens for Anthropic Claude models. [#13206](https://github.com/lobehub/lobe-chat/pull/13206)
+- Added/updated support for `glm-5v-turbo`, GLM-5.1 updates, and qwen3.5-omni series. [#13487](https://github.com/lobehub/lobehub/pull/13487) [#13405](https://github.com/lobehub/lobehub/pull/13405) [#13422](https://github.com/lobehub/lobehub/pull/13422)
+- Added additional ImageGen providers/models (Wanxiang 2.7 and Keling from Qwen). [#13478](https://github.com/lobehub/lobehub/pull/13478)
+- Improved Gemini/Google tool schema and compatibility handling across runtime paths. [#13429](https://github.com/lobehub/lobehub/pull/13429) [#13465](https://github.com/lobehub/lobehub/pull/13465) [#13613](https://github.com/lobehub/lobehub/pull/13613)
 
-### Skills & Tools
+### Response API & Runtime
 
-- **Auto credential injection** — Skills can now automatically request and use required credentials. [#13124](https://github.com/lobehub/lobe-chat/pull/13124)
-- **Smarter tool permissions** — Built-in tools skip confirmation for safe paths like `/tmp`. [#13232](https://github.com/lobehub/lobe-chat/pull/13232)
-- **Model switcher improvements** — Quick access to provider settings and visual highlight for default model. [#13220](https://github.com/lobehub/lobe-chat/pull/13220)
-
-### Memory
-
-- **Bulk delete memories** — You can now delete all memory entries at once. [#13161](https://github.com/lobehub/lobe-chat/pull/13161)
-- **Per-agent memory control** — Memory injection now respects individual agent settings. [#13265](https://github.com/lobehub/lobe-chat/pull/13265)
+- Added hosted builtin tools in Response API and client-side function tool execution support. [#13406](https://github.com/lobehub/lobehub/pull/13406) [#13414](https://github.com/lobehub/lobehub/pull/13414)
+- Improved stream tool-call argument handling and `response.completed` output correctness. [#13506](https://github.com/lobehub/lobehub/pull/13506) [#13555](https://github.com/lobehub/lobehub/pull/13555)
+- Improved runtime error/context handling for intervention and provider edge cases. [#13420](https://github.com/lobehub/lobehub/pull/13420) [#13607](https://github.com/lobehub/lobehub/pull/13607)
 
 ### Desktop App
 
-- **Gateway connection** — Desktop app can now connect to LobeHub Gateway for enhanced features. [#13234](https://github.com/lobehub/lobe-chat/pull/13234)
-- **Connection status indicator** — See gateway connection status in the titlebar. [#13260](https://github.com/lobehub/lobe-chat/pull/13260)
-- **Settings persistence** — Gateway toggle state now persists across app restarts. [#13300](https://github.com/lobehub/lobe-chat/pull/13300)
+- Bumped desktop dependencies and runtime integrations (`agent-browser`, `electron`). [#13550](https://github.com/lobehub/lobehub/pull/13550) [#13557](https://github.com/lobehub/lobehub/pull/13557)
+- Simplified desktop release channel setup by removing nightly release flow. [#13480](https://github.com/lobehub/lobehub/pull/13480)
 
 ### CLI
 
-- **API key authentication** — CLI now supports API key auth for programmatic access. [#13190](https://github.com/lobehub/lobe-chat/pull/13190)
-- **Shell completion** — Tab completion for bash/zsh/fish shells. [#13164](https://github.com/lobehub/lobe-chat/pull/13164)
-- **Man pages** — Built-in manual pages for CLI commands. [#13200](https://github.com/lobehub/lobe-chat/pull/13200)
+- Added OpenClaw migration command. [#13566](https://github.com/lobehub/lobehub/pull/13566)
+- Added local device binding support for `lh agent run`. [#13277](https://github.com/lobehub/lobehub/pull/13277)
+- Added WebSocket gateway support and reconnect reliability improvements. [#13608](https://github.com/lobehub/lobehub/pull/13608) [#13418](https://github.com/lobehub/lobehub/pull/13418)
 
 ### Security
 
-- **XSS protection** — Sanitized search result image titles to prevent script injection. [#13303](https://github.com/lobehub/lobe-chat/pull/13303)
-- **Workflow hardening** — Fixed potential shell injection in release automation. [#13319](https://github.com/lobehub/lobe-chat/pull/13319)
-- **Dependency update** — Updated nodemailer to address security advisory. [#13326](https://github.com/lobehub/lobe-chat/pull/13326)
+- Removed risky `apiKey` fallback behavior in webapi auth path to prevent bypass risk. [#13535](https://github.com/lobehub/lobehub/pull/13535)
+- Sanitized HTML artifact rendering and iframe sandboxing to reduce XSS-to-RCE risk. [#13529](https://github.com/lobehub/lobehub/pull/13529)
+- Upgraded nodemailer to v8 to address SMTP command injection advisory. [#13479](https://github.com/lobehub/lobehub/pull/13479)
 
 ### Bug Fixes
 
-- Fixed skill page not redirecting correctly after import. [#13255](https://github.com/lobehub/lobe-chat/pull/13255) [#13261](https://github.com/lobehub/lobe-chat/pull/13261)
-- Fixed token counting in group chats. [#13247](https://github.com/lobehub/lobe-chat/pull/13247)
-- Fixed editor not resetting when switching to empty pages. [#13229](https://github.com/lobehub/lobe-chat/pull/13229)
-- Fixed manual tool toggle not working. [#13218](https://github.com/lobehub/lobe-chat/pull/13218)
-- Fixed Search1API response parsing. [#13207](https://github.com/lobehub/lobe-chat/pull/13207) [#13208](https://github.com/lobehub/lobe-chat/pull/13208)
-- Fixed mobile topic menus rendering issues. [#12477](https://github.com/lobehub/lobe-chat/pull/12477)
-- Fixed history count calculation for accurate context. [#13051](https://github.com/lobehub/lobe-chat/pull/13051)
-- Added missing Turkish translations. [#13196](https://github.com/lobehub/lobe-chat/pull/13196)
+- Fixed image generation model default switch issues. [#13587](https://github.com/lobehub/lobehub/pull/13587)
+- Fixed subtopic re-fork message scope behavior and agent panel reset edge cases. [#13606](https://github.com/lobehub/lobehub/pull/13606) [#13556](https://github.com/lobehub/lobehub/pull/13556)
+- Fixed chat-input freeze on paste and mention plugin behavior. [#13551](https://github.com/lobehub/lobehub/pull/13551) [#13415](https://github.com/lobehub/lobehub/pull/13415)
+- Fixed auth/social sign-in and settings UX edge cases. [#13368](https://github.com/lobehub/lobehub/pull/13368) [#13392](https://github.com/lobehub/lobehub/pull/13392) [#13338](https://github.com/lobehub/lobehub/pull/13338)
 
 ### Credits
 
 Huge thanks to these contributors:
 
-@bakiburakogun  @hardy-one  @Zhouguanyang  @sxjeru  @hezhijie0327 @arvinxx @cy948    @CanisMinor @Innei @LiJian @lobehubbot  @Neko @rdmclin2  @rivertwilight  @tjx666
+@chriszf @hardy-one @Innei @LiJian @Neko @octopusnote @rdmclin2 @rivertwilight @RylanCai @suyua9 @sxjeru @Tsuki @WangYK @WindSpiritSR @Yizhuo @YuTengjing @hezhijie0327 @arvinxx 
+
