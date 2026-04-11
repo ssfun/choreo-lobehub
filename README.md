@@ -2,67 +2,71 @@
 
 # Version
 
-v2.1.48
+v2.1.49
 
 # Releases
 
-## 📦 Release v2.1.48
+## 📦 Release v2.1.49
 
-This release was automatically published from PR #13626.
+This release was automatically published from PR #13716.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/13626
+See PR description: https://github.com/lobehub/lobehub/pull/13716
 
 ### Commit Message
-# 🚀 release: 20260407
+## 📦 Weekly Release 20260410
 
-This release includes **148 commits**. Key updates are below.
+This release includes **67 commits**. Key user-facing updates below.
 
-- **Response API tool execution is more capable and reliable** — Added hosted builtin tools + client-side function tools and improved tool-call streaming/completion behavior. [#13406](https://github.com/lobehub/lobehub/pull/13406) [#13414](https://github.com/lobehub/lobehub/pull/13414) [#13506](https://github.com/lobehub/lobehub/pull/13506) [#13555](https://github.com/lobehub/lobehub/pull/13555)
-- **Input and composition UX upgraded** — Added AI input auto-completion and multiple chat-input stability fixes. [#13458](https://github.com/lobehub/lobehub/pull/13458) [#13551](https://github.com/lobehub/lobehub/pull/13551) [#13481](https://github.com/lobehub/lobehub/pull/13481)
-- **Model/provider compatibility improved** — Better Gemini/Google tool schema handling and additional model updates. [#13429](https://github.com/lobehub/lobehub/pull/13429) [#13465](https://github.com/lobehub/lobehub/pull/13465) [#13613](https://github.com/lobehub/lobehub/pull/13613)
-- **Desktop and CLI reliability improved** — Gateway WebSocket support and desktop runtime upgrades. [#13608](https://github.com/lobehub/lobehub/pull/13608) [#13550](https://github.com/lobehub/lobehub/pull/13550) [#13557](https://github.com/lobehub/lobehub/pull/13557)
-- **Security hardening continued** — Fixed auth and sanitization risks and upgraded vulnerable dependencies. [#13535](https://github.com/lobehub/lobehub/pull/13535) [#13529](https://github.com/lobehub/lobehub/pull/13529) [#13479](https://github.com/lobehub/lobehub/pull/13479)
+### New Features and Enhancements
 
-### Models & Providers
+- Introduced **Prompt Rewrite & Translate** feature for assisted input editing.
+- Added **Skill Panel** with dedicated skills tab in the skill store and fixed skill icon rendering.
+- Introduced `lh notify` CLI command for external agent callbacks.
+- Added `migrate openclaw` CLI command.
+- Added **GraphAgent** and `agentFactory` for graph-driven agent execution (experimental).
+- New topic auto-creation every 4 hours for long-running sessions.
 
-- Added/updated support for `glm-5v-turbo`, GLM-5.1 updates, and qwen3.5-omni series. [#13487](https://github.com/lobehub/lobehub/pull/13487) [#13405](https://github.com/lobehub/lobehub/pull/13405) [#13422](https://github.com/lobehub/lobehub/pull/13422)
-- Added additional ImageGen providers/models (Wanxiang 2.7 and Keling from Qwen). [#13478](https://github.com/lobehub/lobehub/pull/13478)
-- Improved Gemini/Google tool schema and compatibility handling across runtime paths. [#13429](https://github.com/lobehub/lobehub/pull/13429) [#13465](https://github.com/lobehub/lobehub/pull/13465) [#13613](https://github.com/lobehub/lobehub/pull/13613)
+### Models and Provider Expansion
 
-### Response API & Runtime
+- Added a new provider: **StreamLake (快手万擎)**.
+- Added **GLM-5.1** model support with Kimi CodingPlan fixes.
+- Added **Seedance 2.0** & **Seedance 2.0 Fast** video generation models (pricing adjusted with 20% service fee).
+- Expanded AIGC parameter support for image and video generation.
+- Improved model type normalization for better provider compatibility.
+- Multi-media and multiple connection mode support for ComfyUI integration.
 
-- Added hosted builtin tools in Response API and client-side function tool execution support. [#13406](https://github.com/lobehub/lobehub/pull/13406) [#13414](https://github.com/lobehub/lobehub/pull/13414)
-- Improved stream tool-call argument handling and `response.completed` output correctness. [#13506](https://github.com/lobehub/lobehub/pull/13506) [#13555](https://github.com/lobehub/lobehub/pull/13555)
-- Improved runtime error/context handling for intervention and provider edge cases. [#13420](https://github.com/lobehub/lobehub/pull/13420) [#13607](https://github.com/lobehub/lobehub/pull/13607)
+### Desktop Improvements
 
-### Desktop App
+- **Embedded CLI** in the desktop app with PATH installation support.
+- Added Electron version display in system tools settings.
+- Fixed RuntimeConfig instant-apply working directory with recent list.
+- Fixed desktop locale restore — now uses stored URL parameter instead of system locale.
+- Improved remote re-auth for batched tRPC and clean OIDC on gateway disconnect.
 
-- Bumped desktop dependencies and runtime integrations (`agent-browser`, `electron`). [#13550](https://github.com/lobehub/lobehub/pull/13550) [#13557](https://github.com/lobehub/lobehub/pull/13557)
-- Simplified desktop release channel setup by removing nightly release flow. [#13480](https://github.com/lobehub/lobehub/pull/13480)
+### Stability, Security, and UX Fixes
 
-### CLI
+- **Security**: prevented path traversal in `TempFileManager.writeTempFile`; patched IDOR in `addFilesToKnowledgeBase`; upgraded `better-auth` with hardened `humanIntervention` requirement in builtin-tool-activator.
+- **Context engine**: added `typeof` guard before `.trim()` calls to prevent runtime crashes.
+- **Agent runtime**: preserved reasoning state across OpenAI providers; fixed service error serialization producing `[object Object]`; surfaced error `reasonDetail` in `agent_runtime_end` events.
+- **Knowledge Base**: cleaned up vector storage when deleting knowledge bases.
+- **Templates**: allow templates to specify `policyLoad` so default docs are fully injected.
+- **Skills**: inject current agents information when `lobehub_skill` is activated; filter current agent out of available agents list; fix `agents_documents` overriding `systemRole`.
+- **Google Tools**: use `parametersJsonSchema` for Google tool schemas.
+- **Web Crawler**: prevent happy-dom CSS parsing crash in `htmlToMarkdown`.
+- **Mobile/UI**: fixed video page icon collision, missing locale keys, model query param; hidden LocalFile actions on topic share page; allow manual close of hidden builtin tools.
+- **Auth**: `ENABLE_MOCK_DEV_USER` now supported in `checkAuth` and openapi auth middleware.
+- **Sandbox**: stopped using `sanitizeHTMLContent` to block scripts & sandbox styles.
 
-- Added OpenClaw migration command. [#13566](https://github.com/lobehub/lobehub/pull/13566)
-- Added local device binding support for `lh agent run`. [#13277](https://github.com/lobehub/lobehub/pull/13277)
-- Added WebSocket gateway support and reconnect reliability improvements. [#13608](https://github.com/lobehub/lobehub/pull/13608) [#13418](https://github.com/lobehub/lobehub/pull/13418)
+### Refactors
 
-### Security
-
-- Removed risky `apiKey` fallback behavior in webapi auth path to prevent bypass risk. [#13535](https://github.com/lobehub/lobehub/pull/13535)
-- Sanitized HTML artifact rendering and iframe sandboxing to reduce XSS-to-RCE risk. [#13529](https://github.com/lobehub/lobehub/pull/13529)
-- Upgraded nodemailer to v8 to address SMTP command injection advisory. [#13479](https://github.com/lobehub/lobehub/pull/13479)
-
-### Bug Fixes
-
-- Fixed image generation model default switch issues. [#13587](https://github.com/lobehub/lobehub/pull/13587)
-- Fixed subtopic re-fork message scope behavior and agent panel reset edge cases. [#13606](https://github.com/lobehub/lobehub/pull/13606) [#13556](https://github.com/lobehub/lobehub/pull/13556)
-- Fixed chat-input freeze on paste and mention plugin behavior. [#13551](https://github.com/lobehub/lobehub/pull/13551) [#13415](https://github.com/lobehub/lobehub/pull/13415)
-- Fixed auth/social sign-in and settings UX edge cases. [#13368](https://github.com/lobehub/lobehub/pull/13368) [#13392](https://github.com/lobehub/lobehub/pull/13392) [#13338](https://github.com/lobehub/lobehub/pull/13338)
+- Library/resource tree store for hierarchy and move sync.
+- Removed legacy `messageLoadingIds` from chat store.
+- Removed promptfoo configs and dependencies.
+- `OnboardingContextInjector` wired into context engine.
 
 ### Credits
 
-Huge thanks to these contributors:
+Huge thanks to these contributors (alphabetical):
 
-@chriszf @hardy-one @Innei @LiJian @Neko @octopusnote @rdmclin2 @rivertwilight @RylanCai @suyua9 @sxjeru @Tsuki @WangYK @WindSpiritSR @Yizhuo @YuTengjing @hezhijie0327 @arvinxx 
-
+@arvinxx @canisminor1990 @cy948 @hardy-one @hezhijie0327 @Innei @MarcellGu @ONLY-yours @rdmclin2 @rivertwilight @sxjeru @tjx666
