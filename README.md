@@ -2,71 +2,109 @@
 
 # Version
 
-v2.1.49
+v2.1.51
 
 # Releases
 
-## 📦 Release v2.1.49
+## 📦 Release v2.1.51
 
-This release was automatically published from PR #13716.
+This release was automatically published from PR #13895.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/13716
+See PR description: https://github.com/lobehub/lobehub/pull/13895
 
 ### Commit Message
-## 📦 Weekly Release 20260410
 
-This release includes **67 commits**. Key user-facing updates below.
+**Release Date:** April 16, 2026\
+**Since v2.1.49:** 107 commits · 101 merged PRs · 13 contributors
 
-### New Features and Enhancements
+> This weekly release focuses on improving runtime stability and gateway execution consistency, while making Home/Recents workflows faster to navigate and easier to manage in daily use.
 
-- Introduced **Prompt Rewrite & Translate** feature for assisted input editing.
-- Added **Skill Panel** with dedicated skills tab in the skill store and fixed skill icon rendering.
-- Introduced `lh notify` CLI command for external agent callbacks.
-- Added `migrate openclaw` CLI command.
-- Added **GraphAgent** and `agentFactory` for graph-driven agent execution (experimental).
-- New topic auto-creation every 4 hours for long-running sessions.
+---
 
-### Models and Provider Expansion
+## ✨ Highlights
 
-- Added a new provider: **StreamLake (快手万擎)**.
-- Added **GLM-5.1** model support with Kimi CodingPlan fixes.
-- Added **Seedance 2.0** & **Seedance 2.0 Fast** video generation models (pricing adjusted with 20% service fee).
-- Expanded AIGC parameter support for image and video generation.
-- Improved model type normalization for better provider compatibility.
-- Multi-media and multiple connection mode support for ComfyUI integration.
+- **Server-side Human Approval Flow** — Agent runtime now supports more reliable approve/reject/reject-continue handling in gateway mode, reducing stalled execution paths in long-running tasks. (#13829, #13863, #13873)
 
-### Desktop Improvements
+- **Message Gateway End-to-End Hardening** — Gateway message flow, queue handling, tool callback routing, and stop interruption behavior were strengthened for better execution continuity. (#13761, #13816, #13820, #13815)
 
-- **Embedded CLI** in the desktop app with PATH installation support.
-- Added Electron version display in system tools settings.
-- Fixed RuntimeConfig instant-apply working directory with recent list.
-- Fixed desktop locale restore — now uses stored URL parameter instead of system locale.
-- Improved remote re-auth for batched tRPC and clean OIDC on gateway disconnect.
+- **Client Tool Execution in Gateway Mode** — Client-executor tools now run more predictably across gateway and desktop callers, with improved executor dispatch behavior. (#13792, #13790)
 
-### Stability, Security, and UX Fixes
+- **Home / Recents / Sidebar Upgrade** — Sidebar layout, custom sort, recents operations, and profile actions were improved to reduce navigation friction in active sessions. (#13719, #13812, #13723, #13739, #13878, #13734)
 
-- **Security**: prevented path traversal in `TempFileManager.writeTempFile`; patched IDOR in `addFilesToKnowledgeBase`; upgraded `better-auth` with hardened `humanIntervention` requirement in builtin-tool-activator.
-- **Context engine**: added `typeof` guard before `.trim()` calls to prevent runtime crashes.
-- **Agent runtime**: preserved reasoning state across OpenAI providers; fixed service error serialization producing `[object Object]`; surfaced error `reasonDetail` in `agent_runtime_end` events.
-- **Knowledge Base**: cleaned up vector storage when deleting knowledge bases.
-- **Templates**: allow templates to specify `policyLoad` so default docs are fully injected.
-- **Skills**: inject current agents information when `lobehub_skill` is activated; filter current agent out of available agents list; fix `agents_documents` overriding `systemRole`.
-- **Google Tools**: use `parametersJsonSchema` for Google tool schemas.
-- **Web Crawler**: prevent happy-dom CSS parsing crash in `htmlToMarkdown`.
-- **Mobile/UI**: fixed video page icon collision, missing locale keys, model query param; hidden LocalFile actions on topic share page; allow manual close of hidden builtin tools.
-- **Auth**: `ENABLE_MOCK_DEV_USER` now supported in `checkAuth` and openapi auth middleware.
-- **Sandbox**: stopped using `sanitizeHTMLContent` to block scripts & sandbox styles.
+- **Agent Workspace and Documents Expansion** — Working panel and agent document workflows were expanded and polished for better day-to-day agent operations. (#13766, #13857)
 
-### Refactors
+- **Provider and Model Compatibility Improvements** — Added GLM-5.1 support and refined model/provider edge-case handling, including schema and error-path fixes. (#13757, #13806, #13736, #13740)
 
-- Library/resource tree store for hierarchy and move sync.
-- Removed legacy `messageLoadingIds` from chat store.
-- Removed promptfoo configs and dependencies.
-- `OnboardingContextInjector` wired into context engine.
+---
 
-### Credits
+## 🏗️ Core Agent & Architecture
 
-Huge thanks to these contributors (alphabetical):
+### Agent runtime and intervention lifecycle
 
-@arvinxx @canisminor1990 @cy948 @hardy-one @hezhijie0327 @Innei @MarcellGu @ONLY-yours @rdmclin2 @rivertwilight @sxjeru @tjx666
+- Added server-side human approval and improved runtime coordination across approve/reject decision paths. (#13829, #13863)
+- Improved interrupted-task handling and operation lifecycle consistency to reduce half-finished runtime states. (#13714)
+- Refined error classification and payload propagation so downstream surfaces receive clearer actionable errors. (#13736, #13740)
+
+### Execution model and dispatch behavior
+
+- Introduced executor-aware runtime behavior to better separate client/server tool execution semantics. (#13758)
+- Improved tool/plugin resolution and manifest handling to avoid runtime failures on malformed inputs. (#13856, #13840, #13807)
+
+---
+
+## 📱 Gateway & Platform Integrations
+
+- Added message gateway support and strengthened queue/error behavior for more stable cross-channel execution. (#13761, #13816, #13820)
+- Improved gateway callback pipeline with protocol and API additions for `tool_execute` / `tool_result`. (#13762, #13764, #13765)
+- Improved bot/channel reliability and DM/slash handling in Discord-related paths. (#13805, #13724)
+
+---
+
+## 🖥️ CLI & User Experience
+
+- Improved CLI reliability across message/topic operations and build/minify-related paths. (#13731, #13888)
+- Added image-to-video options and improved command behavior for generation workflows. (#13788)
+- Improved desktop runtime behavior for remote fetch and Linux notification urgency handling. (#13789, #13782)
+
+---
+
+## 🔧 Tooling
+
+- Extracted gateway stream client into `@lobechat/agent-gateway-client` to centralize protocol usage and reduce duplication. (#13866)
+- Improved built-in tool coverage and runtime support, including GTD server runtime and missing lobe-kb tools. (#13854, #13876)
+- Updated skill and frontmatter consistency in workflow tooling. (#13730)
+
+---
+
+## 🔒 Security & Reliability
+
+- **Security:** Strengthened API key WS auth behavior and safer serverUrl forwarding in gateway-related auth paths. (#13824)
+- **Reliability:** Reduced runtime stalls by improving gateway stop/interrupt and approval-state routing behavior. (#13815, #13863, #13873)
+- **Reliability:** Added defensive guards for malformed tool manifests and non-string content edge cases. (#13856, #13753)
+
+---
+
+## 👥 Contributors
+
+**101 merged PRs** from **13 contributors** across **107 commits**.
+
+### Community Contributors
+
+- @arvinxx - Runtime, gateway, and execution reliability improvements
+- @Innei - Navigation, workflow UX, and desktop/CLI refinements
+- @rdmclin2 - Sidebar, recents, and channel behavior updates
+- @ONLY-yours - Tooling/runtime fixes and model execution compatibility
+- @tjx666 - Model support and release/tooling maintenance
+- @nekomeowww - Memory and search-path stability fixes
+- @cy948 - CLI indexing and command flow fixes
+- @octo-patch - Local system runtime edge-case fixes
+- @djthread - Desktop runtime request reliability improvements
+- @rivertwilight - Documentation and changelog updates
+- @sudongyuer - Subscription/mobile support improvements
+- @Zhouguanyang - Provider/model configuration correctness fixes
+- @lobehubbot - Translation and maintenance automation support
+
+---
+
+**Full Changelog**: v2.1.49...v2.1.50
