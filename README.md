@@ -2,109 +2,43 @@
 
 # Version
 
-v2.1.51
+v2.1.52
 
 # Releases
 
-## 📦 Release v2.1.51
+## 📦 Release v2.1.52
 
-This release was automatically published from PR #13895.
+This release was automatically published from PR #13994.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/13895
+See PR description: https://github.com/lobehub/lobehub/pull/13994
 
 ### Commit Message
+This release ships a **database schema migration** that makes two pieces of lifecycle state explicit: how a topic finishes, and how a task is automated. Both already existed implicitly, which made some downstream behaviors ambiguous. This change turns them into first-class columns so the UI, scheduler, and reporting layers can rely on them directly.
 
-**Release Date:** April 16, 2026\
-**Since v2.1.49:** 107 commits · 101 merged PRs · 13 contributors
+## Migration overview
 
-> This weekly release focuses on improving runtime stability and gateway execution consistency, while making Home/Recents workflows faster to navigate and easier to manage in daily use.
+Previously, a topic's completion was inferred from surrounding context — there was no dedicated status or timestamp marking when a topic moved out of the active pool. Tasks had a similar ambiguity around automation: heartbeat supervision and cron-style scheduling lived in overlapping fields, so a configured-but-paused schedule looked identical to one that was never set.
 
----
+This migration makes both states explicit.
 
-## ✨ Highlights
+**topics**
 
-- **Server-side Human Approval Flow** — Agent runtime now supports more reliable approve/reject/reject-continue handling in gateway mode, reducing stalled execution paths in long-running tasks. (#13829, #13863, #13873)
+- `status` (`active` | `completed` | `archived`)
+- `completed_at` timestamp
+- Indexes on `status` and `(user_id, completed_at)` so completion views and archival queries stay cheap
 
-- **Message Gateway End-to-End Hardening** — Gateway message flow, queue handling, tool callback routing, and stop interruption behavior were strengthened for better execution continuity. (#13761, #13816, #13820, #13815)
+**tasks**
 
-- **Client Tool Execution in Gateway Mode** — Client-executor tools now run more predictably across gateway and desktop callers, with improved executor dispatch behavior. (#13792, #13790)
+- `automation_mode` (`heartbeat` | `schedule` | `null`) — a single discriminator that makes the two automation kinds mutually exclusive by design and removes the "configured but disabled" ambiguity
+- Index on `automation_mode`
 
-- **Home / Recents / Sidebar Upgrade** — Sidebar layout, custom sort, recents operations, and profile actions were improved to reduce navigation friction in active sessions. (#13719, #13812, #13723, #13739, #13878, #13734)
+In practice, the topic list can now distinguish completed and archived records without reinterpreting other fields, and the task scheduler gets a clean switch to route records between heartbeat supervision and cron execution.
 
-- **Agent Workspace and Documents Expansion** — Working panel and agent document workflows were expanded and polished for better day-to-day agent operations. (#13766, #13857)
+## Notes for self-hosted users
 
-- **Provider and Model Compatibility Improvements** — Added GLM-5.1 support and refined model/provider edge-case handling, including schema and error-path fixes. (#13757, #13806, #13736, #13740)
+- The migration runs automatically during app startup; no manual SQL action is required in standard deployments.
+- All new columns are nullable, so existing rows stay untouched — nothing is backfilled at migration time.
+- As with any schema release, we still recommend a database backup and rollout during a low-traffic window.
 
----
-
-## 🏗️ Core Agent & Architecture
-
-### Agent runtime and intervention lifecycle
-
-- Added server-side human approval and improved runtime coordination across approve/reject decision paths. (#13829, #13863)
-- Improved interrupted-task handling and operation lifecycle consistency to reduce half-finished runtime states. (#13714)
-- Refined error classification and payload propagation so downstream surfaces receive clearer actionable errors. (#13736, #13740)
-
-### Execution model and dispatch behavior
-
-- Introduced executor-aware runtime behavior to better separate client/server tool execution semantics. (#13758)
-- Improved tool/plugin resolution and manifest handling to avoid runtime failures on malformed inputs. (#13856, #13840, #13807)
-
----
-
-## 📱 Gateway & Platform Integrations
-
-- Added message gateway support and strengthened queue/error behavior for more stable cross-channel execution. (#13761, #13816, #13820)
-- Improved gateway callback pipeline with protocol and API additions for `tool_execute` / `tool_result`. (#13762, #13764, #13765)
-- Improved bot/channel reliability and DM/slash handling in Discord-related paths. (#13805, #13724)
-
----
-
-## 🖥️ CLI & User Experience
-
-- Improved CLI reliability across message/topic operations and build/minify-related paths. (#13731, #13888)
-- Added image-to-video options and improved command behavior for generation workflows. (#13788)
-- Improved desktop runtime behavior for remote fetch and Linux notification urgency handling. (#13789, #13782)
-
----
-
-## 🔧 Tooling
-
-- Extracted gateway stream client into `@lobechat/agent-gateway-client` to centralize protocol usage and reduce duplication. (#13866)
-- Improved built-in tool coverage and runtime support, including GTD server runtime and missing lobe-kb tools. (#13854, #13876)
-- Updated skill and frontmatter consistency in workflow tooling. (#13730)
-
----
-
-## 🔒 Security & Reliability
-
-- **Security:** Strengthened API key WS auth behavior and safer serverUrl forwarding in gateway-related auth paths. (#13824)
-- **Reliability:** Reduced runtime stalls by improving gateway stop/interrupt and approval-state routing behavior. (#13815, #13863, #13873)
-- **Reliability:** Added defensive guards for malformed tool manifests and non-string content edge cases. (#13856, #13753)
-
----
-
-## 👥 Contributors
-
-**101 merged PRs** from **13 contributors** across **107 commits**.
-
-### Community Contributors
-
-- @arvinxx - Runtime, gateway, and execution reliability improvements
-- @Innei - Navigation, workflow UX, and desktop/CLI refinements
-- @rdmclin2 - Sidebar, recents, and channel behavior updates
-- @ONLY-yours - Tooling/runtime fixes and model execution compatibility
-- @tjx666 - Model support and release/tooling maintenance
-- @nekomeowww - Memory and search-path stability fixes
-- @cy948 - CLI indexing and command flow fixes
-- @octo-patch - Local system runtime edge-case fixes
-- @djthread - Desktop runtime request reliability improvements
-- @rivertwilight - Documentation and changelog updates
-- @sudongyuer - Subscription/mobile support improvements
-- @Zhouguanyang - Provider/model configuration correctness fixes
-- @lobehubbot - Translation and maintenance automation support
-
----
-
-**Full Changelog**: v2.1.49...v2.1.50
+The migration owner: @arvinxx — responsible for this database schema change, reach out for any migration-related issues.
