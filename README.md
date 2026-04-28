@@ -2,43 +2,25 @@
 
 # Version
 
-v2.1.52
+v2.1.54
 
 # Releases
 
-## 📦 Release v2.1.52
+## 📦 Release v2.1.54
 
-This release was automatically published from PR #13994.
+This release was automatically published from PR #14231.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/13994
+See PR description: https://github.com/lobehub/lobehub/pull/14231
 
 ### Commit Message
-This release ships a **database schema migration** that makes two pieces of lifecycle state explicit: how a topic finishes, and how a task is automated. Both already existed implicitly, which made some downstream behaviors ambiguous. This change turns them into first-class columns so the UI, scheduler, and reporting layers can rely on them directly.
+**Hotfix Scope:** Agent topic / thread navigation regression — stale chat state on agent switch
 
-## Migration overview
+> Clears residual topic state when navigating between agents, restores the active subtopic's title in the header, and keeps the sidebar's thread list expanded while a thread is open.
 
-Previously, a topic's completion was inferred from surrounding context — there was no dedicated status or timestamp marking when a topic moved out of the active pool. Tasks had a similar ambiguity around automation: heartbeat supervision and cron-style scheduling lived in overlapping fields, so a configured-but-paused schedule looked identical to one that was never set.
+## 🐛 What's Fixed
 
-This migration makes both states explicit.
-
-**topics**
-
-- `status` (`active` | `completed` | `archived`)
-- `completed_at` timestamp
-- Indexes on `status` and `(user_id, completed_at)` so completion views and archival queries stay cheap
-
-**tasks**
-
-- `automation_mode` (`heartbeat` | `schedule` | `null`) — a single discriminator that makes the two automation kinds mutually exclusive by design and removes the "configured but disabled" ambiguity
-- Index on `automation_mode`
-
-In practice, the topic list can now distinguish completed and archived records without reinterpreting other fields, and the task scheduler gets a clean switch to route records between heartbeat supervision and cron execution.
-
-## Notes for self-hosted users
-
-- The migration runs automatically during app startup; no manual SQL action is required in standard deployments.
-- All new columns are nullable, so existing rows stay untouched — nothing is backfilled at migration time.
-- As with any schema release, we still recommend a database backup and rollout during a low-traffic window.
-
-The migration owner: @arvinxx — responsible for this database schema change, reach out for any migration-related issues.
+- **Stale topic on agent switch** — `ChatHydration` syncs `activeTopicId` / `activeThreadId` from the URL via `useLayoutEffect` and writes `null` (not `undefined`) so `/agent/agt_A/tpc_X` → `/agent/agt_B` no longer carries over the previous topic; *Start new topic* responds again.
+- **Conversation context isolation** — `ConversationProvider` keys its inner store on `contextKey`, so consumers don't read stale values for one render after agent / topic / thread identity changes.
+- **Sidebar thread list visibility** — `<ThreadList />` visibility is now driven by `urlTopicId` and accepts `topicId` as a prop, so the parent topic's thread list stays expanded while viewing a subtopic.
+- **Header thread title** — Header `Tags` reads the active thread's title from `s.threadMaps[s.activeTopicId]` when `activeThreadId` is set, falling back to `chat:thread.title` for unnamed threads.
