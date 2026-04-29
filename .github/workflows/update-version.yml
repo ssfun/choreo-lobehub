@@ -2,7 +2,7 @@ name: Auto Update Choreo LobeHub Version
 
 on:
   schedule:
-    # 每天 UTC 00:00 (北京时间 08:00) 检查 Wei-Shaw/sub2api 最新 release。
+    # 每天 UTC 00:00 (北京时间 08:00) 检查 lobehub/lobehub 最新 release。
     - cron: '0 0 * * *'
   workflow_dispatch:
 
