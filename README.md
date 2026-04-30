@@ -2,25 +2,41 @@
 
 # Version
 
-v2.1.54
+v2.1.55
 
 # Releases
 
-## 📦 Release v2.1.54
+## 📦 Release v2.1.55
 
-This release was automatically published from PR #14231.
+This release was automatically published from PR #14284.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/14231
+See PR description: https://github.com/lobehub/lobehub/pull/14284
 
 ### Commit Message
-**Hotfix Scope:** Agent topic / thread navigation regression — stale chat state on agent switch
+**Hotfix Scope:** Topic preservation across cold chat-entry routes
 
-> Clears residual topic state when navigating between agents, restores the active subtopic's title in the header, and keeps the sidebar's thread list expanded while a thread is open.
+> Keeps newly created Topics visible when a first message is sent before the destination chat route has fully hydrated.
 
 ## 🐛 What's Fixed
 
-- **Stale topic on agent switch** — `ChatHydration` syncs `activeTopicId` / `activeThreadId` from the URL via `useLayoutEffect` and writes `null` (not `undefined`) so `/agent/agt_A/tpc_X` → `/agent/agt_B` no longer carries over the previous topic; *Start new topic* responds again.
-- **Conversation context isolation** — `ConversationProvider` keys its inner store on `contextKey`, so consumers don't read stale values for one render after agent / topic / thread identity changes.
-- **Sidebar thread list visibility** — `<ThreadList />` visibility is now driven by `urlTopicId` and accepts `topicId` as a prop, so the parent topic's thread list stays expanded while viewing a subtopic.
-- **Header thread title** — Header `Tags` reads the active thread's title from `s.threadMaps[s.activeTopicId]` when `activeThreadId` is set, falling back to `chat:thread.title` for unnamed threads.
+- **Page Agent empty-session regression** — Sending the first message in an empty Page Agent panel no longer clears the newly created Topic and returns the panel to an empty state. (Resolves LOBE-8351)
+- **Home cold-route send regression** — Sending from the Home default Chat Input now routes to the newly created Inbox Topic even when `/agent/:aid` has never been opened and the route chunk has no warm cache.
+- **Page-scoped Copilot consistency** — Page Copilot and File Copilot share the same provider-level topic reset behavior, so stale Topics are cleared only when entering or switching the scoped Agent.
+- **Regression coverage** — Added focused unit coverage for Home default sends, route parity coverage remains intact, and added an E2E scenario for the no-cache Home send path.
+
+## ✅ Verification
+
+- `bunx vitest run --silent='passed-only' 'src/routes/(main)/home/features/InputArea/useSend.test.ts' 'src/spa/router/desktopRouter.sync.test.tsx' 'src/routes/(main)/agent/features/Conversation/ChatHydration/index.test.tsx' 'src/routes/(main)/agent/_layout/AgentIdSync.test.tsx'`
+- `BASE_URL=http://localhost:3007 DATABASE_URL=postgresql://postgres:postgres@localhost:5433/postgres bun run test -- --tags '@HOME-CHAT-COLD-001'` from `e2e/`
+
+## ⚙️ Upgrade
+
+- Self-hosted: pull the new image and restart. No schema or environment changes.
+- Cloud: ships through the normal hotfix deployment after merge.
+
+## 👥 Owner
+
+@Innei
+
+Fixes LOBE-8351
