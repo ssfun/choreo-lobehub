@@ -2,41 +2,60 @@
 
 # Version
 
-v2.1.55
+v2.1.56
 
 # Releases
 
-## 📦 Release v2.1.55
+## 📦 Release v2.1.56
 
-This release was automatically published from PR #14284.
+This release was automatically published from PR #14354.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/14284
+See PR description: https://github.com/lobehub/lobehub/pull/14354
 
 ### Commit Message
-**Hotfix Scope:** Topic preservation across cold chat-entry routes
+# 🚀 LobeHub v2.1.56 (20260501)
 
-> Keeps newly created Topics visible when a first message is sent before the destination chat route has fully hydrated.
+**Release Date:** May 1, 2026
+**Migration Scope:** `briefs` table — 2 new columns (`trigger`, `metadata`), 1 new index (`briefs_trigger_idx`)
 
-## 🐛 What's Fixed
 
-- **Page Agent empty-session regression** — Sending the first message in an empty Page Agent panel no longer clears the newly created Topic and returns the panel to an empty state. (Resolves LOBE-8351)
-- **Home cold-route send regression** — Sending from the Home default Chat Input now routes to the newly created Inbox Topic even when `/agent/:aid` has never been opened and the route chunk has no warm cache.
-- **Page-scoped Copilot consistency** — Page Copilot and File Copilot share the same provider-level topic reset behavior, so stale Topics are cleared only when entering or switching the scoped Agent.
-- **Regression coverage** — Added focused unit coverage for Home default sends, route parity coverage remains intact, and added an E2E scenario for the no-cache Home send path.
+## 🗄️ Migration Overview
 
-## ✅ Verification
+**File:** `packages/database/migrations/0100_add_metadata_and_trigger_to_briefs.sql`
 
-- `bunx vitest run --silent='passed-only' 'src/routes/(main)/home/features/InputArea/useSend.test.ts' 'src/spa/router/desktopRouter.sync.test.tsx' 'src/routes/(main)/agent/features/Conversation/ChatHydration/index.test.tsx' 'src/routes/(main)/agent/_layout/AgentIdSync.test.tsx'`
-- `BASE_URL=http://localhost:3007 DATABASE_URL=postgresql://postgres:postgres@localhost:5433/postgres bun run test -- --tags '@HOME-CHAT-COLD-001'` from `e2e/`
+Added columns on `briefs`:
 
-## ⚙️ Upgrade
+- `trigger varchar(255)` — module that triggered the brief (e.g. `task`, `agent`, `signal`)
+- `metadata jsonb` — freeform business state attached by the producer
 
-- Self-hosted: pull the new image and restart. No schema or environment changes.
-- Cloud: ships through the normal hotfix deployment after merge.
+Added index:
+
+- `briefs_trigger_idx` on `briefs(trigger)`
+
+The migration uses `ADD COLUMN IF NOT EXISTS` and `CREATE INDEX IF NOT EXISTS`, so re-running it is safe.
+
+---
+
+## ⚙️ Operator Notes
+
+- Migration runs automatically on application startup.
+- Both new columns are nullable — existing rows are unaffected and no backfill is required.
+- The migration is additive only; no existing column or index is modified or dropped.
+- Recommended: take a routine snapshot before deployment, as with any schema change.
+
+---
+
+## 🔒 Reliability & Risk
+
+- **Backwards-compatible:** Older application code that does not read or write `trigger` / `metadata` continues to work, since both columns are nullable.
+- **Index cost:** `briefs_trigger_idx` is built with `IF NOT EXISTS` and is small (single `varchar(255)` column); build time on existing data is expected to be negligible.
+- **Rollback:** If a rollback is required, drop `briefs_trigger_idx` and the two new columns; no data migration is involved.
+
+---
 
 ## 👥 Owner
 
-@Innei
+Migration owner: @nekomeowww
 
-Fixes LOBE-8351
+The migration owner is responsible for rollout follow-up and incident handling for this schema change.
