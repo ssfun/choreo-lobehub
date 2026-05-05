@@ -116,15 +116,12 @@ jobs:
               remote_body = data.get('body') or ''
               print(f'Remote Version: {remote_version}')
 
-              current_releases_match = re.search(r'(?ms)^# Releases\s*\n\s*\n(.*)\Z', content)
-              current_releases = current_releases_match.group(1).strip() if current_releases_match else ''
-              desired_releases = remote_body.strip() or f'Upstream release: https://github.com/Wei-Shaw/sub2api/releases/tag/{remote_version}'
+              desired_releases = remote_body.strip() or f'Upstream release: https://github.com/lobehub/lobehub/releases/tag/{remote_version}'
 
               version_is_newer = semver_parts(remote_version) > semver_parts(local_version)
-              releases_changed = current_releases != desired_releases
 
-              if not version_is_newer and not releases_changed:
-                  print('Local version and release notes are up to date.')
+              if not version_is_newer:
+                  print('Local version is up to date.')
                   sys.exit(0)
 
               content = re.sub(
