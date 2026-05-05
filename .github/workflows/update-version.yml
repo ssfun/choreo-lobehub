@@ -95,6 +95,7 @@ jobs:
 
               with open(README, 'r', encoding='utf-8') as f:
                   content = f.read()
+              original_content = content
 
               match = re.search(r'(?m)^# Version\s*\n\s*\n(v?[^\s]+)', content)
               if not match:
@@ -138,6 +139,10 @@ jobs:
                   content,
                   count=1,
               )
+
+              if content == original_content:
+                  print('README.md is already up to date.')
+                  sys.exit(0)
 
               with open(README, 'w', encoding='utf-8') as f:
                   f.write(content)
