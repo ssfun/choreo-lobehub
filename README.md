@@ -2,219 +2,146 @@
 
 # Version
 
-v2.2.0
+v2.2.1
 
 # Releases
 
-## 📦 Release v2.2.0
+## 📦 Release v2.2.1
 
-This release was automatically published from PR #14915.
+This release was automatically published from PR #15302.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/14915
+See PR description: https://github.com/lobehub/lobehub/pull/15302
 
 ### Commit Message
-# 🚀 LobeHub Release (20260518)
+# 🚀 LobeHub Release (20260528)
 
-**Release Date:** May 18, 2026  
-**Since v2.1.58:** 208 merged PRs · 209 commits · 16 contributors
+**Release Date:** May 28, 2026  
+**Since v2.2.0:** 220 merged PRs · 15 contributors
 
-> v2.2.0 introduces the **Chief Agent Operator** — an agent that runs itself end-to-end. It self-iterates against its own output, assembles sub-agent teams on demand through the heterogeneous runtime, and drives a unified task system that knows when to pause for a human. Self-review, AssistantGroup, and tasks/scheduling all converge into one operator surface.
+> This cycle brings heterogeneous "platform agents" you can dispatch to local or remote devices, a rebuilt onboarding flow, document-centric chat, and a unified model-runtime error model — with new DeepSeek V4 and Gemini 3.5 Flash support along the way.
 
 ---
 
 ## ✨ Highlights
 
-### 🎩 Chief Agent Operator
-
-- **Self-iteration exits Lab** — Agent Signal's self-review pipeline ships proposal actions straight into briefs and auto-executes the approved follow-ups, with prompts hardened against eval. The operator now critiques and re-runs its own work without a human in the loop. (#14769, #14583, #14647, #14882)
-- **Auto-formed agent teams** — Heterogeneous AssistantGroup gains Monitor-style signal callbacks, read-only SubAgent threads with breadcrumb headers, and a thread switcher. The operator dispatches sub-agents and you can step into any branch to see what the team is doing. (#14859, #14658, #14845, #14715)
-- **Task system as the operator's runway** — Claude Code surfaces task tools, AskUserQuestion freeform notes, and a dedicated `waitingForHuman` topic status; `lobe-task` exposes `setTaskSchedule`; the scheduler is hardened (maxExecutions cap, sub-10min heartbeat block, race-free SchedulerForm). Long-running operator runs no longer go silent and stop themselves when human input is needed. (#14870, #14639, #14713, #14865, #14853)
-
-### 🚀 Cloud & runtime
-
-- **Cloud Claude Code V3** — Repo picker, GitHub token flow, and sandbox-aware context bring cloud-hosted Claude Code to feature parity with local; cloud sandbox completion now triggers the task lifecycle end-to-end. (#14568, #14822, #14681)
-- **Heterogeneous agent multi-replica safety** — Subagent threads, ingest refresh, and parallel-tool counts now survive replica swaps without losing parent_id or rolling back tool state. (#14897, #14631, #14806, #14838)
-- **Built-in tool lifecycle hooks** — `onBeforeCall` / `onAfterCall` land on the built-in tool runtime; sub-agent dispatch moves to `lobe-agent`; self-iteration aligns with the shared inspector pattern. (#14719, #14715, #14827)
-- **Knowledge base RAG unified** — Client and server share one `KnowledgeBaseSearchService`; KB files preserved on `NoSuchKey` instead of silently lost. (#14673, #14501)
-
-### 💬 Workspace experience
-
-- **Home daily brief + recommendations** — The home screen opens with a linkable welcome, paired input hint, and a recommendations module sourced from the operator's hetero action library. (#14589, #14645, #14770)
-- **Chat mode + redesigned action bar** — The chat input gains a Chat/Agent mode toggle and a re-pitched action bar with icon-and-color action tag chips. (#14774, #14903, #14846)
-- **Documents tree, optimistic** — Document tree creates, deletes, and inline renames now apply optimistically; the agent-documents index hides web crawls and switches to a table layout. (#14714, #14292)
-- **Branded MCP inspectors** — Linear MCP tool calls render with the same branded inspector as the built-in Linear skill; CC MCP and built-in skills now share inspector code. (#14864, #14884)
-- **Bot identity gating** — Device tools are gated by sender identity, the activator bypass is closed, and Slack mpim plus Discord DM regressions are fixed. (#14634, #14664, #14733)
+- **More Hetero Agents (OpenClaw / Hermes)** — Create heterogeneous agents and dispatch them to local or remote devices through the device gateway, with an execution-target switcher in the composer and persistent CLI sessions. (#15065, #15179, #15022)
+- **iMessage on Desktop** — New iMessage setup and bridge on desktop, plus bot attachments across every platform. (#15228, #15227, #15029)
+- **Skills in the Composer** — Drag skill chips into chat, trigger installed skills from the slash menu mid-line, and surface project-level skills in the homogeneous agent runtime. (#15095, #15061, #15110)
+- **New Models** — DeepSeek V4 Flash/Pro and Gemini 3.5 Flash across providers, with thinking params for structured output and chat cost estimates. (#15031, #15001, #15051, #14876)
+- **Agent Runtime Observability** — OpenTelemetry GenAI semantic conventions plus per-call generation tracing. (#15123, #15124)
 
 ---
 
-## 🏗️ Core Agent & Signal Pipeline
+## 🤖 Agents & Heterogeneous Runtime
 
-### Self-iteration & Agent Signal
-
-- Self-iteration graduates out of Lab, with service, tool, name, and concept structure unified across `agent-signal`, `prompts`, `database`, and `builtin-tool-self-iteration`. (#14699, #14769)
-- Self-review now proposes actions to briefs and auto-executes the approved set, with eval-verified prompt hardening. (#14583, #14657, #14647)
-- Self-iteration built-in tool aligns with the shared runtime + inspector patterns. (#14827)
-- Agent Signal prompts adapt their response language and avoid blocking agent execution. (#14890, #14775, #14882)
-- Receipt descriptions now carry an Agent Signal marker, and self-review hinted skill documents route correctly. (#14764, #14895)
-
-### Heterogeneous agent runtime
-
-- Subagent threads render read-only with a breadcrumb header and thread switcher; SUBAGENT badge dropped, indentation tightened. (#14658, #14845, #14783)
-- Multi-replica safety: ingest refresh restores tools/model from DB to fix parent_id breaks; new-step assistants sync across replicas; subagent-tagged events no longer leak into the main gateway handler. (#14897, #14631, #14838)
-- Fetch-triggering events are deferred to keep parallel tool counts from rolling back. (#14806)
-- AskUserQuestion is wired for Claude Code, with auto-decline disabled and a freeform note input on the cloud side; `waitingForHuman` is a first-class topic status. (#14639, #14629, #14870)
-- AssistantGroup gains Monitor-style signal callbacks; project skills surface in the working sidebar and markdown preview. (#14859, #14896)
-- Cloud Claude Code V3 — repo picker, GitHub token, sandbox context; credentials alert and disabled input when not configured. (#14568, #14822)
-- Cloud sandbox completion now triggers the task lifecycle end-to-end. (#14681)
-
-### Agent runtime & context engine
-
-- Built-in tool runtime gets `onBeforeCall` / `onAfterCall` lifecycle hooks. (#14719)
-- `CompletionLifecycle`, `HumanInterventionHandler`, and `stepPresentation` are extracted from the runtime monolith. (#14441)
-- Per-tool timeout is honored end-to-end for client tool dispatch. (#14817)
-- Compression budget accounts for `tool_calls`, reasoning content, and tool defs; `call_llm` forwards tools into the budget. (#14813, #14837)
-- Pre-flight context check now fails fast for OpenAI-compatible providers. (#14824)
-- Malformed `tool_call` names are recovered instead of finishing the step silently. (#14577)
-- Sub-agent dispatch moves from `lobe-gtd` to `lobe-agent`. (#14715)
-- Hidden built-in tools now appear in the system prompt @-mention list. (#14823)
-
-### Agent tracing & operations
-
-- New `agent_operations` table and runtime persistence for every hetero-agent operation. (#14416, #14736)
-- `signOperationJwt` issues 4-hour signed operation tokens. (#14586)
-- S3 trace snapshots are zstd-compressed; DB `trace_s3_key` aligns with the `.json.zst` suffix; legacy `.json` fallback preserved on fetch. (#14807, #14860, #14826)
+- **Platform agent creation** — OpenClaw/Hermes creation UI, device guard, and remote dispatch backend. (#15065)
+- **Execution-target switcher** — Pick local vs remote execution directly in the composer; device-selection UX with actionable guidance. (#15179, #15111)
+- **CLI hetero dispatch** — OpenClaw/Hermes dispatch with persistent sessions and a notify protocol. (#15022)
+- **Gateway snapshot as source of truth** — Consume the gateway `uiMessages` snapshot at step boundaries to keep chat state consistent. (#15153, #15152)
+- **Client sub-agent as a normal tool call** — Simplifies the sub-agent execution path. (#15281)
+- **Hermes agent chain** — Implements the Hermes agent chain logic. (#15189)
+- **Device registry** — TRPC endpoints to register, list, update, and remove devices. (#15299)
+- **Desktop device routing** — Route gateway agent runs through `lh hetero exec`; restore `userId` in gateway dispatch and gate local-system by execution target. (#15132, #15232)
+- **Agent signals** — Anchor agent-signal receipts to messages and isolate memory-agent messages into a child thread. (#14969, #14921)
 
 ---
 
-## 📱 Platform & Integrations
+## 🚀 Onboarding
 
-### Bot / Channels
-
-- Device tools are gated by sender identity. (#14634)
-- Activator bypass closed and device-access checks converged. (#14664)
-- Slack mpim supported; Discord DM regression fixed; Slack connect + slash commands repaired. (#14733, #14591)
-- Bot channels, bot watch, bot callback service, and system bot reliability fixes. (#14847, #14796, #14570, #14784, #14649)
-- Online Messager scaffolding. (#14755)
-
-### Onboarding
-
-- Home daily brief with linkable welcome and paired input hint. (#14589)
-- Recommendations module sourced from the hetero agent action library. (#14645)
-- Chat onboarding passes request triggers via metadata and preserves the resume request. (#14770, #14798)
-- Discovery turn progress gated by phase, with a reminder on stalled discovery. (#14842, #14833)
-- FullNameStep back button rejoins the shared prefix; ModeSwitch hidden in production. (#14898, #14760)
-- Agent marketplace folds into the web onboarding tool. (#14578, #14672)
-- Onboarding interests stored as keys instead of free text; early-exit skips marketplace and drops CJK prompts. (#14624, #14598)
-
-### Model providers
-
-- Gemini 3.1 Flash-Lite cards; Gemini schema sanitizer drops non-compliant `enum` / `required`; zero `cachedContentTokenCount` handled in usage conversion. (#14604, #14740, #14567)
-- DeepSeek-V4 model cards and pricing restored to official rates. (#14110, #14911)
-- ernie-5.1 and spark-x2-flash support; Grok 4.3 `reasoning_effort` support. (#14643, #14731, #14642)
-- SiliconCloud catalog synced with API; duplicates removed; reasoning params adjusted. (#14464)
-- Minimax derives `max_tokens` from context window to avoid `ExceededContextWindow`. (#14814)
-- aihubmix uses the full models endpoint for a complete list; stale empty-apiKey test dropped. (#14511, #14669)
-- Stream parse errors are enriched with provider + model context. (#14636)
-- Visual content parts are consumed in the server runtime; video image references move to a JSON object. (#14637, #14900)
-- Google function call magic `thoughtSignature` now attaches to every part, not just the last turn. (#14904)
-- Service model assignments settings added; model extend-param options removed. (#14712, #14607)
-
-### Built-in tools & knowledge base
-
-- `lobe-task` exposes `setTaskSchedule`; task scheduler hardened (maxExecutions cap, sub-10min heartbeat blocked, SchedulerForm race fix, rapid automation-mode toggle stabilized). (#14713, #14865, #14853, #14801)
-- KnowledgeBaseSearchService shares RAG runtime across client and server. (#14673)
-- KB files preserved on `NoSuchKey` and orphan documents/tasks cleaned. (#14501)
-- Document tree gets optimistic create/delete + inline rename. (#14714)
-- agent-documents index hides web crawls and switches to a table layout. (#14292)
-- `lobe-clarify` and SKILL.md frontmatter parsing/edit validation are unified. (#14566)
-- AnalyzeVisualMedia inspector + Portal HTML preview refactor; HTML preview restored for AssistantGroup messages. (#14777, #14811)
-- Branded inspector shared between CC MCP and built-in Linear skill. (#14884, #14864)
+- **Simplified first screen** — Defer topic creation to first send. (#15090)
+- **Market Agent Picker** — Added as a classic onboarding step, with template prefetch. (#14980, #15041)
+- **Welcome guidance** — Show agent welcome guidance on first run. (#15098)
+- **Mobile** — Adapt agent onboarding UI and restore Classic-step padding on mobile. (#15019, #15032)
+- **Discovery** — Streamline discovery to a single profession question. (#14987)
+- **Analytics** — Track onboarding step events and create-agent modal source. (#15133, #15028)
 
 ---
 
-## 🖥️ CLI & User Experience
+## 📄 Documents, Pages & Knowledge
 
-### Chat & Conversation
-
-- Chat mode toggle and redesigned chat input action bar. (#14774)
-- Action tag chips switch to icon + colored label; ActionDropdown closes on sibling-open and focus-out; submenu uses native header/footer slots. (#14903, #14802, #14901)
-- Action bar padding equalized around the send button; skeleton shows in action bar while config loads. (#14846, #14656)
-- `useCmdEnterToSend` is respected in thread & task inputs; send button enables after pasting into thread/comment input. (#14850, #14816)
-- TopicChatDrawer state preserved during close animation. (#14803)
-- Only the last assistant block animates during markdown streaming. (#14906)
-- Right working panel no longer auto-collapses on chat mount; home agent config fetched so knowledge toggles reflect in UI. (#14883, #14834)
-
-### Tasks
-
-- Task scheduler, hotkey, comment, and TodoList polish. (#14707)
-- Add Subtask button & card baseline aligned; activity card stop run; task agent manager polish. (#14848, #14559, #14569)
-- Task template skeleton CLS reduced; task page placeholder copy refreshed. (#14788, #14704)
-- Task agent model snapshotted into `task.config` at create time. (#14670)
-- User-feedback card, task card polish, and Run-now context menu in markdown. (#14727)
-- Inline skill auth in recommended task templates. (#14676)
-
-### Navigation & Layout
-
-- Tab bar gains a Chrome-style divider between inactive tabs. (#14892)
-- SideBarDrawer & header layout polish; nav ActionIcon sizing unified; TodoList encapsulation improved. (#14762, #14692)
-- Desktop header icons, sidebar density, and task menus polished. (#14724)
-- Standardized header action icon sizes. (#14717)
-- Chat topic title length increased; copy session ID added to topic dropdown menu. (#14659, #14595)
-- Heterogeneous agent topic rows regain indentation. (#14783)
-
-### Other polish
-
-- Usage token details shortened; tool execution time formatted as `Xmin Ys`. (#14849, #14641)
-- Tool arguments display gets word-wrap toggle; long tool-call params wrap instead of truncate. (#14706, #14640)
-- Editor stops showing per-line placeholder once content is present. (#14852)
-- Visible divider between queued messages; intervention confirmation bar polished. (#14593, #14587)
-- Credit top-up copy refreshed; auth captcha retry copy refreshed; brief recommendations layout polished. (#14821, #14561, #14871)
+- **Thread chat in preview** — Embed thread chat in the document preview portal. (#15216)
+- **Non-markdown rendering** — Render non-markdown docs as a read-only highlight. (#15272)
+- **Multi-select** — Multi-select delete in the document tree. (#15125)
+- **Page-agent streaming** — Preview `initPage` streaming arguments. (#15039)
+- **Per-agent topics** — Per-agent topic management page. (#15207)
+- **Server-side category** — Derive document category server-side and drop frontend predicates. (#15076)
 
 ---
 
-## 🔧 Tooling & Developer Experience
+## 🧩 Skills & Tools
 
-- Dev-only feature flag override panel. (#14565)
-- `__DEV__` define replaces `process.env.NODE_ENV` in the SPA. (#14696)
-- Agent-settings drops Meta/Documents tabs and restores `inputTemplate`. (#14874)
-- `local-system` forwards all `grepContent` params and moves the executor to `/client`. (#14888)
-- `lobe-task` and `setTaskSchedule` exposed. (#14713)
-- Memory user-memory benchmark agent config and source-id extraction schemas. (#14779, #14778)
-- CLI man page drops stale cron entry; `clearMessages` hotkey removed. (#14709, #14906)
-- Skill docs simplified; cloud heteroContext gains sandbox TTL + public-repo fork push guide. (#14785, #14761)
+- **Drag skill chips** — Drag skills into chat input and register agent-document skills. (#15095)
+- **Slash menu** — Installed skills appear in the slash menu with a mid-line trigger. (#15061)
+- **Project skills** — Recognize project-level skills in the homogeneous agent runtime and surface them regardless of active device. (#15110, #15177)
+- **VFS archiving** — Archive oversized tool results to VFS instead of truncating. (#15074)
+- **@localFile mentions** — Drag folders into chat input as `@localFile` mentions on desktop. (#15071)
+
+---
+
+## 🧠 Model Runtime & Providers
+
+- **Error spec registry** — Unify error codes into a spec + pattern registry, split `ProviderBizError` into finer codes, classify Cloud-only codes via a tier digit, and add `DatabasePersistError`. (#15262, #15286, #15278, #15279)
+- **New models** — DeepSeek V4 Flash/Pro (opencode-go) and Gemini 3.5 Flash; DeepSeek V4 Pro on SiliconCloud. (#15031, #15001, #15017, #15267)
+- **Structured output** — Thinking params for structured output, Bedrock structured generation, and DeepSeek `generateObject` tool choice. (#15051, #15174, #15054)
+- **Cost** — Chat cost estimate support; preserve usage cost in custom streams. (#14876, #15218)
+
+---
+
+## 💬 Chat & User Experience
+
+- **Follow-up chips** — Extend follow-up chip suggestions to general chat with scene-specific model config. (#15101, #14797)
+- **Input drafts** — Persist unsent input drafts across tab switches and prevent repeated draft restore. (#14992, #15024)
+- **Command menu** — Order topic/message search by recency and promote inline type filters. (#15094, #14986)
+- **Zoom HUD** — Show a zoom-level HUD on Cmd +/− and Cmd 0. (#15294)
+- **Copy** — Unescape markdown escapes when copying user messages. (#15253)
+
+---
+
+## 🖥️ Desktop
+
+- **App Nap fix** — Prevent App Nap from dropping the gateway WebSocket during display sleep. (#14994)
+- **File preview** — Preview `.cjs`/`.mjs`/no-extension files instead of binary fallback and expand `~` when opening local files. (#15168, #15284)
+- **Cross-platform settings** — Open settings via main-window navigation on Windows/Linux and restore the route after an update restart. (#15036, #14922)
+- **Token refresh** — Prevent frequent logout from token-refresh retries. (#14928)
+
+---
+
+## 📊 Observability
+
+- **OTel GenAI** — Instrument Agent Runtime with OpenTelemetry GenAI semantic conventions. (#15123)
+- **Generation tracing** — Per-call `llm_generation_tracing` with a pre-allocated tracingId and recordFeedback router. (#15124, #15146)
+- **Error classification** — Persist `ERROR_CODE_SPECS` classification on operation errors. (#15273)
+
+---
+
+## 🗃️ Database Migrations
+
+- **Batch migrations** — Topic usage stats, push tokens, `tasks.editor_data`, and document shares. (#15280)
+- **Tracing & eval tables** — Add `llm_generation_tracing` and agent eval experiment tables. (#15126)
+
+> Self-hosted operators should run the database migration (`pnpm db:migrate`, or restart with auto-migrate enabled) after upgrading. The changes are additive and backwards-compatible.
 
 ---
 
 ## 🔒 Security & Reliability
 
-- **Security:** Sensitive comments and examples sanitized from the production JS bundle. (#14557)
-- **Security:** Inactive OIDC access rejected. (#14674)
-- **Security:** CASC `new Function()` template replaced with safe string builders. (#14751)
-- **Security:** Sign-in captcha flow removed in favor of safer flow. (#14573)
-- **Security:** Desktop local file previews restricted to safe roots. (#14789)
-- **Security:** Image binary capped at 3.75 MB so base64 payload stays under the Anthropic 5 MB limit. (#14711)
-- **Reliability:** Neon/Node pools get error listeners to prevent Lambda crashes. (#14606)
-- **Reliability:** `paradedb.match(...)` replaces hardcoded normalizer in memory search. (#14590)
-- **Reliability:** `PlaceholderVariablesProcessor` errors carry diagnostic context. (#14741)
-- **Reliability:** File storage upload checks are serialized; multiple account link bug fixed. (#14829, #14562)
-- **Reliability:** `ScrollShadow` replaced with `ScrollArea` to fix a React infinite render loop (error code 185). (#14689)
-- **Reliability:** Embedding token cap enforced — long memory queries are limited and truncated before search. (#14757)
-- **Reliability:** Embed binary blob guard + oversized output cap in `local-system.readFile`. (#14602)
-- **Reliability:** Windows npm CLI shims resolved before spawning agents. (#14772, #14720)
-- **Reliability:** Vite pinned to 8.0.12 to avoid the rolldown 1.0.1 preload regression; desktop runtime externals split from native deps. (#14804, #14776)
-- **Reliability:** Old lobehub cron job removed; WeChat URL rules dropped from web crawler. (#14630, #14633)
+- **Security:** Remove the `getPlaintextCred` tool to prevent plaintext credential exposure. (#14998)
+- **Security:** Prompt account selection for Google OAuth and add `prompt=consent` to the OIDC authorization URL to fix missing refresh tokens. (#15234, #15010)
+- **Reliability:** Preserve streamed content across a mid-stream cancel. (#15173)
+- **Reliability:** Bound the Redis command timeout and configure the Anthropic client timeout. (#15091, #15042)
+- **Reliability:** Prevent infinite recursion in the assistant chain. (#15288)
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to **16 contributors** who shipped **208 merged PRs** this cycle.
+Huge thanks to **15 contributors** who shipped **220 merged PRs** this cycle.
 
-@hezhijie0327 · @sxjeru · @hardy-one · @Bianzinan · @brone1323 · @YuSaZh · @Wxh16144 · @arvinxx · @Innei · @tjx666 · @Neko · @LiJian · @Rdmclin2 · @sudongyuer · @AmAzing129 · @rivertwilight
+@AnotiaWang · @sxjeru · @algojogacor · @hardy-one · @arvinxx · @Innei · @tjx666 · @LiJian · @AmAzing129 · @Rdmclin2 · @Neko · @cy948 · @CanisMinor · @sudongyuer · @rivertwilight
 
-Plus @lobehubbot for maintenance translations.
+Plus @lobehubbot and renovate[bot] for maintenance.
 
 ---
 
-**Full Changelog**: https://github.com/lobehub/lobe-chat/compare/v2.1.58...v2.2.0
+**Full Changelog**: v2.2.0...release/weekly-20260528
