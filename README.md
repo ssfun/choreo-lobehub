@@ -2,146 +2,132 @@
 
 # Version
 
-v2.2.1
+v2.2.2
 
 # Releases
 
-## 📦 Release v2.2.1
+## 📦 Release v2.2.2
 
-This release was automatically published from PR #15302.
+This release was automatically published from PR #15447.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/15302
+See PR description: https://github.com/lobehub/lobehub/pull/15447
 
 ### Commit Message
-# 🚀 LobeHub Release (20260528)
+# 🚀 LobeHub Release (20260604)
 
-**Release Date:** May 28, 2026  
-**Since v2.2.0:** 220 merged PRs · 15 contributors
+**Release Date:** June 4, 2026  
+**Since v2.2.1:** 88 merged PRs · 11 contributors
 
-> This cycle brings heterogeneous "platform agents" you can dispatch to local or remote devices, a rebuilt onboarding flow, document-centric chat, and a unified model-runtime error model — with new DeepSeek V4 and Gemini 3.5 Flash support along the way.
+> This week brings Execution Devices out of the lab — run agents and Claude Code on any configured local or remote machine — alongside Claude Opus 4.8, token-usage analytics, and Page sharing.
 
 ---
 
 ## ✨ Highlights
 
-- **More Hetero Agents (OpenClaw / Hermes)** — Create heterogeneous agents and dispatch them to local or remote devices through the device gateway, with an execution-target switcher in the composer and persistent CLI sessions. (#15065, #15179, #15022)
-- **iMessage on Desktop** — New iMessage setup and bridge on desktop, plus bot attachments across every platform. (#15228, #15227, #15029)
-- **Skills in the Composer** — Drag skill chips into chat, trigger installed skills from the slash menu mid-line, and surface project-level skills in the homogeneous agent runtime. (#15095, #15061, #15110)
-- **New Models** — DeepSeek V4 Flash/Pro and Gemini 3.5 Flash across providers, with thinking params for structured output and chat cost estimates. (#15031, #15001, #15051, #14876)
-- **Agent Runtime Observability** — OpenTelemetry GenAI semantic conventions plus per-call generation tracing. (#15123, #15124)
+- **Execution Devices** — Pick where an agent runs. Desktop and CLI devices auto-register with a stable machine ID, route through the gateway by channel, and surface a device switcher in the chat input. Run remote Claude Code on a configured device, with a recent-directory picker you can drag to reorder. (#15300, #15315, #15322, #15343, #15351, #15371)
+- **Claude Opus 4.8** — Day-one support for Anthropic's latest model. (#15314)
+- **Token-usage analytics** — A new token-usage mode on the activity heatmap, backed by a denormalized topic usage/cost rollup so totals stay accurate without recomputing from messages. (#15365, #15417, #15425)
+- **Page sharing** — Share a Page through a dedicated document share flow, plus new Workspace and Agent share tables. (#15309, #15439)
+- **Self-iteration agents** — Agent Signal's execAgent migration lands a server-runtime bridge, async memory writer, and a registered self-iteration tool package, with a CLI trigger command for testing. (#15360, #15364, #15392)
+- **Knowledge search** — BM25 search now extends to file-backed documents, and the portal ships an editable CodeMirror viewer for local files with document highlighting. (#15247, #15298)
 
 ---
 
-## 🤖 Agents & Heterogeneous Runtime
+## 🏗️ Core Agent & Architecture
 
-- **Platform agent creation** — OpenClaw/Hermes creation UI, device guard, and remote dispatch backend. (#15065)
-- **Execution-target switcher** — Pick local vs remote execution directly in the composer; device-selection UX with actionable guidance. (#15179, #15111)
-- **CLI hetero dispatch** — OpenClaw/Hermes dispatch with persistent sessions and a notify protocol. (#15022)
-- **Gateway snapshot as source of truth** — Consume the gateway `uiMessages` snapshot at step boundaries to keep chat state consistent. (#15153, #15152)
-- **Client sub-agent as a normal tool call** — Simplifies the sub-agent execution path. (#15281)
-- **Hermes agent chain** — Implements the Hermes agent chain logic. (#15189)
-- **Device registry** — TRPC endpoints to register, list, update, and remove devices. (#15299)
-- **Desktop device routing** — Route gateway agent runs through `lh hetero exec`; restore `userId` in gateway dispatch and gate local-system by execution target. (#15132, #15232)
-- **Agent signals** — Anchor agent-signal receipts to messages and isolate memory-agent messages into a child thread. (#14969, #14921)
+### Agent Signal & Runtime
 
----
-
-## 🚀 Onboarding
-
-- **Simplified first screen** — Defer topic creation to first send. (#15090)
-- **Market Agent Picker** — Added as a classic onboarding step, with template prefetch. (#14980, #15041)
-- **Welcome guidance** — Show agent welcome guidance on first run. (#15098)
-- **Mobile** — Adapt agent onboarding UI and restore Classic-step padding on mobile. (#15019, #15032)
-- **Discovery** — Streamline discovery to a single profession question. (#14987)
-- **Analytics** — Track onboarding step events and create-agent modal source. (#15133, #15028)
+- **execAgent migration** — Server-runtime bridge, completion projection, async memory writer, and removal of the legacy `executeSelfIteration` path. (#15392)
+- Registered the self-iteration builtin tool package and restored the three mode-specific self-iteration agent slugs. (#15202, #15364)
+- Added a CLI trigger command with a golden-snapshot fixture for Agent Signal. (#15360)
+- **Skill priority** — Agent Builder now emits a skill-priority instruction with matching server runtime. (#15409)
+- Retry empty LLM completions instead of silently finishing the turn. (#15355)
+- Classify topic/agent/session foreign-key violations as `ConversationParentMissing` for clearer recovery. (#15408)
+- Persist canonical nested usage/performance on assistant messages, and re-link orphan tool messages at the raw bucket write boundary. (#15359, #15438)
+- Guard `createAgent` against LLM double-encoded array fields. (#15381)
 
 ---
 
-## 📄 Documents, Pages & Knowledge
+## 🖥️ Execution Devices & Gateway
 
-- **Thread chat in preview** — Embed thread chat in the document preview portal. (#15216)
-- **Non-markdown rendering** — Render non-markdown docs as a read-only highlight. (#15272)
-- **Multi-select** — Multi-select delete in the document tree. (#15125)
-- **Page-agent streaming** — Preview `initPage` streaming arguments. (#15039)
-- **Per-agent topics** — Per-agent topic management page. (#15207)
-- **Server-side category** — Derive document category server-side and drop frontend predicates. (#15076)
-
----
-
-## 🧩 Skills & Tools
-
-- **Drag skill chips** — Drag skills into chat input and register agent-document skills. (#15095)
-- **Slash menu** — Installed skills appear in the slash menu with a mid-line trigger. (#15061)
-- **Project skills** — Recognize project-level skills in the homogeneous agent runtime and surface them regardless of active device. (#15110, #15177)
-- **VFS archiving** — Archive oversized tool results to VFS instead of truncating. (#15074)
-- **@localFile mentions** — Drag folders into chat input as `@localFile` mentions on desktop. (#15071)
+- Auto-register desktop and CLI devices with a stable machine ID, and add the `@lobechat/device-identity` package. (#15300, #15321)
+- New Devices settings page behind the Execution Device Switcher lab, with a device switcher shown for all agents in the chat input. (#15315, #15371)
+- `connectionId` + channel routing across the gateway client and device list; preset the local device on the first LLM request for the 本机 target. (#15322, #15435)
+- Run remote Claude Code on a configured device, with drag-to-reorder recent-directory management and client renders for device tool results. (#15343, #15351, #15437)
+- Preserve content and state across gateway tool calls, and prevent duplicate streaming from stale reconnects. (#15114, #15354)
 
 ---
 
-## 🧠 Model Runtime & Providers
+## 🖥️ CLI & Desktop
 
-- **Error spec registry** — Unify error codes into a spec + pattern registry, split `ProviderBizError` into finer codes, classify Cloud-only codes via a tier digit, and add `DatabasePersistError`. (#15262, #15286, #15278, #15279)
-- **New models** — DeepSeek V4 Flash/Pro (opencode-go) and Gemini 3.5 Flash; DeepSeek V4 Pro on SiliconCloud. (#15031, #15001, #15017, #15267)
-- **Structured output** — Thinking params for structured output, Bedrock structured generation, and DeepSeek `generateObject` tool choice. (#15051, #15174, #15054)
-- **Cost** — Chat cost estimate support; preserve usage cost in custom streams. (#14876, #15218)
+- Preserve content/state for connect local file and shell tools; render the `runCommand` tool result card. (#15441, #15442)
+- New `lh topic view` command; CLI now auto-registers its device on login, matching desktop. (#15340, #15377)
+- Resolve CLI tools from the shell `PATH`, and clarify local command session handling. (#15368, #15389)
+- Relocate visual-ref helpers to `@lobechat/const` to fix a renderer crash; upload `.blockmap` files to S3 for differential updates. (#15326, #15369)
+- Fix a market OAuth expiry that triggered the wrong re-login modal, and kill dev child processes on parent shutdown. (#15246, #15290)
+
+---
+
+## 🗂️ Pages, Library & Knowledge
+
+- Document share flow with business slot stubs, plus Workspace and Agent share tables. (#15309, #15439)
+- Export Agent profiles as Markdown, preserving an empty agent prompt on export. (#15312, #15316)
+- Editable CodeMirror viewer for local files with document highlighting; BM25 search extended to file-backed documents. (#15247, #15298)
+- Default new Agent-doc files to `.md` and preserve IME composition; refresh folder data on slug switch and dedupe breadcrumb fetches. (#15335, #15427)
 
 ---
 
 ## 💬 Chat & User Experience
 
-- **Follow-up chips** — Extend follow-up chip suggestions to general chat with scene-specific model config. (#15101, #14797)
-- **Input drafts** — Persist unsent input drafts across tab switches and prevent repeated draft restore. (#14992, #15024)
-- **Command menu** — Order topic/message search by recency and promote inline type filters. (#15094, #14986)
-- **Zoom HUD** — Show a zoom-level HUD on Cmd +/− and Cmd 0. (#15294)
-- **Copy** — Unescape markdown escapes when copying user messages. (#15253)
+- Group-by-status mode for the Topic sidebar; dropped the legacy session→agentId compatibility path from Topic queries. (#15366, #15378)
+- Restore editor focus after the file picker closes, and close the skill dropdown before navigating to settings. (#15391, #15394)
+- Strip markdown tokens from fallback Topic titles; keep an open ActionBar popup when hovering another message. (#15303, #15372)
+- Stabilize home starter loading and stop transliterating model names in the home starter; show artifact source while streaming. (#15310, #15324, #15386)
+- Group the sidebar spacer with recents and agents. (#15373)
 
 ---
 
-## 🖥️ Desktop
+## 📊 Analytics, Tasks & Notifications
 
-- **App Nap fix** — Prevent App Nap from dropping the gateway WebSocket during display sleep. (#14994)
-- **File preview** — Preview `.cjs`/`.mjs`/no-extension files instead of binary fallback and expand `~` when opening local files. (#15168, #15284)
-- **Cross-platform settings** — Open settings via main-window navigation on Windows/Linux and restore the route after an update restart. (#15036, #14922)
-- **Token refresh** — Prevent frequent logout from token-refresh retries. (#14928)
-
----
-
-## 📊 Observability
-
-- **OTel GenAI** — Instrument Agent Runtime with OpenTelemetry GenAI semantic conventions. (#15123)
-- **Generation tracing** — Per-call `llm_generation_tracing` with a pre-allocated tracingId and recordFeedback router. (#15124, #15146)
-- **Error classification** — Persist `ERROR_CODE_SPECS` classification on operation errors. (#15273)
+- Token-usage mode on the activity heatmap, backed by a denormalized topic usage/cost rollup. (#15365, #15417, #15425)
+- Push: new `PushChannel`, receipt cron, and `pushToken` tRPC API. (#15233)
+- Tasks now support file and image attachments. (#15141)
 
 ---
 
-## 🗃️ Database Migrations
+## 🧩 Models & Providers
 
-- **Batch migrations** — Topic usage stats, push tokens, `tasks.editor_data`, and document shares. (#15280)
-- **Tracing & eval tables** — Add `llm_generation_tracing` and agent eval experiment tables. (#15126)
-
-> Self-hosted operators should run the database migration (`pnpm db:migrate`, or restart with auto-migrate enabled) after upgrading. The changes are additive and backwards-compatible.
+- Support Claude Opus 4.8 and configurable model routing with starters. (#15314, #15384)
+- MiniMax M3: new model entry and an Anthropic video runtime. (#15380, #15403)
+- Add `intern-s2-preview` with `thinking_mode`, and `step-3.7-flash` support. (#15308, #15317)
+- Block disabling the official provider; fix default provider setup in business mode. (#15379, #15382)
 
 ---
 
-## 🔒 Security & Reliability
+## 🎨 UI & Modals
 
-- **Security:** Remove the `getPlaintextCred` tool to prevent plaintext credential exposure. (#14998)
-- **Security:** Prompt account selection for Google OAuth and add `prompt=consent` to the OIDC authorization URL to fix missing refresh tokens. (#15234, #15010)
-- **Reliability:** Preserve streamed content across a mid-stream cancel. (#15173)
-- **Reliability:** Bound the Redis command timeout and configure the Anthropic client timeout. (#15091, #15042)
-- **Reliability:** Prevent infinite recursion in the assistant chain. (#15288)
+- Migrate modals to `@lobehub/ui/base-ui` (LOBE-9711 + eval batch), including the create-custom-model and feedback/changelog modals. (#15401, #15416)
+- Restructure confirmModal title and content across deletion flows; polish the service-model form and migrate its Switch to base-ui. (#15426, #15440)
+- Wrap the BlueBubbles bridge config into a connection card; update `@lobehub/ui` to v5.15.5. (#15325, #15342)
+
+---
+
+## 🔒 Reliability
+
+- Replace hardcoded `session_context` values with template variables in credentials. (#15352)
+- Point `CHANGELOG_URL` to `/changelog`. (#15428)
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to **15 contributors** who shipped **220 merged PRs** this cycle.
+Huge thanks to **11 contributors** who shipped **88 merged PRs** this cycle.
 
-@AnotiaWang · @sxjeru · @algojogacor · @hardy-one · @arvinxx · @Innei · @tjx666 · @LiJian · @AmAzing129 · @Rdmclin2 · @Neko · @cy948 · @CanisMinor · @sudongyuer · @rivertwilight
+@hezhijie0327 · @qybaihe · @sxjeru · @arvinxx · @Innei · @tjx666 · @LiJian · @sudongyuer · @cy948 · @rivertwilight · @AmAzing129
 
 Plus @lobehubbot and renovate[bot] for maintenance.
 
 ---
 
-**Full Changelog**: v2.2.0...release/weekly-20260528
+**Full Changelog**: v2.2.1...release/weekly-20260604
