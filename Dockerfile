@@ -18,8 +18,11 @@ RUN VERSION=$(git describe --tags --always) && \
 FROM node:24-slim
 ENV DEBIAN_FRONTEND="noninteractive"
 
-# 1. 安装核心系统依赖
+# 1. 安装核心系统依赖，并对系统层做全量安全升级。
+#    这样 libgnutls30 等系统库每次重建都会自动吃到最新补丁，
+#    不必再为每个新报的 CVE 单独点名升级（配合定期重建效果最佳）。
 RUN apt-get update && \
+    apt-get -y upgrade && \
     apt-get install -y ca-certificates proxychains-ng && \
     rm -rf /var/lib/apt/lists/*
 
@@ -53,8 +56,6 @@ RUN mkdir -p /tmp/fix-deps && cd /tmp/fix-deps && \
     cp -r node_modules/* /app/node_modules/ && \
     # D. 删除不需要的 lock 文件，防止被扫描器静态分析
     rm -f /app/pnpm-lock.yaml /app/package-lock.json /app/yarn.lock && \
-    # E. 篡改 package.json 伪装成合法版本应付扫描
-    node -e "const fs=require('fs'); const p='/app/package.json'; if(fs.existsSync(p)){let d=JSON.parse(fs.readFileSync(p)); let m=false; ['dependencies','devDependencies'].forEach(k=>{if(d[k] && d[k]['fast-xml-parser']){d[k]['fast-xml-parser']='5.3.5'; m=true;}}); if(m) fs.writeFileSync(p, JSON.stringify(d,null,2));}" && \
     cd / && rm -rf /tmp/fix-deps
 
 # 5. 应对只读文件系统的缓存重定向
