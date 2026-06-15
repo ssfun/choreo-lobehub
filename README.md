@@ -2,76 +2,92 @@
 
 # Version
 
-v2.2.3
+v2.2.4
 
 # Releases
 
-## 📦 Release v2.2.3
+## 📦 Release v2.2.4
 
-This release was automatically published from PR #15647.
+This release was automatically published from PR #15806.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/15647
+See PR description: https://github.com/lobehub/lobehub/pull/15806
 
 ### Commit Message
-# 🚀 LobeHub Release (20260610)
+# 🚀 LobeHub Release (20260614)
 
-**Release Date:** June 10, 2026  
-**Since v2.2.2:** 131 merged PRs · 13 contributors
+**Release Date:** June 14, 2026\
+**Since v2.2.3:** 99 commits · 99 merged PRs · 11 contributors
 
-> This weekly release strengthens agent collaboration across cloud, desktop, CLI, and workspace flows, with steadier runtime behavior and a broader foundation for workspace-scoped data.
+> This cycle deepens cross-device collaboration — browser pairing, a shared desktop/CLI device gateway, and edit locks that keep multiple agents and people aligned on the same Context.
 
 ---
 
 ## ✨ Highlights
 
-- **Agent execution across devices** — Unifies per-device working directories, project skill discovery, and sub-agent suspend/resume behavior across server, QStash, and device RPC flows. (#15543, #15566, #15481, #15620, #15591)
-- **Connector and sandbox platform** — Expands connector permissions, custom OAuth MCP connector onboarding, sandbox provider support, and user-uploaded file sync into cloud sandbox runs. (#15463, #15546, #15184, #15550)
-- **Desktop and CLI reliability** — Fixes desktop cold-start, auto-update, Windows build, CLI skill discovery, and `lh connect` agent dispatch paths. (#15547, #15525, #15527, #15562, #15632, #15634)
-- **Pages and sharing** — Refreshes topic sharing, improves Page Editor layout behavior, and routes Page Agent tool execution through the server-side editor path. (#15581, #15556, #15588, #15023, #15610)
-- **Model availability and provider updates** — Adds user-scoped LobeHub model availability, Claude Fable 5, Qwen thinking preservation, and MiniMax M3 updates. (#15590, #15639, #13494, #15376)
+- **Browser device pairing** — Pair a browser as a device and route agent tools to it, with rename/delete actions on the branch switcher. (#15678, #15774)
+- **Shared device gateway** — Desktop and CLI now share one remote-device gateway RPC, so device-bound runs behave the same everywhere. (#15780)
+- **Operation status tray** — A live op-status tray sits above the chat input, tracking operation usage and staying compact on narrow screens. (#14737, #15736, #15735)
+- **Inline file previews** — HTML files render inline and remote read-only local files preview directly in the portal. (#15671, #15673)
+- **New providers** — Added AntGroup (蚂蚁百灵), Longcat with live model-list fetch, and new SenseNova models. (#13713, #15134, #15306)
+- **Desktop tab management** — Drag-to-reorder desktop tabs, plus restored cloud desktop builds. (#15787, #15666)
 
 ---
 
-## 🏗️ Core Product & Architecture
+## 🏗️ Core Agent & Runtime
 
-### Agent Runtime & Heterogeneous Agents
-
-- Improves sub-agent lifecycle handling, including async suspend/resume, queue-mode QStash resume delivery, and blocking nested sub-agent calls. (#15481, #15620, #15575)
-- Stabilizes heterogeneous agent ingestion and streaming with raw stream dumps, per-turn usage, image forwarding on regenerate, and duplicate-text fixes. (#15602, #15577, #15592, #15585)
-- Adds execution-device and working-directory controls across device RPC, legacy defaults, and remote-spawned Claude Code sessions. (#15543, #15566, #15591, #15572)
-- Improves runtime diagnostics and compatibility, including Gemini multimodal output capture, abort stream semantics, and trace quality analysis. (#15535, #13677, #15508)
-
----
-
-## 📱 Platforms, Integrations & UX
-
-### Connectors, Sandbox & Tools
-
-- Ships API-level connector tool permissions, custom OAuth MCP connector onboarding, and connector-first runtime execution. (#15463, #15546)
-- Adds sandbox provider support, cloud sandbox file sync, and safer external URL file input handling with SSRF validation. (#15184, #15550, #12657)
-- Improves tool visibility and execution with pinned app-fixed tools, ANSI output rendering, gateway-tunneled MCP calls, and automatic headless tool runs. (#15509, #15516, #15469, #15492)
-
-### Desktop, CLI & Web UX
-
-- Restores desktop startup and reload behavior, preserves IPC error causes, and keeps the tab bar new-tab action visible across routes. (#15547, #15597, #15638)
-- Fixes desktop update and build stability for browser quit guards, macOS update signing, and Windows Visual Studio detection. (#15525, #15527, #15562)
-- Shows the plan-limit upgrade UI on desktop builds. (#15628)
-- Adds the Agent Run delivery checker and fixes CLI device dispatch plus skill list/search output. (#15489, #15634, #15632)
-- Refreshes onboarding, auth source preservation, topic UI states, referral/Fable campaign copy, and chat-input control bar behavior. (#15629, #15544, #15573, #15614, #15616, #15617, #15622, #15643)
+- **Heterogeneous chaining** — Stabilized main-message chaining and unified the client hetero executor on a shared `mainAgentReducer`. (#15783, #15762)
+- **Sub-agent resilience** — Block recursive server sub-agents, keep async sub-agent streams alive, and rehydrate sub-agent runs from DB on cold replicas. (#15731, #15646, #15788)
+- **Reasoning persistence** — Always persist assistant reasoning to the DB so it survives reloads. (#15687, #15690)
+- **Device routing** — Resolve device routing and device-tool injection through a single execution plan. (#15669, #15683)
+- **Image attachments** — Persist and deliver image attachments for device/sandbox hetero runs. (#15685)
+- **Virtual sub-agents** — Split the virtual sub-agent entry and clarified its naming. (#15733, #15737)
 
 ---
 
-## 🔒 Security, Reliability & Rollout Notes
+## 🖥️ Chat & User Experience
 
-- External URL file input now includes SSRF validation for safer Google file handling. (#12657)
-- Database workspace-scope migrations are part of this release; self-hosted operators should run the normal migration path before serving the updated app. (#15446, #15465, #15468, #15472)
-- The release branch was re-cut from `canary` and includes the latest `main` release-version commit so `v2.2.2` is the verified compare base.
+- **Topic management** — Topic sidebar status indicators, selector topic actions, and a `batchMoveTopics` mutation for bulk moves. (#15739, #15744, #15793)
+- **Local file portals** — Scope local file tabs by working directory and auto-close empty local previews. (#15732, #15760)
+- **Editing** — Coalesce document autosave history into 10-minute windows and fold connector OAuth into the custom MCP form. (#15716, #15661)
+- **Skills** — Delete/remove actions on settings skill items. (#15708)
+- **Polish** — Preserve message order after tool results and stop ContentLoading from leaking raw operation i18n keys. (#15657, #15752)
+
+---
+
+## 🤖 Models & Providers
+
+- **Model bank metadata** — `knowledgeCutoff` batch 2 with a metadata skill and an always-visible tab bar, plus backfilled family/generation data. (#15663, #15642, #15640)
+- **Provider quality** — Improved DeepSeek structured output, Kimi code thinking mode, and a model guard kept in provider grouping. (#15680, #15725, #15681)
+- **Discoverability** — Surface model-list fetch failures instead of failing silently. (#15753)
+
+---
+
+## 🔒 Reliability & Security
+
+- **Error classification** — Classify "Agent state not found" as `StateStoreReadError`, classify untyped `Error` throws via message patterns, and surface missing tool calls as errors. (#15778, #15767, #15691)
+- **Codex** — Parse retry time in the stated timezone and detect the bundled Codex CLI from Codex.app on macOS. (#15758, #15759)
+- **Mobile** — Stop the `pushToken.unregister` 401 storm while preserving authenticated legacy cleanup, and gate inbox unread count by login state. (#15719, #15723, #15724)
+- **Performance** — Derive topic activity from messages and drop sitemap generation to cut static export time. (#15726, #15702)
+- **Security:** Bumped `@opentelemetry/auto-instrumentations-node`, `@opentelemetry/sdk-node`, and `vitest`. (#14686, #14687, #15698)
+
+---
+
+## 🔧 Tooling & Docs
+
+- **Agent testing** — Merged local-testing and cli-backend-testing into a single `agent-testing` skill, with local dev env bootstrap and post-run iteration. (#15699, #15757, #15700, #15750)
+- **Docs** — Replaced Claude-specific references with generic agent wording across skills. (#15785)
 
 ---
 
 ## 👥 Contributors
 
-@ONLY-yours, @sxjeru, @hardy-one, @xujingli, @hezhijie0327, @Coooolfan, @arvinxx, @tjx666, @Innei, @rivertwilight, @rdmclin2, @cy948, @AmAzing129
+Huge thanks to **11 contributors** who shipped **99 merged PRs** this cycle.
 
-**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.2...release/weekly-20260610-recut-3
+@hezhijie0327 · @cokeSEE1 · @R3pl4c3r · @arvinxx · @tjx666 · @Innei · @Rdmclin2 · @LiJian · @sudongyuer · @Neko · @cy948
+
+Plus @lobehubbot and renovate[bot] for maintenance.
+
+---
+
+**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.3...release/weekly-20260614
