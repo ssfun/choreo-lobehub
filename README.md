@@ -2,92 +2,93 @@
 
 # Version
 
-v2.2.4
+v2.2.5
 
 # Releases
 
-## 📦 Release v2.2.4
+## 📦 Release v2.2.5
 
-This release was automatically published from PR #15806.
+This release was automatically published from PR #15877.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/15806
+See PR description: https://github.com/lobehub/lobehub/pull/15877
 
 ### Commit Message
-# 🚀 LobeHub Release (20260614)
+# 🚀 LobeHub Release (20260615)
 
-**Release Date:** June 14, 2026\
-**Since v2.2.3:** 99 commits · 99 merged PRs · 11 contributors
+**Release Date:** June 15, 2026
+**Since v2.2.4:** 48 merged PRs · 5 contributors
 
-> This cycle deepens cross-device collaboration — browser pairing, a shared desktop/CLI device gateway, and edit locks that keep multiple agents and people aligned on the same Context.
+> This cycle lands the Composio integration as the new connector backbone, a unified tiered client cache, and a deep round of agent-runtime reliability hardening for cold-replica and sub-agent flows.
 
 ---
 
 ## ✨ Highlights
 
-- **Browser device pairing** — Pair a browser as a device and route agent tools to it, with rename/delete actions on the branch switcher. (#15678, #15774)
-- **Shared device gateway** — Desktop and CLI now share one remote-device gateway RPC, so device-bound runs behave the same everywhere. (#15780)
-- **Operation status tray** — A live op-status tray sits above the chat input, tracking operation usage and staying compact on narrow screens. (#14737, #15736, #15735)
-- **Inline file previews** — HTML files render inline and remote read-only local files preview directly in the portal. (#15671, #15673)
-- **New providers** — Added AntGroup (蚂蚁百灵), Longcat with live model-list fetch, and new SenseNova models. (#13713, #15134, #15306)
-- **Desktop tab management** — Drag-to-reorder desktop tabs, plus restored cloud desktop builds. (#15787, #15666)
+- **Composio integration** — New Composio integration layer replaces Klavis as the connector backbone for third-party skills. (#15461)
+- **Tiered client cache** — Unified localStorage + IndexedDB cache provider with per-scope isolation, plus a registry-wide convergence of SWR keys for predictable invalidation. (#15844)
+- **Gateway mode in chat config** — Gateway mode now lives in chat config, making it per-conversation rather than a global toggle. (#15714)
+- **Bulk move topics** — Move multiple topics to another assistant in one action. (#15809)
+- **Skills row actions** — View / rename / delete row actions in the working sidebar, plus edit / uninstall for connectors in Skill detail. (#15864, #15829)
+- **Token usage cache rate** — Conversations now surface the prompt-cache hit rate alongside token usage. (#15812)
 
 ---
 
-## 🏗️ Core Agent & Runtime
+## 🏗️ Core Agent & Architecture
 
-- **Heterogeneous chaining** — Stabilized main-message chaining and unified the client hetero executor on a shared `mainAgentReducer`. (#15783, #15762)
-- **Sub-agent resilience** — Block recursive server sub-agents, keep async sub-agent streams alive, and rehydrate sub-agent runs from DB on cold replicas. (#15731, #15646, #15788)
-- **Reasoning persistence** — Always persist assistant reasoning to the DB so it survives reloads. (#15687, #15690)
-- **Device routing** — Resolve device routing and device-tool injection through a single execution plan. (#15669, #15683)
-- **Image attachments** — Persist and deliver image attachments for device/sandbox hetero runs. (#15685)
-- **Virtual sub-agents** — Split the virtual sub-agent entry and clarified its naming. (#15733, #15737)
+- **Run lifecycle** — Extracted client run-completion into a shared `buildRunLifecycle`, with a characterization net over agent-runtime run-lifecycle. (#15854, #15843)
+- **Sub-agent resilience** — Hardened async sub-agent suspend/resume against missed wakeups. (#15855)
+- **Cold-replica correctness** — Fixed main-turn idempotency and now mark topics failed on terminal errors; persist sub-agent turn id so cold replicas don't fragment a turn; dedupe sub-agent thread creation after finalize. (#15838, #15808, #15849)
+- **Stream routing** — Drop sub-agent-tagged events from the main gateway stream handler, and preserve `subAgentId` / `documentId` in the message bucket key context. (#15814, #15865)
+- **Heterogeneous agents** — Forward bot / IM image attachments to heterogeneous agents. (#15868)
+- **Agent state** — Stop background config fetch from hijacking the active agent, and warn when agent mode is on but the model lacks tool calling. (#15862, #15828)
+- **Tracing** — Enable S3 tracing by default in production. (#15841)
+
+---
+
+## 🔌 Integrations & Skills
+
+- **Skill panel** — Dedupe skill-panel rows and allow deleting pending integrations; stop connected integrations from duplicating in the chat-input skill panel. (#15872, #15869)
+- **Connectors** — Edit / uninstall buttons for connectors in Skill detail. (#15829)
 
 ---
 
 ## 🖥️ Chat & User Experience
 
-- **Topic management** — Topic sidebar status indicators, selector topic actions, and a `batchMoveTopics` mutation for bulk moves. (#15739, #15744, #15793)
-- **Local file portals** — Scope local file tabs by working directory and auto-close empty local previews. (#15732, #15760)
-- **Editing** — Coalesce document autosave history into 10-minute windows and fold connector OAuth into the custom MCP form. (#15716, #15661)
-- **Skills** — Delete/remove actions on settings skill items. (#15708)
-- **Polish** — Preserve message order after tool results and stop ContentLoading from leaking raw operation i18n keys. (#15657, #15752)
+- **Topics** — Server-side status filter via a new `queryTopics` query, and per-agent topic search scoped by `agentId`. (#15822, #15798)
+- **Message rendering** — Render mixed assistant blocks in natural order, fold short mixed tool blocks together, and render mention names from the serialized attribute instead of falling back to "unknown". (#15810, #15857, #15831)
+- **Tool workflow** — Tool-workflow collapse no longer shows "in progress" once content renders below it. (#15815)
+- **Token usage** — Derive operation token usage from messages rather than a parallel accumulation. (#15819)
+- **Reconnect** — Normalize reconnect `startTime` to epoch ms. (#15811)
+- **Home & editor** — Hide the agent-mode notice while config is loading, and isolate the page-editor copilot context from global agent/document state. (#15846, #15826)
+- **Polish** — base-ui modal fixes the provider delete-confirm z-index, the updater renders release notes as Markdown, revert-confirm and toast copy tightened. (#15845, #15867, #15813)
+- **Desktop** — Tray double-click opens the main window. (#15816)
 
 ---
 
-## 🤖 Models & Providers
+## 🔒 Reliability
 
-- **Model bank metadata** — `knowledgeCutoff` batch 2 with a metadata skill and an always-visible tab bar, plus backfilled family/generation data. (#15663, #15642, #15640)
-- **Provider quality** — Improved DeepSeek structured output, Kimi code thinking mode, and a model guard kept in provider grouping. (#15680, #15725, #15681)
-- **Discoverability** — Surface model-list fetch failures instead of failing silently. (#15753)
+- **Auth gating** — Gate the `listDevices` request behind login state so it no longer fires before authentication. (#15876)
 
 ---
 
-## 🔒 Reliability & Security
+## 🔧 Tooling & Internal
 
-- **Error classification** — Classify "Agent state not found" as `StateStoreReadError`, classify untyped `Error` throws via message patterns, and surface missing tool calls as errors. (#15778, #15767, #15691)
-- **Codex** — Parse retry time in the stated timezone and detect the bundled Codex CLI from Codex.app on macOS. (#15758, #15759)
-- **Mobile** — Stop the `pushToken.unregister` 401 storm while preserving authenticated legacy cleanup, and gate inbox unread count by login state. (#15719, #15723, #15724)
-- **Performance** — Derive topic activity from messages and drop sitemap generation to cut static export time. (#15726, #15702)
-- **Security:** Bumped `@opentelemetry/auto-instrumentations-node`, `@opentelemetry/sdk-node`, and `vitest`. (#14686, #14687, #15698)
-
----
-
-## 🔧 Tooling & Docs
-
-- **Agent testing** — Merged local-testing and cli-backend-testing into a single `agent-testing` skill, with local dev env bootstrap and post-run iteration. (#15699, #15757, #15700, #15750)
-- **Docs** — Replaced Claude-specific references with generic agent wording across skills. (#15785)
+- **SWR convergence** — Converged store-, UI-, and straggler SWR keys into the `swrKeys` registry, fixing a stale prefetch key along the way. (#15863, #15858, #15853, #15850, #15848)
+- **Tests** — Characterization coverage for parked states and post-persist title wiring; removed stale `LOBE-XXX` markers; updated testing skill rules. (#15847, #15852, #15807)
+- **Docs** — Added the ux design-values / execution-checklist skill and a capability-gated feature checklist. (#15823, #15832)
+- **Misc** — Fixed workspace prefix handling; bumped `@vitest/coverage-v8` to v3.2.6. (#15837, #15802)
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to **11 contributors** who shipped **99 merged PRs** this cycle.
+Huge thanks to **5 contributors** who shipped **48 merged PRs** this cycle.
 
-@hezhijie0327 · @cokeSEE1 · @R3pl4c3r · @arvinxx · @tjx666 · @Innei · @Rdmclin2 · @LiJian · @sudongyuer · @Neko · @cy948
+@arvinxx · @LiJian · @Innei · @tjx666 · @Rdmclin2
 
 Plus @lobehubbot and renovate[bot] for maintenance.
 
 ---
 
-**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.3...release/weekly-20260614
+**Full Changelog**: v2.2.4...release/weekly-20260615
