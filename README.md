@@ -2,93 +2,91 @@
 
 # Version
 
-v2.2.5
+v2.2.6
 
 # Releases
 
-## 📦 Release v2.2.5
+## 📦 Release v2.2.6
 
-This release was automatically published from PR #15877.
+This release was automatically published from PR #15947.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/15877
+See PR description: https://github.com/lobehub/lobehub/pull/15947
 
 ### Commit Message
-# 🚀 LobeHub Release (20260615)
+# 🚀 LobeHub Release (20260617)
 
-**Release Date:** June 15, 2026
-**Since v2.2.4:** 48 merged PRs · 5 contributors
+**Release Date:** June 17, 2026  
+**Since v2.2.5:** 42 commits · 42 merged PRs · 8 contributors
 
-> This cycle lands the Composio integration as the new connector backbone, a unified tiered client cache, and a deep round of agent-runtime reliability hardening for cold-replica and sub-agent flows.
+> This weekly release deepens server-side agent orchestration, brings desktop file and worktree capabilities to the web through device RPC, and smooths out the everyday rough edges — cold-start boot, connector credential safety, and chat refresh feedback.
 
 ---
 
 ## ✨ Highlights
 
-- **Composio integration** — New Composio integration layer replaces Klavis as the connector backbone for third-party skills. (#15461)
-- **Tiered client cache** — Unified localStorage + IndexedDB cache provider with per-scope isolation, plus a registry-wide convergence of SWR keys for predictable invalidation. (#15844)
-- **Gateway mode in chat config** — Gateway mode now lives in chat config, making it per-conversation rather than a global toggle. (#15714)
-- **Bulk move topics** — Move multiple topics to another assistant in one action. (#15809)
-- **Skills row actions** — View / rename / delete row actions in the working sidebar, plus edit / uninstall for connectors in Skill detail. (#15864, #15829)
-- **Token usage cache rate** — Conversations now surface the prompt-cache hit rate alongside token usage. (#15812)
+- **Server-side Group Orchestration** — Agents can now call other agent members server-side, enabling multi-agent collaboration without a desktop in the loop. (#15870)
+- **Desktop File Ops on the Web** — Project file operations and `git worktree` listing now replicate from desktop to web via device RPC, so cloud sessions can read and act on local working directories. (#15885, #15889)
+- **Fleet Running-Tasks Dashboard** — A lab-gated dashboard for in-flight Fleet tasks, with running topics re-synced each time the Observation tab opens. (#15817, #15922)
+- **callAgent as a Deferred Tool** — The agent loop now runs `callAgent` as a deferred tool, giving cleaner sub-agent invocation and tool-chain handling. (#15765)
+- **Connector Credential Safety** — Editing a connector no longer risks silently wiping saved credentials; they are restored in edit mode and preserved on save. (#15909)
+- **Smoother Cold Start** — Boot now shows one continuous loading screen instead of a brand-logo flash on cold start. (#15926)
 
 ---
 
 ## 🏗️ Core Agent & Architecture
 
-- **Run lifecycle** — Extracted client run-completion into a shared `buildRunLifecycle`, with a characterization net over agent-runtime run-lifecycle. (#15854, #15843)
-- **Sub-agent resilience** — Hardened async sub-agent suspend/resume against missed wakeups. (#15855)
-- **Cold-replica correctness** — Fixed main-turn idempotency and now mark topics failed on terminal errors; persist sub-agent turn id so cold replicas don't fragment a turn; dedupe sub-agent thread creation after finalize. (#15838, #15808, #15849)
-- **Stream routing** — Drop sub-agent-tagged events from the main gateway stream handler, and preserve `subAgentId` / `documentId` in the message bucket key context. (#15814, #15865)
-- **Heterogeneous agents** — Forward bot / IM image attachments to heterogeneous agents. (#15868)
-- **Agent state** — Stop background config fetch from hijacking the active agent, and warn when agent mode is on but the model lacks tool calling. (#15862, #15828)
-- **Tracing** — Enable S3 tracing by default in production. (#15841)
+- Improved connector, document, and Fleet agent workflows. (#15936)
+- Scoped the agent conversation subtree to an explicit `agentId` for clearer multi-agent boundaries. (#15866)
+- Added a role-aware dual-form message-chain reader to the conversation flow. (#15908)
+- Anchored the server-side main chain to a run's real last tool in heterogeneous agents. (#15883)
+- Drove resume completion off the authoritative Durable Object status in the gateway client. (#15919)
+- Corrected target `agentId` and refreshed the sidebar in gateway mode for the agent builder. (#15888)
+- Forwarded model extend params on the server-side agent runtime. (#15891)
+- Preserved preference-memory receipt routing in agent signals. (#15892)
+- Filtered the `.tool-results` archive out of document lists by default. (#15935)
+- Optimized the agent document list query. (#15904)
 
 ---
 
-## 🔌 Integrations & Skills
+## 📱 Devices & Platforms
 
-- **Skill panel** — Dedupe skill-panel rows and allow deleting pending integrations; stop connected integrations from duplicating in the chat-input skill panel. (#15872, #15869)
-- **Connectors** — Edit / uninstall buttons for connectors in Skill detail. (#15829)
+- Locked a run to the explicitly selected device, never offering device-switching mid-run. (#15914)
+- Exposed `deviceRouter` on the mobile router. (#15925)
+- Opened a new Home tab from the desktop tab bar "+" button. (#15825)
+- Added support for approved external local file previews on desktop. (#15895)
+- Removed web onboarding aliases from the desktop build. (#15902)
+- Consolidated auth SPA loading. (#15903)
 
 ---
 
-## 🖥️ Chat & User Experience
+## 🖥️ User Experience
 
-- **Topics** — Server-side status filter via a new `queryTopics` query, and per-agent topic search scoped by `agentId`. (#15822, #15798)
-- **Message rendering** — Render mixed assistant blocks in natural order, fold short mixed tool blocks together, and render mention names from the serialized attribute instead of falling back to "unknown". (#15810, #15857, #15831)
-- **Tool workflow** — Tool-workflow collapse no longer shows "in progress" once content renders below it. (#15815)
-- **Token usage** — Derive operation token usage from messages rather than a parallel accumulation. (#15819)
-- **Reconnect** — Normalize reconnect `startTime` to epoch ms. (#15811)
-- **Home & editor** — Hide the agent-mode notice while config is loading, and isolate the page-editor copilot context from global agent/document state. (#15846, #15826)
-- **Polish** — base-ui modal fixes the provider delete-confirm z-index, the updater renders release notes as Markdown, revert-confirm and toast copy tightened. (#15845, #15867, #15813)
-- **Desktop** — Tray double-click opens the main window. (#15816)
+- Fixed assorted workspace problems and clarified workspace copy/move actions. (#15928, #15897)
+- Showed a cached message-refresh hint with breathing room around it. (#15901, #15906)
+- Added an unread-reply indicator on collapsed project groups. (#15915)
+- Anchored the sidebar spacer immediately after the accordion block. (#15871)
+- Capped nested thread-list height with scroll overflow. (#15861)
+- Removed the ParamsPanelToggle control icon from the chat header. (#15860)
+- Defaulted the React Scan scanner UI to off. (#15934)
+- Refined top-up best-value and referral reward-rules copy. (#15924, #15923)
+- Only enforced the chat upload file-type whitelist in chat mode. (#15884)
 
 ---
 
 ## 🔒 Reliability
 
-- **Auth gating** — Gate the `listDevices` request behind login state so it no longer fires before authentication. (#15876)
-
----
-
-## 🔧 Tooling & Internal
-
-- **SWR convergence** — Converged store-, UI-, and straggler SWR keys into the `swrKeys` registry, fixing a stale prefetch key along the way. (#15863, #15858, #15853, #15850, #15848)
-- **Tests** — Characterization coverage for parked states and post-persist title wiring; removed stale `LOBE-XXX` markers; updated testing skill rules. (#15847, #15852, #15807)
-- **Docs** — Added the ux design-values / execution-checklist skill and a capability-gated feature checklist. (#15823, #15832)
-- **Misc** — Fixed workspace prefix handling; bumped `@vitest/coverage-v8` to v3.2.6. (#15837, #15802)
+- Deduped unread-count polling to reduce redundant requests. (#15881)
+- Aligned dayjs locale imports. (#15896)
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to **5 contributors** who shipped **48 merged PRs** this cycle.
+Huge thanks to the **8 contributors** who shipped **42 merged PRs** across **42 commits** this cycle.
 
-@arvinxx · @LiJian · @Innei · @tjx666 · @Rdmclin2
-
-Plus @lobehubbot and renovate[bot] for maintenance.
+@arvinxx · @Innei · @tjx666 · @LiJian · @AmAzing129 · @sudongyuer · @rivertwilight · @Rdmclin2
 
 ---
 
-**Full Changelog**: v2.2.4...release/weekly-20260615
+**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.5...release/weekly-20260617
