@@ -2,91 +2,152 @@
 
 # Version
 
-v2.2.6
+v2.2.7
 
 # Releases
 
-## 📦 Release v2.2.6
+## 📦 Release v2.2.7
 
-This release was automatically published from PR #15947.
+This release was automatically published from PR #16080.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/15947
+See PR description: https://github.com/lobehub/lobehub/pull/16080
 
 ### Commit Message
-# 🚀 LobeHub Release (20260617)
+# 🚀 LobeHub Release (20260620)
 
-**Release Date:** June 17, 2026  
-**Since v2.2.5:** 42 commits · 42 merged PRs · 8 contributors
+**Release Date:** June 20, 2026
+**Since v2.2.6:** 88 merged PRs · 7 contributors · 1 database migration
 
-> This weekly release deepens server-side agent orchestration, brings desktop file and worktree capabilities to the web through device RPC, and smooths out the everyday rough edges — cold-start boot, connector credential safety, and chat refresh feedback.
+> This week pairs a workspace-scoped database migration with broad runtime and UX work — native ASR transcription, audio attachments for audio-capable models, a smarter input-completion prompt, and a long list of reliability fixes.
+
+---
+
+## 🗄️ Database Migration (Action for Self-Hosted)
+
+This release ships migration **`0111_workspace_device_and_ai_infra_surrogate_pk`** (#16065). It is the headline change for operators — read this before upgrading.
+
+### What changes
+
+- **`ai_providers` / `ai_models`** — adopt a surrogate `_id` primary key and workspace-scoped partial unique indexes, so provider/model identity is unique per workspace rather than per user.
+- **`devices`** — the old `(user_id, device_id)` unique is replaced by two workspace-scoped partial uniques, letting personal and workspace-enrolled devices live in independent identity spaces.
+- **`workspaces`** — adds the freeze trio `frozen` (boolean, default `false`), `frozen_reason` (text), `frozen_at` (timestamptz) backing workspace freeze risk control.
+
+### Operator impact
+
+- **Backwards-compatible and additive** — every statement is guarded (`IF EXISTS` / `IF NOT EXISTS` / catalog checks). It is a **NO-OP** on cloud production (where the `ai_infra` side was already applied online) and a **full rebuild** on fresh / self-hosted databases.
+- **No manual SQL required** — the migration runs automatically on application startup.
+- Schedule the rollout in a low-traffic window and **take a backup snapshot before deploying**.
+- If the migration fails, do not retry repeatedly — inspect migration logs and lock state first.
+
+### Rollback
+
+Migration is additive only (new columns / indexes / surrogate PK). If your environment requires strict reversibility, follow your standard DB restore or migration-rollback policy from the pre-deploy snapshot.
 
 ---
 
 ## ✨ Highlights
 
-- **Server-side Group Orchestration** — Agents can now call other agent members server-side, enabling multi-agent collaboration without a desktop in the loop. (#15870)
-- **Desktop File Ops on the Web** — Project file operations and `git worktree` listing now replicate from desktop to web via device RPC, so cloud sessions can read and act on local working directories. (#15885, #15889)
-- **Fleet Running-Tasks Dashboard** — A lab-gated dashboard for in-flight Fleet tasks, with running topics re-synced each time the Observation tab opens. (#15817, #15922)
-- **callAgent as a Deferred Tool** — The agent loop now runs `callAgent` as a deferred tool, giving cleaner sub-agent invocation and tool-chain handling. (#15765)
-- **Connector Credential Safety** — Editing a connector no longer risks silently wiping saved credentials; they are restored in edit mode and preserved on save. (#15909)
-- **Smoother Cold Start** — Boot now shows one continuous loading screen instead of a brand-logo flash on cold start. (#15926)
+- **Native ASR transcription** — new ASR (transcribe) runtime with OpenAI + Gemini-native backends, exposed via tRPC and the CLI (incl. remote audio URLs). (#15992, #15987)
+- **Audio in chat & agent mode** — pass audio (mp3) attachments to audio-capable models like Gemini, with upload allowed in agent mode and a waveform player on render. (#15988, #16022)
+- **Input completion v1.2** — reworked completion prompt that predicts intent, including long-range continuations. (#15961)
+- **Market recommendations** — task-template recommendations from Market, plus skill recommendations during agent creation. (#15558, #16016)
+- **Model intelligence** — inject model knowledge cutoff into context and support GLM-5.2 reasoning effort. (#16048, #15972)
+- **Topic lifecycle** — persist topic unread as a backend status and show a `[Draft]` hint on topics holding unsent input. (#16056, #15996)
+- **Workspace-scoped devices** — distinguish local vs. gateway device targets, add a recent-directory button, and auto-activate a device for bot triggers on a local target. (#15921, #16040, #16032)
 
 ---
 
-## 🏗️ Core Agent & Architecture
+## 🏗️ Core Agent & Model Runtime
 
-- Improved connector, document, and Fleet agent workflows. (#15936)
-- Scoped the agent conversation subtree to an explicit `agentId` for clearer multi-agent boundaries. (#15866)
-- Added a role-aware dual-form message-chain reader to the conversation flow. (#15908)
-- Anchored the server-side main chain to a run's real last tool in heterogeneous agents. (#15883)
-- Drove resume completion off the authoritative Durable Object status in the gateway client. (#15919)
-- Corrected target `agentId` and refreshed the sidebar in gateway mode for the agent builder. (#15888)
-- Forwarded model extend params on the server-side agent runtime. (#15891)
-- Preserved preference-memory receipt routing in agent signals. (#15892)
-- Filtered the `.tool-results` archive out of document lists by default. (#15935)
-- Optimized the agent document list query. (#15904)
-
----
-
-## 📱 Devices & Platforms
-
-- Locked a run to the explicitly selected device, never offering device-switching mid-run. (#15914)
-- Exposed `deviceRouter` on the mobile router. (#15925)
-- Opened a new Home tab from the desktop tab bar "+" button. (#15825)
-- Added support for approved external local file previews on desktop. (#15895)
-- Removed web onboarding aliases from the desktop build. (#15902)
-- Consolidated auth SPA loading. (#15903)
+- Rework input completion prompt to v1.2 — predict intent, including long-range. (#15961)
+- Inject model knowledge cutoff into context. (#16048)
+- Support GLM-5.2 reasoning effort. (#15972)
+- Derive OpenAI model routing from IDs. (#16046)
+- Rename model type `stt` to standard `asr` (runtime migration, non-breaking). (#16002)
+- Persist model config cache for faster startup. (#16047)
+- Hetero-agent: assistant-anchored message-chain write spine. (#15930)
+- Stop chat mode from auto-injecting local-system tools. (#15981)
+- Centralize inbox agent meta fallback across read paths. (#15948)
+- Expose missing usage diagnostics. (#15973)
 
 ---
 
-## 🖥️ User Experience
+## 🎙️ Audio & ASR
 
-- Fixed assorted workspace problems and clarified workspace copy/move actions. (#15928, #15897)
-- Showed a cached message-refresh hint with breathing room around it. (#15901, #15906)
-- Added an unread-reply indicator on collapsed project groups. (#15915)
-- Anchored the sidebar spacer immediately after the accordion block. (#15871)
-- Capped nested thread-list height with scroll overflow. (#15861)
-- Removed the ParamsPanelToggle control icon from the chat header. (#15860)
-- Defaulted the React Scan scanner UI to off. (#15934)
-- Refined top-up best-value and referral reward-rules copy. (#15924, #15923)
-- Only enforced the chat upload file-type whitelist in chat mode. (#15884)
+- Add ASR (transcribe) with OpenAI + Gemini-native backends, exposed via tRPC. (#15992)
+- Pass audio (mp3) attachments to audio-capable models like Gemini. (#15988)
+- Allow audio upload in agent mode and render audio with a waveform player. (#16022)
+- CLI: support remote audio URLs in `generate asr`. (#15987)
+- Remove the deprecated `/webapi/stt` route and frontend mic entry. (#15999)
+- **bot:** recover MIME type for QQ c2c file attachments so audio reaches the model. (#16063)
 
 ---
 
-## 🔒 Reliability
+## 📱 Devices, CLI & Integrations
 
-- Deduped unread-count polling to reduce redundant requests. (#15881)
-- Aligned dayjs locale imports. (#15896)
+- Distinguish local and gateway device targets. (#15921)
+- Inject device-bound working directory into the server local-system tool chain. (#15887)
+- Add a recent-directory button to the device detail panel. (#16040)
+- Auto-activate a device for bot triggers on a local target. (#16032)
+- Tolerate CRLF line endings when editing files & surface real edit errors. (#16061)
+- CLI: stop connect daemon on logout. (#16038)
+- Subscription: add contextual plans modal header i18n keys. (#16025)
+- Linear: render `get_issue` result as a card instead of raw JSON. (#15953)
+
+---
+
+## 🖥️ Chat & User Experience
+
+- Collapse FloatingChatPanel into a slim strip by default. (#15991)
+- Recommend Market skills during agent creation. (#16016)
+- Show a `[Draft]` hint on topics holding unsent input; persist topic unread as a backend status. (#15996, #16056)
+- Polish chat-input attachment menu, agent mode & status hints; polish skill suggestion modal UX. (#16010, #16027)
+- Lead collapsed tool-call summary with total call count. (#16003)
+- Clarify skill installation flow. (#16034)
+- Agent-documents: present documents as clickable links; harden explorer tree, titles, empty state & default tab. (#15989, #15998, #16005)
+- Make working-directory clear button actually clear; hide Codex cloud config tab. (#16019, #16037)
+- SPA: bootstrap app initialization; add use-switch-workspace hook. (#15937, #15979)
+- Desktop: require re-auth for expired sessions; close DevTools with window shortcut. (#16014, #16023)
+- Add a product glossary page. (#16001)
+
+---
+
+## 🔒 Reliability & Security
+
+- **Security:** skip Market trusted token for synthetic eval userIds. (#15959)
+- Treat parked runs as non-terminal in the client run-lifecycle. (#16072)
+- Classify upstream-message fallbacks out of `UpstreamHttpError`; converge 2nd residue wave + unmap payload-too-large from ECW. (#16024, #16053)
+- Preserve gateway error semantics and event body. (#16058, #16069)
+- Hetero-agent: gate CC usage-limit guide on rejected status; don't treat an inline tool's `task_notification` as a post-task summary. (#16042, #16050)
+- Load snapshot store via static import, not dynamic require. (#15982)
+- Reject duplicate custom model ids; allow same-user generic edit-lock updates. (#15975, #15969)
+- Avoid flashing unauthorized state in the tool auth alert; avoid task-template locale key flash. (#16068, #16071)
+- Prevent blank screen when switching language; resolve resource header i18n namespace fallback. (#15977, #16066)
+- Provide Market auth to SPA modals; suppress agent-mode notice for CLI agents. (#16045, #16044)
+- Handle generated asset metadata dedup; cache & gate task-template recommendations. (#16057, #15993, #16013)
+- userMemories: delete persona document when clearing all memories. (#15997)
+
+---
+
+## 🔧 Tooling & Maintenance
+
+- Upgrade `react-router` to v8. (#16029)
+- Use server config for business features; remove Fable campaign paths and client-side community publish/unpublish entries. (#16015, #15960, #15986)
+- Drop dead `markUserValidAction` business slot. (#16018)
+- Expose `memory-user-memory` prompts subpath exports; fix skill audit symlink inventory. (#15985, #16039)
+- Translate non-English comments to English in scripts; clean up LOBE-XXX markers. (#16000, #15943, #16031)
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to the **8 contributors** who shipped **42 merged PRs** across **42 commits** this cycle.
+Huge thanks to **7 contributors** who shipped **88 merged PRs** this cycle.
 
-@arvinxx · @Innei · @tjx666 · @LiJian · @AmAzing129 · @sudongyuer · @rivertwilight · @Rdmclin2
+@hardy-one · @arvinxx · @tjx666 · @AmAzing129 · @rivertwilight · @Innei · @Rdmclin2
+
+Plus @lobehubbot and renovate[bot] for maintenance.
 
 ---
 
-**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.5...release/weekly-20260617
+**Full Changelog**: v2.2.6...release/weekly-20260620-recut
