@@ -2,86 +2,76 @@
 
 # Version
 
-v2.2.9
+v2.2.10
 
 # Releases
 
-## 📦 Release v2.2.9
+# 🚀 LobeHub Release (20260710)
 
-This release was automatically published from PR #16406.
+**Release Date:** July 11, 2026  
+**Since v2.2.9:** 380 merged PRs · 385 commits · 16 contributors
 
-### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/16406
-
-### Commit Message
-# 🚀 LobeHub Release (20260629)
-
-**Release Date:** June 29, 2026  
-**Since v2.2.8:** 199 merged PRs · 199 commits · 14 contributors
-
-> This weekly patch strengthens the agent execution loop: tasks can be verified with evidence, heterogeneous runs recover more reliably, and desktop, CLI, workspace, and provider workflows get clearer control surfaces.
+> This release makes Agent work more capable and dependable across local, remote, and scheduled runs, with clearer verification, stronger Workspace controls, and faster everyday chat workflows.
 
 ---
 
 ## ✨ Highlights
 
-- **Heterogeneous agent reliability** — Routes gateway and external-agent runs through shared lifecycle hooks, persists operation traces, records provider/model details, and keeps bounded verification armed. (#16102, #16193, #16237, #16302, #16386, #16393)
-- **Task and group continuity** — Keeps creator context, assignee activity, group identity, real member rosters, and final answers stable across task handoffs and multi-agent conversations. (#16162, #16188, #16213, #16228, #16303, #16315, #16352, #16363, #16385, #16399)
-- **Desktop and CLI control** — Adds CLI self-update and verify commands, desktop completion notifications, overloaded Claude Code auto-retry, tab/window fixes, hotkeys, and safer local search limits. (#16052, #16147, #16164, #16190, #16277, #16281, #16309, #16384, #16396)
-- **Provider and model compatibility** — Updates OpenAI SDK/runtime mapping, Bedrock key auth, contextual pricing, GLM-5.2 handling, Zhipu stream controls, Copilot parameter filtering, Kimi thinking preservation, and Doubao Seed models. (#16090, #16128, #16135, #15722, #16204, #16240, #16284, #16331, #16401)
-- **Connectors and integrations** — Improves custom connectors, legacy MCP migration, context-aware tool manifests, Aihubmix base URLs, Search1API auto engine selection, PostHog skill integration, and MCP marketplace handling. (#15912, #16172, #16180, #16210, #16233, #16311, #16328, #16282)
+- **Latest model support** — Adds GPT-5.6, Grok 4.5, Sonnet 5, and Nano Banana 2 Lite metadata, with Codex usage support across Agent and CLI flows. (#16957, #16966, #16992)
+- **Worktree workflows** — Adds worktree selection and creation directly from chat, with safer branch checkout, switching, and removal controls. (#15898, #16810, #16908, #16977)
+- **Claude Code and Codex interoperability** — Improves remote human-in-the-loop, tool rendering, session recovery, quota controls, and image-result handling for heterogeneous Agents. (#16557, #16625, #16786, #16855)
+- **Downloads hub** — Adds a central place to find LobeHub apps, CLI, and Messenger downloads. (#16929)
+- **Chat productivity** — Adds input history, message multi-select and forwarding, file drag-and-drop, text-selection actions, and restore-to-input for CLI Agent turns. (#16400, #16446, #16555, #16558, #16842)
 
 ---
 
-## 🏗️ Core Agent & Architecture
+## 🏗️ Agent Runtime & Automation
 
-### Task and Verify
-
-- **Task lifecycle** — Task creation now records creator conversation origin, supports task-level verify storage, links created task IDs to detail pages, includes subtask activity, and bridges finished task handoff back to the creator conversation. (#16111, #16113, #16213, #16238, #16296, #16303, #16399)
-- **Verification reports** — Verify runs gain standalone ingestion/init/delete, evidence submission, acceptance injection, final report pages, table/mobile report layouts, and builder-captured evidence. (#16132, #16140, #16163, #16164, #16187, #16214, #16260, #16391)
-- **Agent Builder context** — Builder suggestions, feedback loops, document-to-skill conversion, editing-agent context, and heterogeneous-agent discovery make agent setup and repair more direct. (#15939, #16225, #16292, #16326)
-
-### Conversations, Groups, and Runtime
-
-- **Shared run lifecycle** — Chat, gateway, and heterogeneous execution continue converging on the shared lifecycle with transport-driven completion, unified run modules, auto-title generation, and terminal error surfacing. (#16083, #16086, #16102, #16119, #16151, #16155)
-- **Group identity stability** — Group reads, persisted messages, supervisor replies, council rendering, member roster injection, and topic routing now preserve group identity across nested and server-runtime flows. (#16149, #16152, #16154, #16188, #16228, #16259, #16271, #16313, #16352, #16363)
-- **Tool-heavy turn handling** — Conversation grouping keeps toolless prose, terminal errors, trailing bookkeeping tools, and post-tool answers readable without hiding the final answer. (#16084, #16127, #16278, #16377, #16385)
+- Moves core tool, sub-Agent, compression, retry, and completion executors into the shared Agent runtime for more consistent behavior across server and CLI execution. (#16914, #16925, #16945, #16948)
+- Stabilizes QStash-backed runs by improving step startup, lock retries, guard cancellation, terminal event handling, and scheduled-task recovery. (#16721, #16829, #16832, #16907, #16716)
+- Adds richer task run cards, inline long-run output, per-run follow-up, and clearer error states when verification infrastructure fails. (#16751, #16819, #16696)
+- Adds device-scoped filesystem Skills and improves offline-device fallback, browser lifecycle handling, and local binary discovery. (#16682, #16759, #16888, #16952)
 
 ---
 
-## 📱 Platforms & Integrations
+## 🖥️ CLI, Desktop & Chat
 
-### Desktop, CLI, and Devices
-
-- **Desktop UX** — Desktop tabs, dynamic route meta, workspace-scoped navigation, completion notifications, update prompts, working directory actions, and transient network handling are more predictable. (#16089, #16184, #16190, #16206, #16224, #16252, #16273, #16276, #16309, #16355, #16384, #16396)
-- **CLI workflows** — `lh update`, verify skill initialization, verify run deletion, file-search result caps, worker isolation, and CLI version bumps tighten local operation loops. (#16052, #16139, #16143, #16164, #16200, #16281, #16391)
-- **Devices and mobile routes** — Workspace device support, scoped device lists, device deletion controls, remote-device tracing, and mobile router exposure for plugins and agent skills improve cross-device workflows. (#16134, #16191, #16280, #16295, #16299, #16333, #16360, #16371)
-
-### Providers, Models, and Tools
-
-- **Provider compatibility** — OpenAI SDK v6, runtime model ID mapping, Bedrock API key auth, DeepSeek reasoning handling, GLM-5.2 metadata, Zhipu stream toggles, and Copilot payload filtering reduce provider-specific failures. (#16090, #16128, #16240, #16284, #16294, #16331, #16401)
-- **Model and pricing updates** — Contextual model pricing, Aihubmix backup URLs, Kimi preserveThinking, Doubao Seed 2.1 models, NewAPI pricing optimization, and model-list search polish keep provider configuration fresher. (#15656, #15722, #16135, #16204, #16279, #16328)
-- **Connectors and tool rendering** — Custom connector edit/delete, legacy MCP migration guards, context-aware manifests, real task/agent tool-card data, compact Linear cards, and local device scope tracing improve tool usage in agent flows. (#15912, #16172, #16180, #16272, #16311, #16359, #16280)
+- Adds interactive code-context selection, project file search, concurrent desktop development instances, and dedicated inspectors for common coding commands. (#16681, #16526, #16553, #16662)
+- Keeps streaming model, usage, tool, git, and session metadata synchronized through heterogeneous Agent runs. (#16963, #16904, #16592)
+- Improves topic and sidebar consistency by fixing optimistic creation, activity ordering, unread indicators, Workspace isolation, and stale running states. (#16467, #16868, #16961, #16411, #16816)
+- Graduates the floating chat panel from Labs and improves task-topic chat, Agent Documents, and review-panel workflows. (#16978, #16692, #16578, #16695)
 
 ---
 
-## 🖥️ Product Experience
+## 🔌 Models, Integrations & Workspace
 
-- **Agent-facing UI** — Inbox interaction tools, memory editing persistence, image reference upload, human-approval notification island, "don't ask again" approval options, and sidebar/home labels refine daily agent work. (#15682, #16195, #16207, #16357, #16389, #16390)
-- **UI platform migration** — Modal, Tabs, Switch, SplitButton, model-list search, route meta, devtools rows, and settings skill copy continue moving toward the base-ui and static-style conventions. (#16212, #16229, #16227, #16253, #16335, #16336, #16348)
+- Separates Skills and Connectors in Settings, exposes the full Connector catalog, and makes connection state and Workspace scope clearer. (#16975, #16789, #16633, #16620)
+- Adds Weixin business bot support, locale-aware notifications, Composio mobile routes, and configurable AIHubMix proxy routing. (#16803, #16867, #16779, #16418)
+- Adds Grok 4.5 reasoning-effort controls and lists embedding models in the service selector. (#16921, #16857)
+- Adds Workspace visibility schema, personal-to-Workspace credential sharing, and organization credential routing for Agent runs. (#16598, #16895, #16889)
 
 ---
 
-## 🔧 Reliability, Tooling & Documentation
+## ⚡ Performance, Reliability & Security
 
-- **Runtime reliability** — Message-list SWR write-through, revalidation dedupe, IndexedDB cache retention, topic metadata serialization, task deadlock fixes, and unavailable-model notices reduce stale or stranded UI states. (#15927, #16131, #16211, #16285, #16301, #16383)
-- **Developer and deployment tooling** — Local dev proxy matching, dev auth proxy NO_PROXY handling, automated testing port allocation, Docker ParadeDB `pg_search`, and MCP marketplace issue handling improve maintenance paths. (#16096, #16247, #16248, #16282, #16287, #16353)
-- **Documentation** — UX surface interaction principles, DB enum guidance, and the June 22 weekly changelog are included for contributors and operators. (#16168, #16203, #16234)
+- Reduces Agent and chat latency through faster QStash publishing, parallel cache hydration, batched heterogeneous-message writes, lighter home payloads, and unread-message prefetching. (#16982, #16951, #16873, #16781, #16831)
+- Makes fetch failures actionable with shared async boundaries and explicit retry states instead of silent empty views. (#16639, #16640, #16647, #16659)
+- Fixes security boundaries for SSRF-safe Skill imports, knowledge-base file access, group ownership checks, and dependency updates. (#16601, #16594, #16586, #16041)
+- Hardens Unicode and base64 handling for browser utilities, including non-ASCII text and valid surrogate pairs. (#16879, #16880)
+
+---
+
+## 🗄️ Database & Upgrade Notes
+
+- Adds task trigger metadata and Agent-linked Connector ownership, alongside Workspace visibility and indexing changes. (#16718, #16598)
+- Self-hosted deployments should apply the repository's normal database migration step during upgrade. No manual version or tag changes are required.
 
 ---
 
 ## 👥 Contributors
 
-Thanks to @sxjeru, @YOYO-do, @ZhuYuxuan9302, @Duo-Huang, @arvinxx, @Innei, @tjx666, @AmAzing129, @rdmclin2, @ONLY-yours, @sudongyuer, @cy948, @nekomeowww, and @rivertwilight.
+@weijun-xia · @ONLY-yours · @orangeboyChen · @marunrun · @YOYO-do · @ZhuYuxuan9302 · @arvinxx · @tjx666 · @AmAzing129 · @Innei · @Neko · @Rdmclin2 · @LiJian · @rivertwilight · @cy948 · @sudongyuer
 
-**Full Changelog:** https://github.com/lobehub/lobehub/compare/v2.2.8...v2.2.9
+Maintenance updates: @lobehubbot · @renovate[bot] · @dependabot[bot]
+
+**Full Changelog:** https://github.com/lobehub/lobehub/compare/v2.2.9...release/weekly-20260710-r3
