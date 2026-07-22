@@ -1,20 +1,3 @@
-# ==========================================
-# 阶段 1: 构建 Komari Agent
-# ==========================================
-FROM golang:alpine AS builder
-WORKDIR /src
-RUN apk add --no-cache git
-RUN git clone https://github.com/komari-monitor/komari-agent.git .
-RUN git fetch --tags && \
-    LATEST_TAG=$(git describe --tags --abbrev=0) && \
-    git checkout $LATEST_TAG
-RUN VERSION=$(git describe --tags --always) && \
-    go mod download && \
-    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X github.com/komari-monitor/komari-agent/update.CurrentVersion=${VERSION}" -o komari-agent .
-    
-# ==========================================
-# 阶段 2: 最终运行环境
-# ==========================================
 FROM node:24-slim
 ENV DEBIAN_FRONTEND="noninteractive"
 
@@ -30,7 +13,7 @@ RUN ln -sf /usr/local/bin/node /bin/node
 
 # 2. 移入核心资产
 COPY --from=lobehub/lobehub:latest /app /app
-COPY --from=builder /src/komari-agent /app/komari-agent
+COPY --from=ghcr.io/komari-monitor/komari-agent:latest /app/komari-agent /app/komari-agent
 
 # 3. 环境变量
 ENV NODE_ENV="production" \
