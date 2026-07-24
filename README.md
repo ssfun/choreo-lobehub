@@ -2,76 +2,85 @@
 
 # Version
 
-v2.2.10
+v2.2.11
 
 # Releases
 
-# 🚀 LobeHub Release (20260710)
+## 📦 Release v2.2.11
 
-**Release Date:** July 11, 2026  
-**Since v2.2.9:** 380 merged PRs · 385 commits · 16 contributors
+This release was automatically published from PR #17509.
 
-> This release makes Agent work more capable and dependable across local, remote, and scheduled runs, with clearer verification, stronger Workspace controls, and faster everyday chat workflows.
+### Changes
+See PR description: https://github.com/lobehub/lobehub/pull/17509
+
+### Commit Message
+# 🚀 LobeHub Release (20260723)
+
+**Release Date:** July 23, 2026  
+**Since v2.2.10:** 366 merged PRs · 17 contributors
+
+> This release makes Agent work easier to run, inspect, and recover across the desktop, CLI, Workspace, and connected tools.
 
 ---
 
 ## ✨ Highlights
 
-- **Latest model support** — Adds GPT-5.6, Grok 4.5, Sonnet 5, and Nano Banana 2 Lite metadata, with Codex usage support across Agent and CLI flows. (#16957, #16966, #16992)
-- **Worktree workflows** — Adds worktree selection and creation directly from chat, with safer branch checkout, switching, and removal controls. (#15898, #16810, #16908, #16977)
-- **Claude Code and Codex interoperability** — Improves remote human-in-the-loop, tool rendering, session recovery, quota controls, and image-result handling for heterogeneous Agents. (#16557, #16625, #16786, #16855)
-- **Downloads hub** — Adds a central place to find LobeHub apps, CLI, and Messenger downloads. (#16929)
-- **Chat productivity** — Adds input history, message multi-select and forwarding, file drag-and-drop, text-selection actions, and restore-to-input for CLI Agent turns. (#16400, #16446, #16555, #16558, #16842)
+- **Desktop terminal and browser workspace** — Run terminal sessions beside a conversation, tune terminal fonts, capture browser screenshots into chat, and give Agents richer page context. (#17197, #17455, #17442, #17163)
+- **Local coding session continuity** — Import Claude Code and Codex sessions, resume reclaimed Claude Code sessions, and follow live sub-agent progress. (#17101, #17437, #17115)
+- **Workspace access controls** — Manage workspace-scoped API keys, resource permissions, connector ownership, device sharing, and private Agent access. (#17263, #17192, #17286, #17037, #17417)
+- **Broader model and provider support** — Adds Kimi K3, SuperGrok, Gemini 3.6 Flash, Gemini 3.5 Flash-Lite, and OpenCode Agent support. (#17267, #17001, #17440, #17345)
+- **Topic-level model choice** — New topics snapshot their selected model and keep model changes scoped to that topic. (#15933)
 
 ---
 
-## 🏗️ Agent Runtime & Automation
+## 🏗️ Agents, Chat, and Workspace
 
-- Moves core tool, sub-Agent, compression, retry, and completion executors into the shared Agent runtime for more consistent behavior across server and CLI execution. (#16914, #16925, #16945, #16948)
-- Stabilizes QStash-backed runs by improving step startup, lock retries, guard cancellation, terminal event handling, and scheduled-task recovery. (#16721, #16829, #16832, #16907, #16716)
-- Adds richer task run cards, inline long-run output, per-run follow-up, and clearer error states when verification infrastructure fails. (#16751, #16819, #16696)
-- Adds device-scoped filesystem Skills and improves offline-device fallback, browser lifecycle handling, and local binary discovery. (#16682, #16759, #16888, #16952)
-
----
-
-## 🖥️ CLI, Desktop & Chat
-
-- Adds interactive code-context selection, project file search, concurrent desktop development instances, and dedicated inspectors for common coding commands. (#16681, #16526, #16553, #16662)
-- Keeps streaming model, usage, tool, git, and session metadata synchronized through heterogeneous Agent runs. (#16963, #16904, #16592)
-- Improves topic and sidebar consistency by fixing optimistic creation, activity ordering, unread indicators, Workspace isolation, and stale running states. (#16467, #16868, #16961, #16411, #16816)
-- Graduates the floating chat panel from Labs and improves task-topic chat, Agent Documents, and review-panel workflows. (#16978, #16692, #16578, #16695)
+- Added account-scoped Agent quota data, capacity calibration, selected-account routing, and per-turn usage tracking. (#17314, #17441)
+- Added configurable default models for sub-agents and included sub-agent spend in parent usage. (#16552, #17116)
+- Added topic scheduling, resumable heterogeneous Agent continuations, and forwarding topics or messages to Agents. (#17127, #17077, #17039)
+- Improved long-topic reliability with newest-first message paging and a Topic doctor that finds and repairs hidden messages. (#17313, #17145)
+- Added Workspace resource collaboration, RBAC controls, data deletion, and safer cross-workspace transfer behavior. (#17172, #17263, #17180)
+- Improved Agent recovery by preserving rate-limit state, surfacing process errors, and timing out stalled connected Skill calls. (#16974, #17248, #17454)
 
 ---
 
-## 🔌 Models, Integrations & Workspace
+## 🖥️ Desktop, CLI, and Verification
 
-- Separates Skills and Connectors in Settings, exposes the full Connector catalog, and makes connection state and Workspace scope clearer. (#16975, #16789, #16633, #16620)
-- Adds Weixin business bot support, locale-aware notifications, Composio mobile routes, and configurable AIHubMix proxy routing. (#16803, #16867, #16779, #16418)
-- Adds Grok 4.5 reasoning-effort controls and lists embedding models in the service selector. (#16921, #16857)
-- Adds Workspace visibility schema, personal-to-Workspace credential sharing, and organization credential routing for Agent runs. (#16598, #16895, #16889)
-
----
-
-## ⚡ Performance, Reliability & Security
-
-- Reduces Agent and chat latency through faster QStash publishing, parallel cache hydration, batched heterogeneous-message writes, lighter home payloads, and unread-message prefetching. (#16982, #16951, #16873, #16781, #16831)
-- Makes fetch failures actionable with shared async boundaries and explicit retry states instead of silent empty views. (#16639, #16640, #16647, #16659)
-- Fixes security boundaries for SSRF-safe Skill imports, knowledge-base file access, group ownership checks, and dependency updates. (#16601, #16594, #16586, #16041)
-- Hardens Unicode and base64 handling for browser utilities, including non-ASCII text and valid surrogate pairs. (#16879, #16880)
+- Graduated the built-in terminal from Labs and added tabs, context menus, WebGL rendering, and persistent terminal settings. (#17459, #17494, #17455)
+- Added an opt-in sandbox runtime for local device execution with explicit capabilities and launch policy. (#17476)
+- Added browser control for desktop Agents, topic-scoped browser sessions, and inline browser screenshots in Agent output. (#17057, #17200, #17129)
+- Expanded `lh verify` and the acceptance workflow with installed testing Skills, complete pageable topic views, and direct verification URLs after evidence submission. (#17280, #17224, #17460)
+- Added OpenCode and Amp CLI Agent support, plus more reliable Codex todo streaming and Claude Code session recovery. (#17345, #17223, #17329, #17437)
 
 ---
 
-## 🗄️ Database & Upgrade Notes
+## 🔌 Models and Integrations
 
-- Adds task trigger metadata and Agent-linked Connector ownership, alongside Workspace visibility and indexing changes. (#16718, #16598)
-- Self-hosted deployments should apply the repository's normal database migration step during upgrade. No manual version or tag changes are required.
+- Added Gmail and GitHub connector data clients and agent-scoped connectors with Workspace isolation. (#17322, #17319, #16971)
+- Added WeChat system bot support and Telegram slash-command handling. (#17275, #16545)
+- Added Kimi K3, SuperGrok through xAI OAuth, Gemini 3.6 Flash, Gemini 3.5 Flash-Lite, and Grok prompt-cache support. (#17267, #17001, #17440, #17489)
+- Improved model safeguards for unavailable image-generation models, thinking-only Qwen models, and unsupported MiniMax image detail values. (#17410, #17363, #17281)
+
+---
+
+## 🔒 Security and Reliability
+
+- **Security:** Prevented MCP stdio pre-checks from inheriting the server process environment. (#17323)
+- **Security:** Added workspace-scoped API keys with RBAC and masked real API-key prefixes in OpenAPI authentication errors. (#17263, #17143)
+- **Reliability:** Reduced mobile stack-overflow risk in conversation traversal and prevented mobile input auto-zoom. (#17457, #17013)
+- **Reliability:** Fixed stale running-operation reconnect loops, empty completion retries, and AI model batch-update duplication. (#17332, #17418, #17465)
+- **Reliability:** Preserved parsed-file source metadata and restored correct preview and download behavior for file-backed documents. (#17458, #17432)
 
 ---
 
 ## 👥 Contributors
 
-@weijun-xia · @ONLY-yours · @orangeboyChen · @marunrun · @YOYO-do · @ZhuYuxuan9302 · @arvinxx · @tjx666 · @AmAzing129 · @Innei · @Neko · @Rdmclin2 · @LiJian · @rivertwilight · @cy948 · @sudongyuer
+Huge thanks to **17 contributors** who shipped **366 merged PRs** this cycle.
 
-Maintenance updates: @lobehubbot · @renovate[bot] · @dependabot[bot]
+@H-TTTTT · @zerafachris · @northword · @orangeboyChen · @ahfoysal · @hijos · @Minamiyama · @arvinxx · @tjx666 · @Innei · @sudongyuer · @AmAzing129 · @rdmclin2 · @cy948 · @nekomeowww · @ONLY-yours · @rivertwilight
 
-**Full Changelog:** https://github.com/lobehub/lobehub/compare/v2.2.9...release/weekly-20260710-r3
+Plus @lobehubbot and renovate[bot] for maintenance.
+
+---
+
+**Full Changelog**: v2.2.10...release/weekly-20260723
