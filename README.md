@@ -2,133 +2,124 @@
 
 # Version
 
-v2.2.13
+v2.2.14
 
 # Releases
 
-## 📦 Release v2.2.13
+## 📦 Release v2.2.14
 
-This release was automatically published from PR #17807.
+This release was automatically published from PR #18373.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/17807
+See PR description: https://github.com/lobehub/lobehub/pull/18373
 
 ### Commit Message
-# 🚀 LobeHub Release (20260801)
+# 🚀 LobeHub Release (20260816)
 
-**Release Date:** August 1, 2026\
-**Since v2.2.12:** 86 merged PRs · 13 contributors
+**Release Date:** August 16, 2026
+**Since v2.2.13:** 363 merged PRs · 21 contributors
 
-> Home becomes an Agent dashboard, the desktop shell keeps every tab alive, and local Agents connect through one wizard — with a long tail of runtime, model, and Windows fixes behind it.
+> This cycle gives longer-horizon work a durable home: Projects and Goals land as first-class containers for agent work, seven new CLI coding agents join the heterogeneous runtime, a Local Sandbox executes on your machine, and the platform opens up through a generated OpenAPI spec and SDK.
 
 ---
 
 ## ✨ Highlights
 
-- **Home as an Agent dashboard** — Home is rebuilt around what your Agents are doing: activity, Topics, and a dashboard rail replace the old landing view. (#17680, #17756, #17798, #17735, #17781)
-- **One wizard for local Agents** — Connecting a local Agent now runs through a single unified flow instead of per-connector setup paths. (#17794)
-- **Local MCP connectors on desktop** — Install and run stdio and LAN-HTTP MCP connectors directly from the desktop app. (#17673)
-- **Per-tab keep-alive routers on desktop** — The Electron shell routes each tab through its own keep-alive router, so switching tabs no longer resets in-progress views. (#17595, #17773)
-- **Cross-runtime local database** — Local data now runs on one database layer shared across runtimes, replacing the runtime-specific paths. (#17682)
-- **Scoped tool allowlists in the Agent runtime** — Tool access is enforced against the calling scope, so a sub-Agent can no longer reach tools outside its grant. (#17717)
-- **Faster Agent search** — Agent filtering moved above the BM25 scan and scans are isolated per query, restoring real TopN ordering and true relevance scores. (#17755, #17720)
-- **Demand-aware SPA startup** — The SPA loads work on demand instead of up front, cutting cold-start cost. (#17577)
+- **Seven new CLI coding agents** — Cursor, CodeBuddy, Qoder, Kimi Code, Pi, TRAE, and Grok Build (ACP) join the heterogeneous runtime, plus a Codex app-server lab. (#18229, #18219, #17965, #18228, #17899, #18292, #18254, #18275)
+- **Local Sandbox** — A local execution environment for devices, with a real working directory instead of a refusal. (#18143, #18180)
+- **Public API & SDK** — `openapi.yml` generated from routes, a new `@lobehub/sdk` package, expanded v1 endpoints, and scoped API keys. (#17944, #17980, #18141, #18029)
+- **Home customization** — A Customize modal with Minimal / Balanced / Full presets, a day-paged daily brief, and a task-shaped task mode with scheduled tasks. (#17912, #17948, #17958, #18173)
+- **Desktop split views** — Split tab views, a tab strip reworked for many-tab use, and a faster cold start. (#18004, #17809, #17811)
 
 ---
 
-## 🏗️ Core Agent & Runtime
+## 🏗️ Core Agent & Architecture
 
-### Conversation correctness
+### Projects & Goals（Alpha）
 
-- Sub-Agent final answers are preserved when steps are grouped. (#17725)
-- Explicit model overrides survive in sub-Agent Topics. (#17766)
-- Assistant step count now matches the actual number of LLM calls. (#17790)
-- Assistant messages are reused on step retry instead of duplicated. (#17703)
-- Duplicate assistant continuations are omitted. (#17726)
-- Failed assistant placeholders are filtered, and the Claude prefill guard is hardened. (#17737)
-- Thread conversation cancellation is isolated, so cancelling one thread leaves the others running. (#17719)
-- Runtime todos are injected into the server Context. (#17671)
+- Project schema, backend and CLI, workspaces with conversation PoC, and an identifier column. (#17996, #18006, #18020, #18034)
+- Goal creation split from task creation with an explanatory empty state; goals get their own table and AI-generated acceptance criteria. (#18047, #18335, #18265)
+- Goal launch requires confirmation even in auto-run mode. (#18111)
 
-### Data & workflows
+### Agents & Groups
 
-- Local Agent Signal workflows are supported. (#17681)
-- Agent documents accept backing IDs when reading. (#17763)
-- GitHub Works are registered from heterogeneous shell `gh` runs. (#17666)
+- Group member permissions with personal model choice on shared builtins. (#18122)
+- Async agent transfer and copy, with history backfill and intact membership lifecycle. (#17997, #18030, #18082, #18126)
+- Sub-agents follow the parent model by default, with thinking controls. (#17938)
+- Agent quota gets a usage calendar and burnout projection. (#18117)
 
----
+### Context & Memory
 
-## 🖥️ Workspace & Home
-
-- Workspace budget settings get their own tab and route slot. (#17775)
-- Onboarding generates starter task recommendations, with the recommendation prompts centralized. (#17757, #17770)
-- Agent Profile supports a Markdown source mode. (#17580)
-- Messenger DM support, plus broader Workspace interaction polish. (#17771)
-- Claude Code quota is sampled from bound devices and refreshed every two minutes. (#17797)
-- Settings page headers are unified, the About layout is reworked, and Workspace and service-model pages are tidied. (#17667, #17696, #17698)
-- Memory empty states, the prompt editor header, and Agent statistics are polished. (#17764)
-- Conversation portal headers are refined. (#17751)
-- Model Select surfaces stale-model state instead of a raw provider/model id, and the stale-model popup is compact. (#17748, #17754)
-- Tab titles show the section and Agent name on Agent sub-pages. (#17711)
-- The Home sidebar stays put on routes without a dedicated panel. (#17718)
-- Sidebar task list cache persists, so the skeleton no longer replays on every visit. (#17706)
-- The Inbox route stays valid during initialization. (#17759)
-- Resolved briefs no longer reappear after navigation. (#17760)
-- The prompt view-mode toggle no longer scrolls to the bottom. (#17746)
-- `Enter` / `Esc` hotkeys are added to the AskUserQuestion intervention. (#17733)
-- A copy-operation-id action is available in assistant message menus. (#17710)
-- Copy and i18n polish across the OAuth provider card, model param controls, storage cleanup guidance, artifact deployment, and the zh-CN model rating labels. (#17736, #17749, #17740, #17722, #17712, #17714)
+- Graph runtime context is injected continuously; container message tokens count toward the context budget. (#17761, #17839)
+- Every memory tool call renders a dedicated card; extraction prompts align with their schemas. (#17891, #17988)
+- Opt-in automatic topic summary workflow. (#17796, #18171)
 
 ---
 
-## 📱 Desktop & Platforms
+## 📱 Platforms & Integrations
 
-- Native macOS context menus back the app-domain menus. (#17648)
-- Oversized glob and spawn errors in the local system layer are guarded. (#17792)
-- High-frequency Windows shell-execution issues are resolved. (#17576)
-- Composio-backed connector data is supported. (#17677)
+### Heterogeneous CLI Agents
+
+- New runtimes: Cursor CLI with model selection, CodeBuddy, Qoder with reasoning effort, Kimi Code, Pi, TRAE, and Grok Build over ACP; Codex app-server session lifecycle completes as a lab. (#18229, #18244, #18219, #17965, #18160, #18228, #17899, #18292, #18254, #17907, #18275)
+- The model selector is driven by a capability table, with local CLI descriptors centralized as a single source of truth. (#18214, #17979)
+- Windows support hardened: CLI spawning, agents behind unknown shims and stale PATH. (#18095, #18220)
+- A heterogeneous error taxonomy classifies terminal errors; cloud auth failures surface clearly. (#17887, #18040)
+
+### Desktop
+
+- Split tab views, a tab strip reworked for many-tab use, and pinned tabs that travel. (#18004, #17809, #17857)
+- Boot straight into the last active workspace; cold-start critical path reduced and the local database prewarmed after navigation. (#17946, #17811, #18218)
+- Chromium zoom presets and update downgrades. (#17679, #18012)
+
+### Messaging & Bots
+
+- `/mode` command switches bot conversation mode; recent same-channel history is injected. (#18197, #16608)
+- Proactive messenger push with per-channel notification settings. (#17791)
+- Discord completes deferred forwarded interactions. (#18169)
+
+### Models
+
+- Gemini 3.7 Flash, GLM-5.3 with always-on thinking, Grok 4.6 reasoning effort, and MiniMax-H3 video with official v2 API. (#18289, #18290, #18301, #18225, #17827)
+- Audio lands in multimodal understanding with input cost estimation; Cerebras and Groq gain advanced reasoning parameters. (#17904, #17949, #16469)
 
 ---
 
-## 🧠 Models & Providers
+## 🖥️ User Experience
 
-- Kimi K3 reasoning-effort controls, plus a K3 Fast model description. (#17615, #17707)
-- Moonshot supports structured output together with thinking. (#17729)
-- OpenAI Responses reasoning items are persisted in full, and opaque reasoning state is scoped correctly. (#17705, #17694)
-- Empty and image-only model completions are classified and captured instead of failing silently. (#17700, #17695)
-- Builtin model lists can be hidden. (#17683)
-- Params model config moves to a dedicated `useParamsModelConfig` hook. (#17616)
-- RustFS init uses the S3 policy `Id` field. (#15603)
+- Home: mine/team scope and author chips on recent topics, open goals in the rail, and one-page dashboard scrolling with a persistent recents cache. (#17908, #18121, #17836)
+- Chat: web voice messages, editable opening questions, keyboard-driven AskUserQuestion with select-to-submit, and a reachable, effective error-card retry. (#17744, #18003, #17903, #18080)
+- Agent identity: an avatar studio with one-click brand-style generation, profile artwork with style presets, and personal names with a dice-roll composer. (#18113, #17929, #17986, #17853, #17894)
+- Workspace agents organize with labels and a shared sidebar; the sidebar header becomes an identity switcher. (#17848, #18338)
+- Resource library: path-based category routes with a Files category, origin filtering, and restored document scrolling. (#18083, #18170, #18345)
+- Onboarding: Notion and X understanding sources, streamed generation progress, and confirmed starter tasks that run immediately. (#18110, #18118, #18105, #18224)
+
+---
+
+## 🔧 Tooling & API
+
+- OpenAPI spec generated from routes via hono-openapi, shipped as the generated `@lobehub/sdk`. (#17944, #17980)
+- v1 API adds api-keys, evals, mcp-servers, and usage endpoints. (#18141)
+- API key scopes, with workspace keys scoped to member permissions. (#18029, #18136)
+- Jupyter notebook (.ipynb) upload with token-efficient markdown conversion. (#17855)
+- CI gates bundle size for web dist and desktop asar. (#17970)
+- Agent tracing visualizes context composition. (#18114)
 
 ---
 
 ## 🔒 Security & Reliability
 
-- **Security:** Tool allowlists are enforced per scope in the Agent runtime. (#17717)
-- **Security:** `globFiles` / `searchFiles` scopes resolve against the user Workspace on Windows. (#17676)
-- **Security:** Stale OIDC sessions are cleared on account switch. (#17734)
-- **Reliability:** Cron schedules start by default. (#17709)
-- **Reliability:** Library visibility syncs with its content, and phantom Agent-config saves are stopped. (#17715)
-- **Reliability:** The Vite SPA watcher scope is narrowed. (#17693)
-
----
-
-## 🔧 Tooling
-
-- Authorized runtime DevDock. (#17652)
-- Acceptance review: evidence-aware verification, aligned task-checklist grouping, restored single-page scrolling, and refined review interactions. (#17658, #17654, #17697, #17768)
-- Todo tool rendering style is aligned. (#17787)
-- Next.js updated to preview.10. (#17750)
-- Scripts are excluded from the root type-check. (#17699)
-- Legacy PostHog configuration is removed. (#17738)
+- **Security:** custom provider base URLs are validated (#18223); restricted knowledge bases are soft-hidden from members (#18282); deleting a connector unlinks remote accounts (#18270); auth cookies support custom prefixes and subdomain sharing (#18358, #18200).
+- **Reliability:** blocking Redis XREAD runs on a dedicated connection (#17876); file parse cache writes are serialized (#17919); repeated network-error toasts collapse into one (#17873); runs no longer strand in `verifying` (#18164); sessions survive provider key errors (#18343).
+- **Performance:** PDF parsing drops a 25MB native dependency (#17858); agent page render cost is cut across sidebars, composer, and topic list (#17991); recent-topic previews are batched instead of per-topic subqueries (#17928).
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to **13 contributors** who shipped **86 merged PRs** this cycle.
+Huge thanks to **21 contributors** who shipped **363 merged PRs** this cycle.
 
-@sxjeru · @Coooolfan · @hardy-one · @northword · @qybaihe · @tjx666 · @arvinxx · @Innei · @rivertwilight · @Rdmclin2 · @nekomeowww · @cy948 · @AmAzing129
+@sxjeru · @Cyber-Yichen · @northword · @smbslt3 · @hardy-one · @orangeboyChen · @nightcityblade · @Max-Reisinger · @Mark-star-dot · @ImSingee · @BittuBarnwal7479 · @arvinxx · @Innei · @AmAzing129 · @tjx666 · @Rdmclin2 · @Neko · @LiJian · @sudongyuer · @rivertwilight · @cy948
 
 ---
 
-**Full Changelog**: v2.2.12...release/weekly-20260801
+**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.13...release/weekly-20260816
