@@ -2,124 +2,115 @@
 
 # Version
 
-v2.2.14
+v2.2.15
 
 # Releases
 
-## 📦 Release v2.2.14
+## 📦 Release v2.2.15
 
-This release was automatically published from PR #18373.
+This release was automatically published from PR #18747.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/18373
+See PR description: https://github.com/lobehub/lobehub/pull/18747
 
 ### Commit Message
-# 🚀 LobeHub Release (20260816)
+# 🚀 LobeHub Release (20260827)
 
-**Release Date:** August 16, 2026
-**Since v2.2.13:** 363 merged PRs · 21 contributors
+**Release Date:** August 27, 2026  
+**Since v2.2.14:** 235 merged PRs · 13 contributors
 
-> This cycle gives longer-horizon work a durable home: Projects and Goals land as first-class containers for agent work, seven new CLI coding agents join the heterogeneous runtime, a Local Sandbox executes on your machine, and the platform opens up through a generated OpenAPI spec and SDK.
+> This cycle makes long-running Agent work easier to direct and recover, expands provider-backed heterogeneous Agents, delivers safer restart-free Desktop updates, and deepens Artifact, Workspace, and acceptance workflows.
 
 ---
 
 ## ✨ Highlights
 
-- **Seven new CLI coding agents** — Cursor, CodeBuddy, Qoder, Kimi Code, Pi, TRAE, and Grok Build (ACP) join the heterogeneous runtime, plus a Codex app-server lab. (#18229, #18219, #17965, #18228, #17899, #18292, #18254, #18275)
-- **Local Sandbox** — A local execution environment for devices, with a real working directory instead of a refusal. (#18143, #18180)
-- **Public API & SDK** — `openapi.yml` generated from routes, a new `@lobehub/sdk` package, expanded v1 endpoints, and scoped API keys. (#17944, #17980, #18141, #18029)
-- **Home customization** — A Customize modal with Minimal / Balanced / Full presets, a day-paged daily brief, and a task-shaped task mode with scheduled tasks. (#17912, #17948, #17958, #18173)
-- **Desktop split views** — Split tab views, a tab strip reworked for many-tab use, and a faster cold start. (#18004, #17809, #17811)
+- **Provider-backed heterogeneous Agents** — Claude Code and Codex gain deployment-backed model options, while Kimi Code and Pi add new provider paths across web and Desktop. (#18468, #18558, #18609, #18658, #18720, #18721)
+- **Restart-free Desktop updates** — Signed renderer updates apply in place with compatibility checks, compressed delta delivery, release-scoped artifacts, and automatic rollback. (#18648, #18694, #18716, #18724)
+- **Agent approval and intervention flows** — Agent approvals now align across surfaces, and generic interventions persist so long-running work can resume with the right user decision. (#18417, #18645)
+- **Agent self-learning** — A Labs-gated growth portrait shows learned domains, rules, and practice history while operation-scoped expertise improves future Work. (#18195, #18394, #18420)
+- **Public Artifacts and Workbench** — Local HTML and site assets can be packaged into versioned Artifacts, while acceptance and verification run in a standalone SSR Workbench. (#18424, #18473, #18569, #18728)
+- **Workspace collaboration** — Per-member Resource grants, transfer requests, and a redesigned Notification Center make shared work easier to control and act on. (#18389, #18432, #18536, #18545)
+- **More adaptable everyday UI** — Global interface fonts, consolidated Home promotions, clearer model availability, and refined recommendation visuals make the app easier to personalize and navigate. (#18712, #18722, #18730, #18741)
 
 ---
 
 ## 🏗️ Core Agent & Architecture
 
-### Projects & Goals（Alpha）
+### Goals, Tasks & Acceptance
 
-- Project schema, backend and CLI, workspaces with conversation PoC, and an identifier column. (#17996, #18006, #18020, #18034)
-- Goal creation split from task creation with an explanatory empty state; goals get their own table and AI-generated acceptance criteria. (#18047, #18335, #18265)
-- Goal launch requires confirmation even in auto-run mode. (#18111)
+- Goal state moves to a durable graph with dependency-aware scheduling, CLI controls, autonomous recovery, and terminal Acceptance Work. (#18574, #18597, #18635)
+- Scheduled Tasks get a dedicated view, successful subtasks complete automatically, and Kanban grouping matches the list view with clearer loading states. (#18586, #18591, #18631, #18707)
+- Acceptance deliveries group by Project and can be merged without losing checks, evidence, or prior review decisions; the review round now always reports its outcome. (#18448, #18537, #18548, #18672)
+- Acceptance features now share one consistent product boundary, while abandoned Goal Work and stale scoped tool calls recover instead of silently ending the run. (#18656, #18664, #18703)
 
-### Agents & Groups
+### Agent Learning & Identity
 
-- Group member permissions with personal model choice on shared builtins. (#18122)
-- Async agent transfer and copy, with history backfill and intact membership lifecycle. (#17997, #18030, #18082, #18126)
-- Sub-agents follow the parent model by default, with thinking controls. (#17938)
-- Agent quota gets a usage calendar and burnout projection. (#18117)
-
-### Context & Memory
-
-- Graph runtime context is injected continuously; container message tokens count toward the context budget. (#17761, #17839)
-- Every memory tool call renders a dedicated card; extraction prompts align with their schemas. (#17891, #17988)
-- Opt-in automatic topic summary workflow. (#17796, #18171)
+- Self-learning gains dedicated domain creation, editable anchors, operation-scoped Context, and safer lesson history management. (#18418, #18420, #18517, #18556)
+- Agent profiles gain a character sheet and reusable full-body artwork that retains its style and direction. (#18446, #18464)
+- Agent authors can restrict Topic sharing, while Agent transfers preserve accumulated expertise. (#18445, #18557)
+- Approval workflows align with web behavior, and generic interventions persist across Agent runs. (#18417, #18645)
 
 ---
 
 ## 📱 Platforms & Integrations
 
-### Heterogeneous CLI Agents
+### Heterogeneous Agents
 
-- New runtimes: Cursor CLI with model selection, CodeBuddy, Qoder with reasoning effort, Kimi Code, Pi, TRAE, and Grok Build over ACP; Codex app-server session lifecycle completes as a lab. (#18229, #18244, #18219, #17965, #18160, #18228, #17899, #18292, #18254, #17907, #18275)
-- The model selector is driven by a capability table, with local CLI descriptors centralized as a single source of truth. (#18214, #17979)
-- Windows support hardened: CLI spawning, agents behind unknown shims and stale PATH. (#18095, #18220)
-- A heterogeneous error taxonomy classifies terminal errors; cloud auth failures surface clearly. (#17887, #18040)
+- Claude Code supports local Provider bindings, while supported Claude Code and Codex runs can use deployment-backed models with operation-scoped authorization. (#18468, #18558, #18595, #18609, #18621)
+- Kimi Code joins heterogeneous Agent provider bindings, and Pi gains a dedicated Desktop provider path. (#18720, #18721)
+- Each Topic keeps its own heterogeneous model choice instead of rewriting the Agent default. (#18658)
+- Cursor moves to a bidirectional ACP session with permission prompts, questions, approvals, and safe resume recovery. (#18475)
+- OpenClaw and Hermes detection now covers official install paths, refreshed shell environments, and Windows launchers. (#18646)
 
-### Desktop
+### Desktop, Messaging & Gateway
 
-- Split tab views, a tab strip reworked for many-tab use, and pinned tabs that travel. (#18004, #17809, #17857)
-- Boot straight into the last active workspace; cold-start critical path reduced and the local database prewarmed after navigation. (#17946, #17811, #18218)
-- Chromium zoom presets and update downgrades. (#17679, #18012)
-
-### Messaging & Bots
-
-- `/mode` command switches bot conversation mode; recent same-channel history is injected. (#18197, #16608)
-- Proactive messenger push with per-channel notification settings. (#17791)
-- Discord completes deferred forwarded interactions. (#18169)
-
-### Models
-
-- Gemini 3.7 Flash, GLM-5.3 with always-on thinking, Grok 4.6 reasoning effort, and MiniMax-H3 video with official v2 API. (#18289, #18290, #18301, #18225, #17827)
-- Audio lands in multimodal understanding with input cost estimation; Cerebras and Groq gain advanced reasoning parameters. (#17904, #17949, #16469)
+- Desktop applies verified renderer updates without restarting, keeps compact rollback deltas, and scopes OTA artifacts to the matching release. (#18648, #18694, #18716, #18724)
+- macOS communication notifications include Agent avatars, Workspace windows retain their bounds, and the terminal adds links and split panes. (#18430, #18433, #18441, #18500)
+- Gateways can pull the connection assignments they should hold, while message routing can still split platforms across deployments without changing the Integration protocol. (#18628, #18680)
+- Linked chat platforms receive Resource files and attachments with per-platform budgets, while scheduled Task results and rich Agent pushes appear in the Notification Center. (#18391, #18467, #18511, #18535, #18561, #18608)
 
 ---
 
 ## 🖥️ User Experience
 
-- Home: mine/team scope and author chips on recent topics, open goals in the rail, and one-page dashboard scrolling with a persistent recents cache. (#17908, #18121, #17836)
-- Chat: web voice messages, editable opening questions, keyboard-driven AskUserQuestion with select-to-submit, and a reachable, effective error-card retry. (#17744, #18003, #17903, #18080)
-- Agent identity: an avatar studio with one-click brand-style generation, profile artwork with style presets, and personal names with a dice-roll composer. (#18113, #17929, #17986, #17853, #17894)
-- Workspace agents organize with labels and a shared sidebar; the sidebar header becomes an identity switcher. (#17848, #18338)
-- Resource library: path-based category routes with a Files category, origin filtering, and restored document scrolling. (#18083, #18170, #18345)
-- Onboarding: Notion and X understanding sources, streamed generation progress, and confirmed starter tasks that run immediately. (#18110, #18118, #18105, #18224)
+- Realtime voice dictation adds finalized speech to the editable draft without auto-sending or disturbing existing text and attachments, and its entry point now sits with the left-side chat actions. (#18132, #18578, #18709)
+- Home restores its marketing hierarchy, consolidates promotional surfaces, sharpens recommendation visuals, and brings back richer model shortcuts and the Apps catalog. (#18438, #18528, #18553, #18562, #18580, #18722, #18741)
+- A global interface font setting and locale-aware font stacks make reading preferences consistent across the app. (#18712)
+- GLM-5.3-Flash is available, disabled models can be re-enabled from chat input, and model prices survive OAuth redirects. (#18723, #18727, #18730)
+- Dead Topic locks no longer swallow sent messages, and completed gateway runs clear stale loading state in the sidebar. (#18497, #18682)
+- Agent document edits recover malformed persisted content and reject operations that would unexpectedly clear a non-empty document. (#18643)
+- Settings search covers more destinations and matches user queries more reliably. (#18390)
 
 ---
 
-## 🔧 Tooling & API
+## 🔧 Tooling
 
-- OpenAPI spec generated from routes via hono-openapi, shipped as the generated `@lobehub/sdk`. (#17944, #17980)
-- v1 API adds api-keys, evals, mcp-servers, and usage endpoints. (#18141)
-- API key scopes, with workspace keys scoped to member permissions. (#18029, #18136)
-- Jupyter notebook (.ipynb) upload with token-efficient markdown conversion. (#17855)
-- CI gates bundle size for web dist and desktop asar. (#17970)
-- Agent tracing visualizes context composition. (#18114)
+- Agent Chaos adds deterministic timeout, cleanup, tracing, and failure-injection contracts for long-running Agent tests. (#18667)
+- Evaluation Run Topics restore Test Case history and environment Context, and tool calls can be forwarded to mock servers for end-to-end verification. (#18516, #18604)
+- Workbench CI checks Worker bundle size and publishes PR previews after assets reach R2. (#18492, #18592)
+- Desktop release automation dispatches renderer OTA before native releases, and shared UI primitives continue moving to the base component layer. (#18716, #18729)
+- Obsolete Orb repository setup scripts are removed from the development path. (#18740)
 
 ---
 
 ## 🔒 Security & Reliability
 
-- **Security:** custom provider base URLs are validated (#18223); restricted knowledge bases are soft-hidden from members (#18282); deleting a connector unlinks remote accounts (#18270); auth cookies support custom prefixes and subdomain sharing (#18358, #18200).
-- **Reliability:** blocking Redis XREAD runs on a dedicated connection (#17876); file parse cache writes are serialized (#17919); repeated network-error toasts collapse into one (#17873); runs no longer strand in `verifying` (#18164); sessions survive provider key errors (#18343).
-- **Performance:** PDF parsing drops a 25MB native dependency (#17858); agent page render cost is cut across sidebars, composer, and topic list (#17991); recent-topic previews are batched instead of per-topic subqueries (#17928).
+- **Security:** Resource checks stay scoped to the active Workspace and support per-member grants without bypassing privacy or role ceilings. (#18396, #18406, #18525, #18536, #18545)
+- **Security:** Server-default heterogeneous operations bind authorization to the user, operation, Workspace, and allowed capabilities. (#18558)
+- **Reliability:** Context compression avoids repeat work, removes compressed messages from queued payloads, and settles in-flight tool calls when interrupted. (#18506, #18587, #18610, #18626)
+- **Reliability:** Completed heterogeneous child Agents resume their parked parent, while RouterRuntime preserves request Context and retries the next configured channel on insufficient Provider balance. (#18596, #18668)
+- **Reliability:** Multi-tab settings changes no longer overwrite newer tool approval choices with stale state. (#18705)
+- **Performance:** Message-plugin and heterogeneous tool-call lookups avoid broad scans, and Task lists use a leaner database path. (#18457, #18519, #18618)
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to **21 contributors** who shipped **363 merged PRs** this cycle.
+Huge thanks to **13 contributors** who shipped **235 merged PRs** this cycle.
 
-@sxjeru · @Cyber-Yichen · @northword · @smbslt3 · @hardy-one · @orangeboyChen · @nightcityblade · @Max-Reisinger · @Mark-star-dot · @ImSingee · @BittuBarnwal7479 · @arvinxx · @Innei · @AmAzing129 · @tjx666 · @Rdmclin2 · @Neko · @LiJian · @sudongyuer · @rivertwilight · @cy948
+@ONLY-yours · @orangeboyChen · @jalenzz · @NickShee · @BittuBarnwal7479 · @arvinxx · @Innei · @AmAzing129 · @rdmclin2 · @tjx666 · @sudongyuer · @cy948 · @nekomeowww
 
 ---
 
-**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.13...release/weekly-20260816
+**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.14...release/weekly-20260827
