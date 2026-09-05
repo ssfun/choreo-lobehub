@@ -2,36 +2,36 @@
 
 # Version
 
-v2.2.15
+v2.2.16
 
 # Releases
 
-## 📦 Release v2.2.15
+## 📦 Release v2.2.16
 
-This release was automatically published from PR #18747.
+This release was automatically published from PR #19137.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/18747
+See PR description: https://github.com/lobehub/lobehub/pull/19137
 
 ### Commit Message
-# 🚀 LobeHub Release (20260827)
+# 🚀 LobeHub Release (v2.2.16)
 
-**Release Date:** August 27, 2026  
-**Since v2.2.14:** 235 merged PRs · 13 contributors
+**Release Date:** September 3, 2026  
+**Since v2.2.15:** 246 merged PRs · 9 contributors
 
-> This cycle makes long-running Agent work easier to direct and recover, expands provider-backed heterogeneous Agents, delivers safer restart-free Desktop updates, and deepens Artifact, Workspace, and acceptance workflows.
+> This release makes long-running Goals easier to plan, supervise, and accept; adds direct Agent sharing and a project-scoped Acceptance workspace; broadens local heterogeneous Agent support; and strengthens search, CLI, collaboration, performance, and gateway reliability.
 
 ---
 
 ## ✨ Highlights
 
-- **Provider-backed heterogeneous Agents** — Claude Code and Codex gain deployment-backed model options, while Kimi Code and Pi add new provider paths across web and Desktop. (#18468, #18558, #18609, #18658, #18720, #18721)
-- **Restart-free Desktop updates** — Signed renderer updates apply in place with compatibility checks, compressed delta delivery, release-scoped artifacts, and automatic rollback. (#18648, #18694, #18716, #18724)
-- **Agent approval and intervention flows** — Agent approvals now align across surfaces, and generic interventions persist so long-running work can resume with the right user decision. (#18417, #18645)
-- **Agent self-learning** — A Labs-gated growth portrait shows learned domains, rules, and practice history while operation-scoped expertise improves future Work. (#18195, #18394, #18420)
-- **Public Artifacts and Workbench** — Local HTML and site assets can be packaged into versioned Artifacts, while acceptance and verification run in a standalone SSR Workbench. (#18424, #18473, #18569, #18728)
-- **Workspace collaboration** — Per-member Resource grants, transfer requests, and a redesigned Notification Center make shared work easier to control and act on. (#18389, #18432, #18536, #18545)
-- **More adaptable everyday UI** — Global interface fonts, consolidated Home promotions, clearer model availability, and refined recommendation visuals make the app easier to personalize and navigate. (#18712, #18722, #18730, #18741)
+
+- **More heterogeneous Agents, with safer bindings** — Factory Droid joins through ACP, TRAE and Grok Build gain provider binding support, and the deployment-provided LobeHub connection expands across Claude Code, Codex, Kimi Code, Pi, and Grok Build. (#18737, #18775, #18785, #18811, #18932)
+- **Full-text search gains an Elasticsearch path** — A provider-neutral search layer, durable outbox, resumable indexing, operational recovery, and an opt-in Docker Compose profile make Elasticsearch practical without changing the default self-hosted setup. (#18807, #18902, #19028)
+- **The CLI covers more of the Agent workflow** — Workspace selection, resilient Goal execution, operation inspection and replay, execution snapshots, and stronger daemon readiness checks make `lh` more useful for repeatable local and remote workflows. (#18797, #18874, #19000, #19015, #19020)
+- **Workspace collaboration becomes more actionable** — Document comment threads gain participant notifications and deep links, shared documents can receive likes, and Tasks add assignments, mentions, and member-aware tool actions. (#18750, #18999, #19035, #19039)
+- **Large workloads feel lighter** — A CI-enforced first-screen graph cut, off-main-thread hashing, streaming upload paths, and larger PDF reads reduce startup and file-processing stalls. (#18945, #19033, #19065, #19073)
+- **Gateway and runtime failures recover more clearly** — Device handshake deadlines, explicit device-read failures, recoverable offline-device states, bounded tool-loop handling, and synthetic tool-failure diagnosis prevent silent fallbacks and stuck execution. (#18965, #19021, #19022, #19069, #19116)
 
 ---
 
@@ -39,17 +39,17 @@ See PR description: https://github.com/lobehub/lobehub/pull/18747
 
 ### Goals, Tasks & Acceptance
 
-- Goal state moves to a durable graph with dependency-aware scheduling, CLI controls, autonomous recovery, and terminal Acceptance Work. (#18574, #18597, #18635)
-- Scheduled Tasks get a dedicated view, successful subtasks complete automatically, and Kanban grouping matches the list view with clearer loading states. (#18586, #18591, #18631, #18707)
-- Acceptance deliveries group by Project and can be merged without losing checks, evidence, or prior review decisions; the review round now always reports its outcome. (#18448, #18537, #18548, #18672)
-- Acceptance features now share one consistent product boundary, while abandoned Goal Work and stale scoped tool calls recover instead of silently ending the run. (#18656, #18664, #18703)
+- Goal planning now records exploration structure, schedules independent Tasks in parallel, and bounds Goal reads, lifecycle transitions, and deadlines. (#18942, #18944, #18970)
+- Goal creation and execution stay non-blocking, while the Goal page adds contextual chat, liveness heartbeats, explicit process controls, structured acceptance criteria, and a final result-review view. (#18979, #19050, #19124)
+- Acceptance lists support pagination and batch actions, and reports, decisions, and evidence are clearer during review and reruns. (#18843, #18844, #18896, #18897, #18901)
+- Projects now host their own Acceptance workspace, including scoped queries, contextual empty states, and a notice when a shared viewer cannot perform review actions. (#19042, #19064)
 
-### Agent Learning & Identity
+### Runtime, Context & Agent Work
 
-- Self-learning gains dedicated domain creation, editable anchors, operation-scoped Context, and safer lesson history management. (#18418, #18420, #18517, #18556)
-- Agent profiles gain a character sheet and reusable full-body artwork that retains its style and direction. (#18446, #18464)
-- Agent authors can restrict Topic sharing, while Agent transfers preserve accumulated expertise. (#18445, #18557)
-- Approval workflows align with web behavior, and generic interventions persist across Agent runs. (#18417, #18645)
+- Agent Work verification no longer redispatches an already delivered Work item, and gateway tool-state updates are coalesced to reduce redundant traffic. (#18969, #19060)
+- Repeated tool loops are bounded, synthetic tool failures retain their reason and tool identity, and network-success responses with empty completions can be retried safely. (#18965, #19083, #19116)
+- Heterogeneous Agent lifecycle hooks persist across operations, while operation completion propagates through the hook chain. (#18408, #18946)
+- Agent documents keep their folder relationships, and workspace resource management is less restrictive where ownership and permissions already allow the operation. (#18964, #19107)
 
 ---
 
@@ -57,60 +57,56 @@ See PR description: https://github.com/lobehub/lobehub/pull/18747
 
 ### Heterogeneous Agents
 
-- Claude Code supports local Provider bindings, while supported Claude Code and Codex runs can use deployment-backed models with operation-scoped authorization. (#18468, #18558, #18595, #18609, #18621)
-- Kimi Code joins heterogeneous Agent provider bindings, and Pi gains a dedicated Desktop provider path. (#18720, #18721)
-- Each Topic keeps its own heterogeneous model choice instead of rewriting the Agent default. (#18658)
-- Cursor moves to a bidirectional ACP session with permission prompts, questions, approvals, and safe resume recovery. (#18475)
-- OpenClaw and Hermes detection now covers official install paths, refreshed shell environments, and Windows launchers. (#18646)
+- Factory Droid is available as a first-class ACP Agent with session resume, image input, cancellation, model configuration, and permission interventions. (#18775)
+- TRAE supports provider binding through OpenAI Responses, including isolated profiles and preserved authentication across model bindings. (#18811, #18932)
+- The deployment-provided LobeHub connection covers more local Agent drivers with operation-scoped credentials and capability checks, including Grok Build support. (#18737, #18785)
 
-### Desktop, Messaging & Gateway
+### Desktop, Gateway & Messaging
 
-- Desktop applies verified renderer updates without restarting, keeps compact rollback deltas, and scopes OTA artifacts to the matching release. (#18648, #18694, #18716, #18724)
-- macOS communication notifications include Agent avatars, Workspace windows retain their bounds, and the terminal adds links and split panes. (#18430, #18433, #18441, #18500)
-- Gateways can pull the connection assignments they should hold, while message routing can still split platforms across deployments without changing the Integration protocol. (#18628, #18680)
-- Linked chat platforms receive Resource files and attachments with per-platform budgets, while scheduled Task results and rich Agent pushes appear in the Notification Center. (#18391, #18467, #18511, #18535, #18561, #18608)
+- Device clients time out black-holed handshakes, distinguish gateway read failures from an empty device list, and expose offline-device failures as recoverable states instead of silently degrading execution. (#19021, #19022, #19069)
+- Desktop renderer updates use the next OTA flow, update notifications are clearer, and listener and root cleanup reduces stale IPC state. (#18745, #18839, #18954)
+- Bot topics can be filtered by source, background Task and evaluation runs avoid noisy completion pushes, and Telegram webhooks gain verification hardening. (#18788, #18866, #18930)
+- Mobile Agent search aligns with the shared search contract, while chat image proxying and media references improve image delivery across integrations. (#18743, #18784, #18835)
 
 ---
 
 ## 🖥️ User Experience
 
-- Realtime voice dictation adds finalized speech to the editable draft without auto-sending or disturbing existing text and attachments, and its entry point now sits with the left-side chat actions. (#18132, #18578, #18709)
-- Home restores its marketing hierarchy, consolidates promotional surfaces, sharpens recommendation visuals, and brings back richer model shortcuts and the Apps catalog. (#18438, #18528, #18553, #18562, #18580, #18722, #18741)
-- A global interface font setting and locale-aware font stacks make reading preferences consistent across the app. (#18712)
-- GLM-5.3-Flash is available, disabled models can be re-enabled from chat input, and model prices survive OAuth redirects. (#18723, #18727, #18730)
-- Dead Topic locks no longer swallow sent messages, and completed gateway runs clear stale loading state in the sidebar. (#18497, #18682)
-- Agent document edits recover malformed persisted content and reject operations that would unexpectedly clear a non-empty document. (#18643)
-- Settings search covers more destinations and matches user queries more reliably. (#18390)
+- Direct Agent links provide a controlled visitor-chat surface with configurable grants, limits, and exposure settings. (#18998)
+- The Goal experience adds an exploration map, a detail portal, compact running-process controls, and a dedicated result-review view. (#18928, #18942, #18921, #19124)
+- Workspace browsing gains a more capable explorer, Agent Overview and Workspace are separated more clearly, and Agent Documents are distinguished from knowledge-base lookup. (#18845, #18892, #19085)
+- Local files gain a focused preview toolbar, large PDFs can be read without the earlier cap, and `.v` and `.sv` files are recognized as attachments. (#18758, #19073, #19118)
+- Gemini 3.8 Flash is available with the supported thinking levels, and React Artifact previews boot reliably in Sandpack. (#19058)
 
 ---
 
-## 🔧 Tooling
+## 🔧 Search, CLI & Tooling
 
-- Agent Chaos adds deterministic timeout, cleanup, tracing, and failure-injection contracts for long-running Agent tests. (#18667)
-- Evaluation Run Topics restore Test Case history and environment Context, and tool calls can be forwarded to mock servers for end-to-end verification. (#18516, #18604)
-- Workbench CI checks Worker bundle size and publishes PR previews after assets reach R2. (#18492, #18592)
-- Desktop release automation dispatches renderer OTA before native releases, and shared UI primitives continue moving to the base component layer. (#18716, #18729)
-- Obsolete Orb repository setup scripts are removed from the development path. (#18740)
+- Full-text search supports PostgreSQL and Elasticsearch behind one repository contract, with permission-aware hydration, durable incremental sync, and resumable reindexing. (#18807)
+- Elasticsearch deployments can recover interrupted indexing, while self-hosters can opt into a single-node Docker Compose profile without changing the default stack. (#18902, #19028)
+- `lh workspace` lists, inspects, and switches workspace scope; `lh goal run` becomes more resilient; and daemon startup waits for actual readiness. (#19000, #19015, #19020)
+- Signed operation snapshots can be inspected and replayed across models or as a full trajectory, and CLI execution snapshots make runs easier to diagnose. (#18796, #18797, #18874)
+- Evaluation cases can be captured from a conversation turn, and the Mesurer inspector improves local investigation of application behavior. (#18889, #18955)
 
 ---
 
-## 🔒 Security & Reliability
+## 🔒 Security, Reliability & Performance
 
-- **Security:** Resource checks stay scoped to the active Workspace and support per-member grants without bypassing privacy or role ceilings. (#18396, #18406, #18525, #18536, #18545)
-- **Security:** Server-default heterogeneous operations bind authorization to the user, operation, Workspace, and allowed capabilities. (#18558)
-- **Reliability:** Context compression avoids repeat work, removes compressed messages from queued payloads, and settles in-flight tool calls when interrupted. (#18506, #18587, #18610, #18626)
-- **Reliability:** Completed heterogeneous child Agents resume their parked parent, while RouterRuntime preserves request Context and retries the next configured channel on insufficient Provider balance. (#18596, #18668)
-- **Reliability:** Multi-tab settings changes no longer overwrite newer tool approval choices with stale state. (#18705)
-- **Performance:** Message-plugin and heterogeneous tool-call lookups avoid broad scans, and Task lists use a leaner database path. (#18457, #18519, #18618)
+- **Security:** Trusted authentication origins and apex Desktop redirects are handled explicitly, while direct Agent sharing keeps spend caps and capability grants under the creator's control. (#18924, #18925, #18998)
+- **Security:** Signed trace snapshots and heterogeneous provider bindings scope credentials to the intended operation and Agent capability. (#18785, #18796)
+- **Reliability:** Model and runtime failures preserve clearer classifications and reasoning details, and image tool results are no longer misreported as failed. (#18795, #19004, #19005, #19006)
+- **Reliability:** Device connectivity failures no longer masquerade as an empty online set or leave clients indefinitely parked in a connecting state. (#19021, #19022)
+- **Performance:** The first-screen static import graph is CI-gated and 41% smaller, large-file hashing moves off the UI thread, and uploads stream with bounded memory. (#18945, #19033, #19065)
+- **Observability:** Model, router, search-cost, and time-series metrics add clearer attribution for runtime behavior and operational trends. (#19012, #19063, #19071)
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to **13 contributors** who shipped **235 merged PRs** this cycle.
+Huge thanks to **9 contributors** who shipped **246 merged PRs** this cycle.
 
-@ONLY-yours · @orangeboyChen · @jalenzz · @NickShee · @BittuBarnwal7479 · @arvinxx · @Innei · @AmAzing129 · @rdmclin2 · @tjx666 · @sudongyuer · @cy948 · @nekomeowww
+@arvinxx · @Innei · @tjx666 · @rdmclin2 · @AmAzing129 · @ONLY-yours · @sudongyuer · @nekomeowww · @cy948
 
 ---
 
-**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.14...release/weekly-20260827
+**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.15...release/v2.2.16
