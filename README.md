@@ -2,152 +2,138 @@
 
 # Version
 
-v2.2.17
+v2.2.18
 
 # Releases
 
-## 📦 Release v2.2.17
+Published from https://github.com/lobehub/lobehub/pull/19706 on merge commit `14dfc07b`.
 
-This release was automatically published from PR #19434.
+**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.17...v2.2.18
 
-### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/19434
+---
 
-### Commit Message
-# 🚀 LobeHub Release (20260911)
+# 🚀 LobeHub Release (20260920)
 
-**Planned Release Date:** September 11, 2026  
-**Since v2.2.16:** 210 non-merge commits · 13 contributors (six additional canary PRs bundled through the refresh PR)
+**Planned Release Date:** September 20, 2026  
+**Since v2.2.17:** 177 non-merge commits · 12 contributors (excluding bots)
 
-> This cycle makes Goals easier to plan and recover, brings discussion and reusable checks into Acceptance, expands Desktop and local-file workflows, and improves startup performance, model support, and messaging reliability.
+> This week brings text-anchored document comments, conversation-linked Goals, clearer CLI diagnostics, and a more reliable self-hosted setup, alongside fixes for long-running Agent work and Desktop updates.
 
 ## ⚙️ Upgrade & Migration Notes
 
-- **Database migrations:** This candidate adds migrations `0158`–`0161`: upload reservations (`file_uploads`), Task activity history (`task_activities`), reusable Acceptance flows and check metadata, and Acceptance comments. Back up the database before upgrading; validate the migration path from v2.2.16 before promoting this candidate. Downgrade compatibility and rollback have not yet been verified. (#19119, #19217, #19268, #19392)
-- **Optional providers:** Meta and Unsloth add `META_API_KEY` / `META_PROXY_URL` / `META_MODEL_LIST` and `UNSLOTH_API_KEY` / `UNSLOTH_PROXY_URL` / `UNSLOTH_MODEL_LIST` configuration. For a local Unsloth Studio instance, use a URL reachable from the LobeHub server; Docker loopback points to the container, not the host. (#19152, #18339)
-- **Elasticsearch:** Per-entity mapping migration support and Serverless index compatibility are included. Deployments using Elasticsearch should verify their existing index and reindex workflow before rollout. (#19186, #19381)
-- **Source builds:** The workspace moves to pnpm 12 and Vitest 5. Update development and CI tooling to the versions declared by the repository. (#19324, #19355)
+- **Docker Compose:** Chats now use server-side Gateway Mode by default. Existing deployments need deployment-specific `JWKS_KEY`, matching public-only `JWKS_PUBLIC_KEY`, `GATEWAY_SERVICE_TOKEN`, and a browser-reachable `AGENT_GATEWAY_URL`. Follow the updated Compose upgrade guide; do not retain the old example signing key. Missing settings produce a startup warning and chats fall back to browser execution. `AGENT_GATEWAY_INTERNAL_URL` and `S3_INTERNAL_ENDPOINT` separate container-internal access from browser-facing URLs. (#19583)
+- **Compose startup:** Bucket initialization uses `rustfs/rc`; upload CORS and PostgreSQL initialization/health checks are corrected. The setup script downloads templates from main and supports curl and macOS host-IP detection. (#19572, #19590)
+- **Database:** Migrations `0162`–`0166` add search-capture version tracking, Environment/Instance/project associations, document-comment selection anchors, delivery-standard provenance, and nullable device CPU architecture. Environment support in this range is schema-only, not provisioning or execution integration. Back up the database before upgrading; this release preparation has not verified a full production upgrade or rollback. (#19537, #19270, #19595, #19627, #19510)
+- **Plain PostgreSQL search:** `FTS_SEARCH_PROVIDER=pg_like` explicitly selects an extension-free query backend for smaller instances; it is not an automatic fallback. Historical migrations still require `pg_search`, so this setting alone does not make a fresh extension-free installation possible. (#19188)
+- **Bot credentials:** List/detail responses mask credentials, and `lh bot view --show-credentials` is removed. (#19452)
 
 ---
 
 ## ✨ Highlights
 
-- **More resilient Goals** — Durable planning, planning leases, measured acceptance criteria, and recovery from pipeline failures help long-running work progress without duplicate decomposition or unnecessary escalation. (#19277, #19307, #19133, #19377)
-- **Collaborative Acceptance** — Reusable checks, grouped flows, discussion, region notes, and reviewer approval bring execution evidence and review into one workflow. (#19268, #19348, #19393)
-- **A broader Desktop workflow** — Computer Use through `auv`, tab-hover thumbnails, completion sound settings, and clearer authentication recovery expand everyday Desktop capabilities. (#19051, #19284, #19280, #19240)
-- **Local files become easier to use** — Edit code in the local-file portal, inspect spreadsheets with layout and reflow views, and publish local HTML as an Artifact through the CLI. (#19379, #19265, #19360)
-- **More models and providers** — GPT-6 Astra, Qwen3.8 Max, Gemini 3.8 Flash, Meta Muse Spark 1.3, and Unsloth support expand available choices, with reasoning effort configurable per Topic. (#19163, #17863, #19077, #19152, #18339, #19190)
-- **A lighter startup path** — Deferred analytics, model catalogs, icon pickers, editors, and cold-tab routers reduce work performed before the app is needed. (#19289, #19291, #19292, #19294, #19347)
-- **Better messaging and collaboration** — Feishu document reading, Workspace document mentions, Telegram Guest Mode summons, and more reliable bot replies connect Agent work to shared conversations. (#19401, #19402, #18846, #19405)
+- **Continue after a rate limit** — Transfer an external CLI Agent conversation to another Agent, schedule continuation, or retry. Product acceptance remains incomplete as noted below. (#19080)
+- **Pull requests in the Desktop sidebar** — A native PR tab brings descriptions, checks, commits, activity, and merge actions into the Working Sidebar. (#19506)
+
+- **Comments beside the text** — Select a document excerpt to comment on it, then follow the highlighted passage and its aligned comment card. (#19602, #19659)
+- **Goals from a conversation** — `/goal` lets a heterogeneous Agent supervise work from its current conversation; the linked Goal tray and portal are behind the `enableTopicAcceptance` Lab. (#19588)
+- **One diagnostic command** — `lh doctor` checks credentials, endpoints, scope, device connectivity, and execution with selectable profiles and actionable results. (#19626)
+- **A simpler Desktop composer** — Quick Composer opens for typing first and captures screenshots when requested. (#19523)
+- **Resource previews in place** — Files and Pages open in an inline detail panel, keeping the resource list within reach. (#19599)
+- **More durable Agent runs** — Operation-token renewal and corrected failure handling reduce interruptions and prevent discarded output from being reported as success. (#19548, #19549, #19658)
 
 ---
 
 ## 🏗️ Core Agent & Architecture
 
-### Goals & Tasks
+- Goal plans express dependencies across rounds; documents written through `lh doc` become run deliverables. After final acceptance checks pass, the Goal can surface its delivered document. (#19587)
+- Agent steps share message reads and reuse turn-invariant facts; full completion-state snapshots become opt-in. (#19683, #19690, #19682)
+- With the `gatewayMux` Lab enabled, supported tool results send smaller display payloads and recover full command/document output on demand. Follow-up fixes restore full bodies before transcript replay and cover the command-output family. (#19666, #19694, #19695)
 
-- Goal planning runs through the main Agent with durable coordination, while exploration can revise a flawed protocol and navigate nested experiment answers. (#19277, #19375, #19261)
-- Goals carry deliverables as Work, show each Task's verification, and support Agent reassignment and restart commands. (#19131, #19171, #19181)
-- Planning leases prevent duplicate decomposition; dead dispatches fail explicitly, and pipeline failures recover instead of immediately escalating to a person. (#19307, #19339, #19377)
-- Task terminal status cascades to subtasks, activity feeds record assignment and automation changes, and failed delivery verification no longer disarms recurring schedules. (#19158, #19258, #19220)
-
-### Acceptance
-
-- Reusable check assets and grouped flows preserve check history when regrouping, order occurrences along flow paths, and support fullscreen flow review. (#19268, #19306, #19319, #19304)
-- Reviewers can discuss a delivery, attach region notes, and record approval; rounds can introduce themselves in the collaboration view. (#19348, #19393)
-- Mobile review and repair handoff improve, file evidence becomes easier to identify, and plain-text evidence is displayed verbatim instead of being interpreted as Markdown. (#19260, #19361, #19276, #19390)
-- Authors can remove obsolete flows, and draft rounds no longer inflate the review history. (#19388, #19350)
+- Consecutive server Agent steps run in one invocation, with deferred work settled between steps and queued messages able to request a turn handoff. (#19470, #19531, #19541, #19585)
+- Shared rules now assemble Agent configuration, context, model parameters, tool rules, tool manifests, and Skills across execution hosts. (#19476, #19514, #19517, #19525, #19576, #19586, #19604, #19616, #19667)
+- Goals use the system planner and supervising Agent, show Task assignees, retain graph position during interaction, and display live Task runs in the result panel. The default per-Task attempt budget increases from 3 to 8. (#19477, #19578, #19591, #19535, #19575)
+- Acceptance review receives evidence frames inline, and review errors no longer consume Task attempts. Public discussion gains moderation and clearer permission boundaries. (#19565, #19448)
+- Delivery-standard capture can derive lessons from settled rejection feedback and retain their provenance. This is backend groundwork; standards pages and automatic enforcement are not delivered here. (#19629, #19627)
 
 ---
 
 ## 📱 Platforms & Integrations
 
-- Devin CLI joins the heterogeneous Agent integrations, and provider binding graduates from Labs. (#18554, #19142)
-- Desktop adds Computer Use through `auv`, native scroll bounce, tab-hover thumbnails, completion sounds, and font fallbacks with title-bar-safe popups. (#19051, #19354, #19284, #19280, #19332)
-- Desktop authentication routes Better Auth through the backend proxy, preserves refresh error codes, and keeps the re-login modal reachable. (#19298, #19167, #19245)
-- Renderer OTA compatibility is derived from source inputs, with additional update lifecycle diagnostics. (#19351, #19300)
-- Web users can browse remote working directories, while device presence and heterogeneous completion snapshots are hardened against stale state. (#19221, #19243, #19352, #19353)
-- Feishu integrations read chat history and documents with rich-text images; WeChat voice decoding and bot channel setup receive fixes. (#19323, #19401, #19405)
-- Telegram supports Guest Mode summons without joining the chat, and bot failures report budget scope and headroom. (#18846, #19336)
+- Devices report CPU architecture on registration; existing rows remain nullable until upgraded clients reconnect. Local and remote Codex quota handling share the same account model. (#19510, #19678)
+
+- The pi integration uses RPC transport and reuses its process across turns. Windows Claude SDK shim handling and Android Codex Gateway routing are corrected. (#18346, #18674, #18717)
+- OAuth applications support web redirect URIs, and Android passkey origins are accepted. (#19504, #19640)
+- Gateway connection multiplexing is available behind a Labs toggle, sharing one WebSocket per user. (#19557)
+- Desktop improves first-paint startup, restored tabs, idle memory collection, renderer OTA application, and completion-sound choices. Missing user folders no longer crash the main process. (#19429, #19481, #19497, #19509, #19480, #19598)
+- Agent-share visitor attachments gain scoped storage limits and isolation; shared Topic errors become safer and traceable. Availability follows the distribution's Agent-sharing surface. (#19569, #19649, #19560)
 
 ---
 
-## 🖥️ User Experience
+## 🖥️ CLI & User Experience
 
-- Local-file previews add a code editor, spreadsheet layout and reflow modes, consolidated file actions, and Reveal in Finder. (#19379, #19265, #19263)
-- HTML publishing provides guidance when files are outside the Workspace, while tool titles retain their action labels for Chinese, Japanese, and Korean arguments. (#19432)
-- About and update checks use the build-time Web app version when supplied, falling back to package metadata otherwise. (#19432)
-- Workspace documents support member mentions, Workspace context remains scoped, and the usage widget incorporates Workspace quota. (#19402, #19299, #19272)
-- Agent sharing adds settings tabs and a visitor page, with direct visitor Topic links and clearer tab titles. (#19180, #19267)
-- API Key management is redesigned, Market review submission is restored, and system-prompt edits are displayed as a diff. (#19328, #19376, #19178)
-- Topic-specific reasoning effort and Agent defaults make model behavior easier to control, while newly released models are promoted in the picker. (#19190, #19076)
-- Image tool results are visible outside collapsed workflows, typed answers work in multi-select interventions, and registered Works appear with the final assistant reply. (#19045, #19399, #19345)
+- Stopping an accepted reply preserves the current composer draft; only an unaccepted cancelled send restores its snapshot. Question submissions receive immediate optimistic feedback. (#19674, #19681)
+- Terminal Task runs can be stopped or deleted, device settings give the detail pane more room, and workflow folds measure their own elapsed wall-clock time. (#19688, #19680, #19702)
 
----
-
-## 🔧 Models, CLI & Tooling
-
-- Add GPT-6 Astra, Qwen3.8 Max, and Gemini 3.8 Flash model support, along with Meta Muse Spark 1.3 and Unsloth providers. (#19163, #17863, #19077, #19152, #18339)
-- Preserve mixed reasoning and answer deltas, flat JSON provider errors, and OpenCode Go conversation headers; route OpenCode Go Muse Spark through Responses. (#19378, #19404, #19235, #19109)
-- The CLI publishes local HTML Artifacts and maintains a local message store with write-behind sync for device-hosted runs. (#19360, #18908)
-- Embedded and standalone CLI packaging retains required workspace packages and dependencies. (#19391, #19408)
-- OpenAPI adds read routes for evaluation runs, datasets, and Topics, and Elasticsearch gains per-entity mapping migration support. (#19423, #19186)
-- Release automation explicitly dispatches the post-release main-to-canary sync on `main`, fixing a skipped synchronization step. (#19424)
-- HTML Artifact callers use the shared package directly instead of obsolete Workspace re-export shims. (#19432)
-- The blocked HTML publish hook imports helpers and types directly from the shared package, resolving the candidate's missing-module type-check errors. (#19433)
+- `lh doctor` supports offline diagnostics, JSON output, and opt-in deep checks; costly checks are not enabled by default. (#19626)
+- HTML publishing can copy outside-Workspace assets into the Workspace, and the CLI prints the Artifact share URL after publishing. (#19447, #19536)
+- Document comments retain the selected excerpt, align beside their source, and keep the line-comment marker inside the editor column. Pasted document images are rehosted. (#19602, #19659, #19664, #19527)
+- Task URLs gain readable slugs; Artifact previews stay in the run drawer; resource galleries refresh after document deletion. (#19503, #19641, #19647)
+- Acceptance adds a pinned list rail, multi-select, and optional evidence-file deletion. (#19559, #19529)
+- Navigation restores sidebar scroll position, virtualizes long branch lists, and shows full upload errors in file tooltips. (#19441, #19492, #19453)
 
 ---
 
-## 🔒 Security, Reliability & Performance
+## 🔧 Tooling
 
-- **Isolation:** Personal conversations no longer appear in team recent Topics, and persisted CLI Workspace scope stays out of server-dispatched runs. (#19239, #19182)
-- **Resource control:** Storage is reserved before uploads, and invalid or unretryable web-search/crawl requests avoid unnecessary paid calls. (#19119, #18702)
-- **Reliability:** Interrupted group messages retain continuation scope, stale mid-turn refetches are dropped, and sandbox recreation is surfaced in tool results. (#19250, #19150, #19329)
-- **Reliability:** Bot completion replies remain bound to their own operation, and Agent share visitors reject stale reconnects. (#19114, #19140)
-- **Performance:** Build-time style precompilation, deferred startup modules, and separate first-screen/lazy chunks reduce startup work without loading every feature up front. (#19066, #19288, #19289, #19291, #19292, #19293, #19294)
-- **Performance:** Runtime interrupt polling reads a small sentinel rather than the full state, unused step-event persistence is removed, and initial diff rendering is bounded. (#18995, #19321, #18991)
-- **Desktop startup:** The main window appears on first paint, with compile caching and development loading progress. (#19432)
-- **Metrics:** Aggregated message token throughput uses paired output-token counts and generation durations rather than averaging per-call rates equally. (#19432)
+- OpenAPI exposes Evaluation resources and the external run lifecycle for integration tooling. (#19428)
+- Provider-native stream diagnostics and router-affinity hooks improve deployment troubleshooting. (#19643, #19648)
+- Search indexing skips ineligible messages with versioned capture, and capture-trigger upgrades reduce lock contention. (#19537, #19570)
+- Source tooling moves to pnpm 12.4.1 and actions/checkout v7. (#19437, #19656)
+
+---
+
+## 🔒 Security & Reliability
+
+- JSON device-Gateway dispatch errors are recognized, and Agent message errors and structured IM replies are normalized. Rate-limit handoff coordinates cancellation with scheduled dispatch to prevent duplicate continuation. (#19692, #19676, #19080)
+
+- **Credential protection:** Bot credentials are masked server-side; Compose generates deployment-specific signing keys and gives Gateway only the public key. (#19452, #19583)
+- **Discussion access:** Public Acceptance visitors cannot impersonate Workspace Agents; private Workspace viewers remain read-only, with moderation and rate limits for public comments. (#19448)
+- **Run recovery:** Garbled tool names are recovered, large tool errors are bounded, and sandbox spawn timeouts no longer immediately kill live or completed runs. (#19362, #19496, #19443)
+- **Accurate completion:** Discarded heterogeneous output cannot settle as success; Desktop cancellation is confirmed even when its local Task record is missing. (#19658, #19603)
+- **File and tool handling:** Device file operations avoid false outside-Workspace refusals, archived tool results are deduplicated, and knowledge reads are paginated. (#16962, #19665)
+
+---
+
+## 🧪 Release Validation & Known Gaps
+
+This PR packages existing canary changes and adds no release-specific code. Main ancestry is restored by the preceding synchronization PR; the candidate is based on the synchronized canary. Git ancestry and release-note references are checked locally. Product tests, lint, and type-check were not rerun solely to prepare this release.
+
+Existing upstream evidence is linked for traceability; these links do not establish full release-wide coverage:
+
+- [Docker Gateway, chat, uploads, and existing-environment upgrade](https://app.lobehub.com/acceptance/3b34d577-d47e-454f-a12c-735ee93fd443).
+- [One-click Compose startup and upload CORS](https://app.lobehub.com/acceptance/ed8cc7bc-93c9-4079-975a-96e9e003f61e).
+- [Document comment gutter](https://app.lobehub.com/acceptance/9e59d0e0-4323-4fd8-a5f2-f88017360181): upstream reports 19/19 checks across two rounds.
+- [Conversation-linked Goals](https://app.lobehub.com/acceptance/21cccad0-6c48-4d70-bf95-2796893679e4): real device path covered; cloud sandbox and Desktop-local paths have unit coverage only.
+- [CLI diagnostics](https://app.lobehub.com/acceptance/50f5c139-aaa1-4bd2-8e6e-b516923f5db8).
+- [Bot credential masking](https://app.lobehub.com/acceptance/359bbc47-a76e-42f8-9a38-ca04acb3cfbd?r=3).
+- [Quick Composer](https://app.lobehub.com/acceptance/7debc9b3-9e79-4083-b4fc-5f7e984623a8): upstream reports 6/7 passed, with the denied Screen Recording permission prompt still blocked. This is not a fully passed acceptance.
+
+- [Cancelled-send composer recovery](https://app.lobehub.com/acceptance/37ae5ab5-da81-4700-affc-b2fcd96048c8): covers dispatch cancellation, preserving a draft after acceptance, and typing/clearing during cancellation rollback.
+- [Tool-result projection](https://app.lobehub.com/acceptance/4b8aabe7-b98c-4107-87ee-7a29df6d7de1): covers settled reads, on-demand recovery, and a controlled busy-assistant rendering regression; not a live WebSocket end-to-end claim.
+- [Rate-limit handoff](https://app.lobehub.com/acceptance/bd76c280-6069-45c1-8afa-39a4bb58cfab?r=3): incomplete upstream; the atomic-cancellation repair has database regression coverage but no new passing UI acceptance because of a local worktree dependency blocker.
+
+Additional limitations: `lh doctor` cannot report an unsupported Node runtime if module loading fails before the command starts; the Compose setup short-link redirect to main remains an external follow-up in the upstream PR. Full migration/rollback verification is not claimed.
 
 ---
 
 ## 👥 Contributors
 
-Thanks to **13 contributors** for this candidate. Its release-branch history contains **210 non-merge commits**, including the refresh that bundles six additional canary PRs and the follow-up import repair.
+Thanks to the 12 contributors represented in this Git range. Handles were verified against the contributing PRs; community contributors are listed first, followed by team members in contribution-count order.
 
-@sxjeru · @Coooolfan · @mise42 · @XYenon · @bakiburakogun · @arvinxx · @Innei · @tjx666 · @rdmclin2 · @AmAzing129 · @sudongyuer · @nekomeowww · @ONLY-yours
+@hardy-one · @northword · @Totoro-qaq · @BetterAndBetterII · @arvinxx · @Innei · @tjx666 · @rdmclin2 · @sudongyuer · @AmAzing129 · @cy948 · @ONLY-yours
 
-**Full Changelog:** https://github.com/lobehub/lobehub/compare/v2.2.16...release/weekly-20260911-v2
+Maintenance synchronization also includes LobeHub Bot.
 
 ---
 
-## 🚧 Release Readiness Checklist
-
-This PR is open for review, not yet verified for publication. Do not merge until the remaining checks and product acceptance are complete. Refresh this section and the release notes whenever the branch changes.
-
-**Replacement:** Supersedes https://github.com/lobehub/lobehub/pull/19426. The new branch preserves the old candidate's latest files, including the merged refresh and import repair, and merges main before its first push to repair the missing ancestry. No product files changed during this history reconciliation. Reviews and CI must be completed on this replacement PR.
-
-**Merge method:** The active main ruleset permits only a merge commit, requires two approving reviews, and requires review conversations to be resolved. Rebase and squash are not permitted for this target. A local normal-merge simulation is conflict-free; rebase is not needed to resolve the current blocked state.
-
-- **Release owner:** @AmAzing129
-- **Candidate:** https://github.com/lobehub/lobehub/commit/79b479559e71e21a1f79579e78dcaa32a18ac3a0 — its tree exactly matches the previous candidate at https://github.com/lobehub/lobehub/commit/f339e48348218b32720b6700445cf901f6c36f1d, including #19432 and #19433.
-- **Expected version:** v2.2.17 if no other release changes main before merge. CI owns the version bump and tag.
-- **History reconciled:** The v2.2.16 metadata was previously restored through squash-merged #19424. This replacement now also includes the original main commit: both `origin/main` and `v2.2.16` pass the ancestor check. No ancestry exception is needed for this branch.
-- **Comparison:** Counts and cited PR references come from the actual release branch's non-merge history since `v2.2.16`. The six refreshed changes are cited through #19432 because their original commits were squashed. Actual file changes were also checked using an endpoint tree diff, rather than relying only on the merge-base comparison.
-
-### Preparation checks
-
-- [x] Candidate files exactly match the old weekly PR's latest head, including the refresh and import repair.
-- [x] Current main and v2.2.16 are ancestors of this candidate; main has zero commits missing from this branch.
-- [x] Every cited PR is present in the git-derived release range; contributor handles were resolved through GitHub.
-- [x] Version and prior changelog metadata match main; a local `git merge-tree` simulation reports no merge conflicts.
-- [x] Migration files and new provider environment examples inspected for release notes.
-- [ ] Two approving reviews and resolution of review conversations, as required by main's ruleset.
-- [ ] Required GitHub checks complete on the final candidate.
-- [ ] Verify login, chat, tool execution, and the highlighted workflows on the candidate preview or test packages.
-- [ ] Verify Docker startup and database upgrade from v2.2.16, including a backup/rollback plan.
-- [ ] Verify Desktop startup, authentication, and update behavior on candidate artifacts.
-- [ ] Publish the candidate's product acceptance round and add its URL here before merging.
-- [ ] Confirm the final cutoff, refresh release notes and counts, and recheck main's latest stable version before merging.
-
-**Acceptance:** Pending. No candidate-wide end-to-end acceptance or full release test run is claimed by preparing this PR.
+**Full Changelog**: https://github.com/lobehub/lobehub/compare/v2.2.17...release/weekly-20260920
