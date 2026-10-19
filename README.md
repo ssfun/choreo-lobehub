@@ -2,244 +2,77 @@
 
 # Version
 
-v2.2.19
+v2.2.20
 
 # Releases
 
-## 📦 Release v2.2.19
+## 📦 Release v2.2.20
 
-This release was automatically published from PR #20476.
+This release was automatically published from PR #21078.
 
 ### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/20476
+See PR description: https://github.com/lobehub/lobehub/pull/21078
 
 ### Commit Message
-# 🚀 LobeHub Release (20261007)
+# 🚀 LobeHub Release (20261018)
 
-**Release Date:** October 7, 2026\
-**Since v2.2.18:** 546 commits · 547 merged PRs · 15 contributors
+**Release Date:** October 18, 2026  
+**Since v2.2.19:** 419 merged PRs · 14 contributors
 
-> This release turns Desktop into an over-the-air updatable shell, closes the GitHub loop from install to merge, and gives Goals, tasks, devices and tunneled ports first-class surfaces, starts moving lists onto a local-first replica — on top of a broad performance pass over the agent runtime and tool payloads.
+> Agents now reach further across your devices, and the app opens faster. Topics, documents and device data load from local copies first, and server runs can use models that only exist on your device.
 
 ---
 
 ## ✨ Highlights
 
-- **Desktop OTA Core** — Desktop is split into a signed shell plus an OTA-able core, so updates, reloads and rollbacks ship as range-based packs instead of a full reinstall. (#19501, #20191, #20214)
-- **GitHub App Closed Loop** — Connect GitHub from the Integrations directory, install the App, and let pull requests route back to the agent that opened them; CI failures and review feedback now wake that agent. (#19721, #19728, #19888, #19726)
-- **Goal Delivery** — Finished Goals get a Delivery tab with a wrap-up storyline, ambiguous goals are clarified before work starts, and a Goal's main Agent runs 50 turns by default. (#20189, #20143, #20178)
-- **Device Ports & Tunnels** — Detect listening ports on a device, expose them in one click, browse folders at the current directory, and relay HTTP/WebSocket traffic through registered tunnel links. (#19895, #19886, #19892, #19855)
-- **Broader Heterogeneous Agents** — Kimi Code gains image attachments, a model selector and subscription quota; Qoder reports usage in credits; voice messages are transcribed for external agents. (#19767, #19850, #19765, #20009, #20041)
-- **Recycle Bin** — Deleted topics, agents and messages move to a recycle bin and stay hidden from ownership-scoped reads, while long topics page history by round cursor without fetching upward. (#18893, #18412, #18414, #20152)
-- **Local-First Lists** — Topics, projects, recents, the agent list, agent config, task lists, kanban boards and task details now read from the new `@lobechat/replica` local-first store. (#20256, #20390, #20391)
-- **Image Viewer Tools** — Annotate and comment on an image straight into chat, remove its background, erase regions and resize it from the file viewer. (#20376)
-- **Agent Runtime Hooks** — Configure webhook hooks from server environment variables, enforce `beforeToolCall` allow/deny at execution time, and consume hook events enriched with call context and results. (#20196, #20132, #20128)
-- **Security Hardening Pass** — Calibrated alint rules for injection and trust boundaries, server-owned topic runtime metadata, authenticated `lh` access through sandboxes, and OAuth app logos moved out of inline payloads. (#20190, #20192, #20064, #19937)
+- **Goals with batch rollout** — A goal stays a draft until you start it, and a Goal can roll out one repeated task in batches. Each batch stops at a decision gate for the owner to review. (#20840, #20704, #20917, #20833)
+- **Widgets & dashboards** — Home and project dashboards, an agent widget tool, chat previews, and new `lh widget` / `lh dashboard` commands. (#20421, #20771)
+- **LLM relay to your device** — Server-side runs, preset tasks, model lists and Ollama downloads can now use models that are only available in your browser tab or desktop app. (#20453, #20454, #20455, #20456, #20457)
+- **Remote terminals & device maintenance** — Open interactive shells on connected devices from the web, and update or restart CLI daemons from device settings. (#20600, #20527, #20528)
+- **Local-first loading** — Topics, agent documents, devices, git status and home recents load from local replicas first, so pages show content before the network responds. (#20449, #20869, #20838, #20841, #20851)
+- **Agent document folders** — Folders, batch moves, documents as parents, and sorting by name, created or modified time. (#20761, #20926)
+- **Memory from your materials** — Memory can extract rules from pasted text, files, documents and conversations. (#20266)
+- **Fork from a reply** — Start a new topic from any assistant message. (#20610)
 
 ---
 
 ## 🏗️ Core Agent & Architecture
 
-### Runtime & context engine
+- Sub-agents run through the parent's executor, and `afterToolCall` controls can gate tool results. (#20446, #20297)
+- Skills selected in the composer or CLI are injected on server runs. Adding an agent installs the Market skills it references. (#20961, #21059)
+- Agent-to-agent messages now show which agent sent them. (#20548)
+- Fewer repeated device and Market lookups on each send, and project sends appear right away. (#20465, #20897, #20628)
 
-- Deferred tool results now tell the model they are still pending, and tool results pair by position when providers reuse `tool_call` ids. (#20069, #20114)
-- Stale tool results are trimmed at the payload boundary, cutting context growth on long runs. (#19777)
-- A run's credential list, model facts and tool set are frozen once per run instead of being re-read on every step. (#19717, #19698, #19707)
-- The trace partial stays in memory and uploads off the step path; a run's init now sits behind one serializable request. (#19716, #19762)
-- Tool discovery runs its independent reads together, and search/grep/readFile payloads are projected to what their cards actually render. (#19755, #19699, #19704, #19732, #19744)
-- Errors routed to the gateway error board are now classified by the runtime. (#19995)
-- Orphaned runs settle when a host dies mid-step or a step delivers without metadata. (#20035, #19160)
-- Device-only models (such as local Ollama) are relayed to a connected client when a run executes on the server, and runs park in `waiting_for_client` when no client can take them. (#20332, #20334, #20336, #20339, #20346)
-- `callAgent` callees run on their own model instead of the caller's topic pin, and the legacy `runAsTask` async invocation is retired. (#20385, #20354)
-- A composer send supersedes a live `agent_signal` run, and every stage of the send path is traced. (#20396, #20464)
+## 📱 Platforms / Integrations
 
-### Hooks, sub-agents & groups
-
-- Webhook hooks are configurable through server environment variables, backed by validated HTTP hook contracts. (#20196, #20128)
-- `beforeToolCall` allow/deny is enforced at execution, and hook events carry call context and results. (#20132, #20127)
-- Agents can continue earlier sub-agents on their preserved history; a blank `callSubAgent` id now starts a new sub-agent. (#19763, #20066)
-- Sub-agent runs no longer activate `callAgent` or get instructed to delegate, and credit exhaustion is explained in failed sub-agent results. (#20060, #20067)
-- Group runs scope history by `groupId` so activated tools restore, and supervisor sessions stay alive across member terminals. (#20087, #20102)
-- Builder config access and member tool approval are enforced in gateway mode. (#20093)
-
-### Data platform
-
-- Local-first Agent and Project projections land, keeping reads responsive as the schema grows. (#18913)
-- Expertise lessons gain explicit sort order and enforcement. (#20000)
-- Trashed rows are hidden from every ownership-scoped read. (#18414)
-- The `@lobechat/replica` local-first package lands, carrying topics, projects, recents, agents and tasks. (#20256, #20390, #20391)
-- Widget and dashboard tables, models, services and scheduler are added, along with an `agent_accounts` identity table with a credential-safe model. (#20352, #20366, #20254)
-- Agents and messages join topics in the recycle bin. (#18412)
-
-### Goals & tasks
-
-- A Delivery tab summarizes finished Goals with a wrap-up storyline. (#20189)
-- Ambiguous goals are clarified before any work starts. (#20143)
-- A Goal's main Agent now runs 50 turns by default instead of 12. (#20178)
-- The conversation goal renders as a workflow card in the working sidebar. (#20120)
-- Stray task nodes can be retired from the CLI, and Goals continue past their creation limits. (#20166, #19967)
-- Planning turns that never started are replaced, and the owner can confirm a stuck one. (#20185)
-- Goal decisions and machine gates are asked through one card, the island and the inbox, and manager turns render as a `<goalTurn>` card. (#20437, #20429)
-- The `/goal` card shows a stage track and plan chain; an existing goal can be bound to a topic and continued from its result page. (#20173, #20343, #20388)
-- Goals support durable waits and measured replanning, with recovery supervision required at creation and one retry policy for failed runs. (#20171, #20286, #20431)
-- Every acceptance of a goal can be reviewed from its result page, and goal status can be changed from the detail menu. (#20270, #20159)
-- Tasks can pin their own run location and working directory, start by being dragged into In progress on the kanban, and show the goal they belong to. (#19799, #20386, #20370, #20403)
-- Task-mode entries can be created from Home without starting them. (#20305)
-
----
-
-## 📱 Platforms & Integrations
-
-### Desktop
-
-- Desktop splits `app.asar` into a shell plus a signed, OTA-able core with reload / relaunch / rollback, and packages the builtin core as ASAR with range-based packs. (#19501, #20191, #20214)
-- The OTA core is served from the builtin core and object store, and boot checks pack sizes instead of hashing every file. (#20214, #20211)
-- Core OTA is checked immediately after startup and on manual update checks, with downloaded state restored after deferred checks. (#20163, #20157, #20139)
-- The desktop OTA version is shown in About. (#20147)
-- Devices chart the last 12 hours of machine health (CPU / memory / load), can be updated remotely, and stay awake and steady through reconnects. (#20002, #19939, #19962)
-- Agent background processes are monitored and cleaned up. (#20096)
-- Local Claude Code runs resume after an app restart. (#19775)
-- macOS Intel builds are dropped from canary releases. (#20140)
-- macOS full updates go through Sparkle, and in-app updates actually install on Linux. (#19459, #19621)
-- Electron is upgraded to 44, and first-screen chunks are split per renderer entry. (#20306, #20324)
-- Browser tools stop hanging on page loads, keep background pages capturable, skip closed dialogs in snapshots, and can choose native select options. (#20414, #20412, #20415, #20416, #20413)
-
-### Device & tunnels
-
-- Listening ports are detected and exposed in one click from the working sidebar. (#19895, #19886)
-- The folder browser opens at the current directory and gains well-known folder icons. (#19848)
-- WebSocket traffic is relayed through tunnels and links are minted with a dedicated param; HTTP tunnel requests are served from the device. (#19892, #19855)
-- Tunnel links can be registered, listed and revoked from the server. (#19881)
-
-### Heterogeneous agents
-
-- Kimi Code gains a model selector, image attachments and subscription quota across local and remote paths. (#19850, #19767, #19765)
-- Qoder usage is reported in subscription credits. (#20009)
-- Voice messages are transcribed for heterogeneous agents with a configurable ASR model. (#20041)
-- The LobeHub CLI is introduced to an external agent once per session. (#19712)
-- Kimi Code token usage is read from the session wire log after a run. (#19722)
-- Codex discovers models from the execution device and is found in ChatGPT.app's bundled CLI layout; Codex reply regeneration is restored. (#20425, #20445, #20271)
-- Channels show for device-backed heterogeneous agents. (#20371)
-
-### GitHub & SCM
-
-- GitHub App ingress, install flow and change-request tracking are wired end to end. (#19721)
-- SCM integration tables back the GitHub App closed loop. (#19718)
-- Merging a PR accepts the acceptance, and CI failures and reviews wake the agent. (#19728)
-- A pull request routes to the agent that opened it, wherever it lives. (#19888)
-- The Integrations directory ships with a GitHub integration page. (#19726)
-- SCM wake-up messages show GitHub as the sender. (#20448)
-
-### Acceptance & verification
-
-- Acceptance reports can be embedded read-only. (#19885)
-- Phone review gains a marking mode, side-by-side buttons, a taller preview and pinch zoom. (#19735)
-- Video evidence is reviewed by frame and span, with agent chapters. (#20194)
-- A rejected delivery goes back to its authoring agent, and the reject dialog copies the prompt when no agent can repair. (#19896, #19936)
-- Acceptance installs skills from their upstream source. (#19793)
-- Linked pull requests belong to the acceptance rather than a round, and `lh acceptance link-pr` links them from the CLI. (#20426, #20427)
-- The acceptance list filters by participation, source and project, and region comments and send-backs appear in the discussion. (#20461, #20459)
-- The reject dialog shows which feedback its prompt carries. (#20452)
-
----
+- **Heterogeneous agents:** DeepSeek Harness adapter. Codex app-server can run on connected devices (behind Labs). Codex user messages can be edited and resent. Codex and Pi can use any tool-capable LobeHub model. Droid and OpenCode support server-default models. (#18333, #20820, #20467, #20612, #20965, #20963)
+- **Desktop:** Bundled Computer Use app on macOS, guided macOS privacy permissions, Dock menu with running topics, tab drag with pin/unpin, and instant topic switching. (#20780, #20932, #20635, #20650, #21001)
+- **Models:** Claude Haiku 5.5, fal H3 Max and Seedance 2.5 video. (#20517, #20210)
+- **OpenAPI:** Async IM channel and push-token REST resources. (#20440)
 
 ## 🖥️ CLI & User Experience
 
-### Chat & topics
-
-- Topics get a recycle bin, and trashed rows stay hidden from ownership-scoped reads. (#18893, #18414)
-- Topic history pages by round cursor, so a fully loaded topic never fetches upward. (#20152, #19014)
-- Copy Topic Prompt is added to the topic menu. (#20011)
-- Topics can start from folder references. (#19677)
-- Internal entity links render inline on reading surfaces. (#20236)
-- Conversation parsing stays linear and stack-safe on long agent topics. (#20242)
-- Background threads stay out of the main transcript. (#19011)
-- Shared topic transcripts become AI-readable. (#20090)
-- The send button shows beside stop while generating, and an assistant message notice slot is available. (#19912, #19902)
-- Topic sub-agents surface in the right working panel, and a fetching hint shows while cached messages revalidate. (#20285, #20355)
-- Steered follow-ups stay in one continuous turn, and cross-device approval answers sync. (#20218, #20204)
-- Local videos play in the working panel. (#20399)
-
-### Memory & knowledge
-
-- My Rules (Labs alpha) can order, group, edit and enforce distilled delivery rules. (#19779)
-- The memory sidebar is regrouped and experience memory retired. (#19774)
-- One Self-evolving page shows my rules first, then what each agent learned; the rules sheet gains a scalable agent switcher and positive/negative direction. (#20261, #20383)
-
-### Files, preview & settings
-
-- The workspace Files tree gains basic file operations. (#20028)
-- File preview adds docx section tabs and pptx slide controls. (#19841)
-- Exported files preview inline instead of navigating away. (#19727)
-- A font antialiasing toggle is added to appearance settings. (#20203)
-- The hide-ignored filter moves into the Files panel's more menu. (#20106)
-- The file viewer gains image annotation, background removal, erase and resize tools. (#20376)
-- Sandboxes get a persistent working directory, defined by environments with their own visibility and build. (#19783, #20235)
-- New worktrees get auto-generated branch names. (#20307)
-
-### Models & providers
-
-- GPT-6.1 Sol is added to the model bank. (#20222)
-- Claude Sonnet 5.5 always-on thinking is handled. (#20183)
-- Opus 5.5, GPT-6, Grok 4.7 and MiMo-V2.6 are added to the model bank, and Grok 4.7 and MiMo V2.6 gain multimodal input. (#19874, #19807)
-- Qwen Image 3 on fal and Grok Imagine Image 2.0 are supported. (#19996)
-- Gemini Omni video generation and editing are supported, alongside a chat video generation tool. (#17572, #17560)
-- `generateImage` gains an immersive develop-from-blur canvas. (#19931)
-- Azure transcription routes via the deployments path; transcription usage is reported and Gemini transcripts fixed. (#20117, #20092)
-- Search and crawl channel preferences are configurable. (#17093)
-
-### CLI & OpenAPI
-
-- `lh goal delete` is available, and tasks can be assigned to workspace members. (#20135, #19933)
-- Goal, task, memory, notification and signal REST resources are exposed. (#20221)
-- Machine Payments Protocol middleware (HTTP 402) is added. (#18518)
-- `lh agent run` always exits with a status that matches the run. (#20389)
-- OpenAPI streaming responses are mirrored to the agent gateway. (#20276)
-
----
-
-## 🔧 Tooling
-
-- antd Spin, Progress, Badge, Result, Pagination, Tooltip, Popover, Empty and Upload are migrated to base-ui, with the migration review follow-ups restored. (#19606, #20051)
-- alint reports findings as a check and a single PR summary comment, and forbids Node-only imports in browser code. (#19968, #20124)
-- The bundle size gate folds its PR comment into one line when it passes. (#20027)
-- Workbench deploys are skipped when the build output is unchanged. (#20122)
-- Desktop and weekly releases are published as the lobe-tsukumo GitHub App. (#19758, #19784)
-- Sharded coverage uploads once every shard has finished, and PR test/coverage latency is reduced. (#19973, #19823)
-- The openapi package's tests run in CI. (#18739)
-- Antd inputs, forms and menu items are migrated to `@lobehub/ui/base-ui`. (#20247, #20317, #20408)
-- The repo type-check skips test files and caps tsgo checkers to stop CI OOM kills. (#20353, #20328)
-
----
+- Tasks: archiving, creating tasks from Kanban columns, and creating or searching tasks from the command menu. (#20990, #21020, #21000, #21002)
+- Sidebar topics can be grouped by device, time, status or agent within a project. (#20811, #20592, #20715)
+- Projects can have a logo, and the trash can be filtered by project. (#20641, #20739)
+- `lh connect --auv` offers Computer Use, and `lh connect service install` accepts `--workspace`. (#20983, #20818)
+- Settings search ranks results better and handles IME input. (#20620)
 
 ## 🔒 Security & Reliability
 
-- **Security:** Calibrated alint rules for injection and trust boundaries. (#20190)
-- **Security:** Topic runtime metadata writes are kept server-owned. (#20192)
-- **Security:** `lh` access through timeout, child shells and subprocesses is authenticated. (#20064)
-- **Security:** OAuth app logos upload to storage instead of being inlined, and OAuth apps can read discovery, JWKS and userinfo. (#19937, #19753)
-- **Security:** Tools of a connection that is not active are no longer exposed. (#20075)
-- **Reliability:** The v1 socket is the fallback when the multiplexed socket cannot connect, and gateway pushes are ordered instead of awaited. (#19814, #19797)
-- **Reliability:** The in-flight model call aborts when a server run is interrupted, and a stop request can retire a dead running operation. (#20217, #20055)
-- **Reliability:** Oversized documents are handled with one pageable truncation contract. (#20004)
-- **Security:** MCP OAuth token requests use the registered client auth method, and installs finish inside workspaces. (#20404, #20400)
-- **Reliability:** Two clients of one install stop trading the device gateway connection, and device tool calls are no longer replayed. (#20100, #20110)
-- **Reliability:** Upstream storage failures surface as 502/504 instead of 500. (#20260)
+- **Security:** Desktop can require security updates and checks the first launch of Canary builds. Credentials are collected through a secure form. nodemailer is updated to ^9.1.1. (#20168, #20469, #20338)
+- **Reliability:** OAuth no longer goes through email validation, and replicas ignore hydrates and errors that arrive late. (#20545, #20754)
 
 ---
 
 ## 👥 Contributors
 
-**547 merged PRs** from **15 contributors** across **546 commits**.
+Huge thanks to **14 contributors** who shipped **419 merged PRs** this cycle.
 
-@ImSingee · @Coooolfan · @rika363 · @mise42 · @jrlprost · @fatwang2 · @pratikgx · @arvinxx · @tjx666 · @Innei · @AmAzing129 · @Rdmclin2 · @Neko · @sudongyuer · @LiJian
+@mise42 · @0genlab · @arvinxx · @tjx666 · @Rdmclin2 · @Innei · @Neko · @AmAzing129 · @ImSingee · @LiJian · @MarioJames · @cy948 · @sudongyuer · @lobehub-coder
 
-Plus @lobehubbot and renovate[bot] for maintenance.
+Plus renovate[bot] for maintenance.
 
 ---
 
-**Full Changelog**: v2.2.18...v2.2.19
-
-
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+**Full Changelog**: v2.2.19...release/weekly-20261018
