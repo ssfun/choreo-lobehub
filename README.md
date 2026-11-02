@@ -2,89 +2,118 @@
 
 # Version
 
-v2.2.21
+v2.3.0
 
 # Releases
 
-## 📦 Release v2.2.21
+## Release v2.3.0
 
-This release was automatically published from PR #21872.
+From PR #22056: https://github.com/lobehub/lobehub/pull/22056
 
-### Changes
-See PR description: https://github.com/lobehub/lobehub/pull/21872
+# 🚀 LobeHub Release (v2.3.0)
 
-### Commit Message
-# 🚀 LobeHub Release (20261029)
+**Release Date:** November 1, 2026  
+**Since v2.2.21:** 145 merged PRs · 7 contributors
 
-**Release Date:** October 29, 2026  
-**Since v2.2.20:** 616 merged PRs · 16 contributors
+> Bots stop waiting to be @-mentioned. With Proactive Bot on by default, every bot reads its channels, steps in when it can help, and shows its owner every call it made. Channels, pages, memory, dashboards, tasks and goals round out the release.
 
-> Projects become the place where work happens — conversations, channels, tasks and acceptance live inside them — while bots learn when to speak up, goals gain a full review loop, and Resources become Docs.
+---
+
+## 🤖 Proactive Bot
+
+Until now a bot answered only when someone @-mentioned it. Bot wake was previewed behind a rollout flag in v2.2.21. In v2.3.0 it is on for every bot: the bot judges each message in the channels it watches and decides for itself whether to speak up, stay quiet or wait.
+
+- **On by default, with an off switch** — The rollout flag is gone, and every bot speaks up on its own unless its owner turns it off. The switch is the new **Proactive participation** block at the top of the channel settings' Wake policy tab and saves as soon as it changes. With it off, the Duties, Channels and Pace options are hidden, and only watch keywords still wake the bot. (#22024)
+- **Steps in when it can help** — For a bot whose owner wrote duties, the bot no longer waits for a message that falls inside them. It also steps in when someone leaves an open question or problem that nobody has answered and the bot can settle it. A line right after a person goes to the model instead of being skipped, and the bot still stays out of replies addressed to someone else. This adds no extra model call. (#22038)
+- **Wake records** — A new Wake records tab in bot settings lists every message the bot judged. It shows a 30-day summary (woke, skipped, deferred, proactive wakes) and, for each message, the outcome, the model score and a readable reason, with a link back to the message on Discord. Filter by outcome, proactive wakes only or unmarked only, and mark each decision ✓ right or ✗ wrong. (#21934)
+- **Clearer failures in IM** — Replies explain fail-fast sandbox dispatch errors and Feishu error 41050 instead of a bare failure, the generic reply-failure message is clearer, and internal metadata stays out of public replies. (#21973, #21525, #21955, #21899)
 
 ---
 
 ## ✨ Highlights
 
-- **Projects as workspaces** — Run conversations and tasks inside a project, with a project home composer, members and libraries settings, a swappable main agent, topics grouped by agent and filtered by status and device, drag-to-reorder projects, and channels grouped inside projects. (#21370, #21345, #21344, #21483, #21382, #21398, #21490, #21752)
-- **Multi-agent channels** — Agents collaborate in channels, each channel inherits its Agent's device and directory, and the redesigned channel settings keep reply style and emoji per channel. (#21545, #21782, #21658, #21757)
-- **Bot wake** — Bots decide when to reply based on their duties, can acknowledge first and answer in a thread, wake on edits that @-mention them, stay out of multi-party threads, and the choice not to reply renders as its own state. Available on Discord, Slack and Feishu / Lark. (#21585, #21726, #21719, #21756, #21728, #21727, #21825)
-- **Goals workspace** — A cross-agent goals page, decision option trees, a delivery report to review before sign-off, copying goals between personal and workspace scopes, and north-star metric charts. (#21221, #21560, #21773, #21665, #21126)
-- **Docs and Favorites** — Resources are restructured into Docs with sidebar view options and artifact rendering; pin any page to a sidebar Favorites section. (#21373, #21548, #21572)
-- **Canvas** — Multi-file HTML artifacts rendered with lobe-\* elements, code highlighting, an explicit share button, and unified Canvas/HTML CLI publishing. (#21326, #21506, #21589, #21671)
-- **Editor 7.0** — Alerts, charts and footnotes in documents and the slash menu, plus a Notion-style page table of contents. (#21799, #21826, #21321)
-- **Linear integration** — Connect Linear via OAuth and sync Linear issues into project tasks. (#21036, #21723)
+- **Real-time page collaboration** — Several people can edit a page at once, page Agent edits run in a sandbox, and a page shows its stored content while the room syncs instead of an empty editor. (#20322, #21924, #21919)
+- **Channel conversations** — Quote a message in a reply, follow Agent replies in their own threads nested under a Discord-style connector line, and write in a compact IM-style composer. Mentions list members and Agents separately. (#22025, #22042, #21994, #22026, #21885)
+- **Channels that open themselves** — Every new Agent gets a direct channel and every new project a General channel. In a group with one Agent, every message goes straight to it. (#22018, #21996, #21927)
+- **Memory as stories** — Legacy contexts are consolidated into contexts and dossiers and shown as stories on the contexts tab, and a stopped consolidation run resumes instead of starting over. (#21968, #22006, #22007)
+- **Dashboards** — Widgets use a declarative card layout with presets and user parameters, dashboards get descriptions and a `createDashboard` tool, and widget approval shows its stages. (#22016, #22049, #21954, #21936)
+- **Tasks** — Pick a task's model from the task tools or the CLI, keep private Agents on public tasks (make the task private or take it over), and use one "Follow the agent" switch for device and working directory. (#21852, #21937, #21932, #21848)
+- **Goals** — Goals can be shared at workspace level, and you can rename them yourself or with smart rename. New goals no longer use the whole instruction as their title. (#22027, #21970)
+- **Persistent sandbox** — The persistent sandbox is out of preview, and paid users default to their drive. (#22032)
+- **Docs, files and Favorites** — Add topics to Favorites, link straight to library folders, pages and files by id, open Docs file links beside the chat, and share files by link. (#21950, #21923, #21913)
+- **Credentials** — Workspace and private credential tabs, with sharing across multiple workspaces. (#21670)
 
 ---
 
 ## 🏗️ Core Agent & Architecture
 
-- Sub-agents run in the background and deliver their results as messages. (#20862)
-- Decision models via OpenRouter and OpenAI's native Decisions API, configurable per channel and in the redesigned Service Model settings, along with the verifier model. (#20836, #21359, #21788, #21480, #21774)
-- New providers and models: Magpie, TypeSafe, MiniMax M3.1 Flash, and any fal endpoint with its image/video model list. (#21644, #21444, #21216, #21238)
-- Context compaction is offered for oversized requests, and history is kept when the compaction summary fails. (#21504, #21590)
-- Stdio MCP sessions stay alive across tool calls and show actionable startup errors; MCP negotiates modern HTTP protocol versions. (#21031, #21110, #21743)
-- Filtered message search, goal search and `lh recall`. (#21188)
-- Large server routers, services and database models split into focused modules, and many client stores moved onto `@lobechat/replica` for faster stale-first paints. (#21085, #21132, #21145, #21200, #21118)
+- One member's run never interrupts another member's live run, and a queued follow-up is no longer resent once its message is written. (#22037, #21777)
+- Agent management searches the MCP marketplace before installing a market plugin, and Agents can be created from the identity form. (#21703, #21987)
+- A generic TTS model type with MiniMax `t2a_v2` speech and a TTS spend label. (#21942)
+- Image generation rejects unsupported parameters with a clear error instead of a ServerError. (#21945)
+- Chinese vendors in the model bank are priced in international USD. (#21808)
+- Verification writes generated criteria and reports in the account's language. (#22035)
+- Model discovery and runtime configuration reach the Agent correctly. (#21895)
+
+### External Agents
+
+- Claude Code project memory shows in the workspace panel, and Agent quota picks the Claude Code account per device. (#21234, #21984)
+- Every background-task wake-up stays in the run's reply, and subagent threads stay linear across replicas and resumable after finalize. (#21939, #21917)
+- The CLI status card shows the device the Agent actually runs on. (#21931, #21999)
+
+---
 
 ## 📱 Platforms / Integrations
 
-- **OpenAPI:** chat groups at `/api/v1/chat-groups`, run a task now and read its runs at `/api/v1/tasks/{id}/runs`, and notification settings endpoints. (#21280, #21470, #21538)
-- **IM:** uploaded message attachments, chat images visible to the model in message reads, and Discord replies that actually @-mention people. (#21581, #21758, #21736)
-- **External agents:** file/image upload in the `+` menu, Claude Code sees claude.ai connectors, and device-bound runs resume on retry instead of wiping the turn. (#21794, #21294, #21494)
-- **Desktop:** OS notification when a workspace member mentions you, and hovered link URLs in the status bar. (#21436, #21291)
-- **Mobile:** desktop surfaces come to the mobile web. (#21503)
-- **CLI:** `lh gen json`, `lh gen decide`, `lh read <url>`, `lh notification`, workspace slugs for `--workspace`, a reconnectable WebSocket in place of SSE, and the browser tool on `lh connect` devices. (#21413, #21835, #21514, #21539, #21540, #20501, #21422)
-- **SDK:** OAuth helpers for native apps and an accessToken provider. (#21435)
+- **Desktop:** New Window in the File menu opens the current workspace. On macOS 27 the sidebar uses native AppKit glass, and the window background follows system theme switches. (#21928, #21854, #21921, #21894, #21920)
+- **White-label:** distributions can set their own desktop app identity, and the brand is no longer hardcoded in LLM system prompts, tool descriptions, auth emails, the passkey prompt or the default assistant name. (#21890, #21930, #21902, #21882, #21946)
+- **CLI:** `lh topic send` / `lh message reply` wake another conversation, `lh topic send --new` / `lh message send` start a new one, and `lh workspace member update` sets a member's title and responsibilities. (#21938, #21965, #21959)
+- **CLI:** follows Agent runs over the multiplexed gateway socket, and detects system services with clearer upgrade restarts. (#22048, #21869)
+- **API / SDK:** read the caller's credit quota through the API, SDK and `lh`. (#21933)
+- **Browser tool:** key combos work, and `setViewport` is available. (#22011)
+
+---
 
 ## 🖥️ User Experience
 
-- Acceptance gains workspace scope, project binding, terminal evidence and feedback hand-off to the original agent. (#21432, #21392, #21734, #21619)
-- Memory replaces the contexts page with entity pages built on real memory data. (#21347)
-- Find in topic with Mod+F, hover prefetch of topic pages, and a workspace recycle bin. (#21530, #21724, #21537)
-- Generated avatars for agents, people and workspaces without one, and an agent list badge wall. (#21778, #21632, #21786, #21815)
-- Connectors open as list → detail pages, with a workspace setting for who manages them. (#21684, #21653)
-- Clearer Chinese UI copy with mistranslations corrected. (#21505)
+- Chat keeps its scroll position after you send and loads history again in 500-row pages. (#22030)
+- Device pickers show running topics on hover, and device cards show disk usage next to CPU and memory. (#21915, #21940)
+- Search the skills panel, filter topics to only your own per Agent, and unarchive from the bulk bar. (#21961, #21870, #21876)
+- Project "+" buttons open a blank draft, and project Agents come first when creating a channel. (#21989, #22004)
+- Manage canvas storage from a Works Canvas tab, and insert videos from the page editor's slash menu. (#21831, #21925)
+- Acceptance hover cards open the acceptance in the browser, and a local report can accept or reject the delivery. (#21966, #21947)
+- Eight Agent cover textures, with profile covers on badge cards. (#21868)
+- The boot loading hint appears only on slow boots. (#21941)
+
+---
 
 ## 🔒 Security & Reliability
 
-- **Security:** JWKS key rotation for auth. (#21431)
-- **Security:** memory webhooks require authentication configuration, and provider endpoint credentials are isolated. (#21254, #21255)
-- **Security:** `@modelcontextprotocol/sdk` updated for a security advisory, marketplace OAuth MCP installations are authorized, and MCP logs redact sensitive metadata. (#21351, #21367, #21423)
-- **Security:** the secure credential form can no longer be approved from notification surfaces. (#20580)
-- **Reliability:** web sessions stay alive with deferred session refresh. (#21707)
-- **Reliability:** SSRF-safe fetch streams response bodies instead of buffering them. (#21701)
-- **Self-hosting:** this release ships several database migrations (favorites, Linear sync, channel lifecycle, project sites and member roles); they run automatically on startup. (#21792, #21722, #21691, #21290)
+- **Security:** the OIDC provider pins its request host to `APP_URL`. (#21985)
+- **Reliability:** pages keep seeding and projecting on serverless builds, file proxy URLs resolve from the page origin, and a late linked-PR lookup no longer crashes the device view. (#21919, #21914, #21960)
+- **Reliability:** quota limits a plan no longer reports are dropped. (#22000)
+
+### Database migrations (self-hosted)
+
+This release adds six migrations (`0193`–`0198`): goal/file share and structured user memory tables, document history attribution, memory columns with subscription logins and device account bindings, indexes on the memory tables, a `(message_id, member_id)` unique index for channel jobs, and goal visibility. They run automatically on startup. (#21844, #21611, #21888, #21672, #21935, #21901, #22027)
+
+> [!NOTE]
+> `0196` builds indexes on the `user_memories_*` tables inside a transaction, which blocks writes to those tables while it runs. If they are large, create the same indexes with `CREATE INDEX CONCURRENTLY IF NOT EXISTS` before upgrading so the migration does nothing.
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to **16 contributors** who shipped **616 merged PRs** this cycle.
+Huge thanks to **7 contributors** who shipped **145 merged PRs** this cycle.
 
-@SaladDay · @fzlzjerry · @hardy-one · @Coooolfan · @arvinxx · @AmAzing129 · @Innei · @rdmclin2 · @ONLY-yours · @tjx666 · @ImSingee · @nekomeowww · @sudongyuer · @MarioJames · @cy948 · @canisminor1990
+@arvinxx · @AmAzing129 · @Innei · @rdmclin2 · @ONLY-yours · @MarioJames · @tjx666
 
-Plus @lobehub-coder and renovate[bot] for maintenance.
+Plus @lobehub-coder and @lobehubbot for maintenance.
 
 ---
 
-**Full Changelog**: v2.2.20...release/weekly-20261029
+**Full Changelog**: v2.2.21...v2.3.0
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+<!-- desktop-release-request {"schemaVersion":1,"mode":"initialize","mergeSha":"700c8349e35477cb602975f8089c942e96bc9601","prNumber":22056} -->
