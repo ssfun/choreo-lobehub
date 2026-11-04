@@ -2,118 +2,84 @@
 
 # Version
 
-v2.3.0
+v2.3.1
 
 # Releases
 
-## Release v2.3.0
+## Release v2.3.1
 
-From PR #22056: https://github.com/lobehub/lobehub/pull/22056
+From PR #22188: https://github.com/lobehub/lobehub/pull/22188
 
-# 🚀 LobeHub Release (v2.3.0)
+### Summary
 
-**Release Date:** November 1, 2026  
-**Since v2.2.21:** 145 merged PRs · 7 contributors
+Contribution source: AI-assisted
 
-> Bots stop waiting to be @-mentioned. With Proactive Bot on by default, every bot reads its channels, steps in when it can help, and shows its owner every call it made. Channels, pages, memory, dashboards, tasks and goals round out the release.
+# 🚀 LobeHub Release v2.3.1
 
----
+Promote the complete current `canary` snapshot to `main` for a normal Stable release, replacing the closed, unmerged hotfix proposal #22186. **This is not a two-commit hotfix.**
 
-## 🤖 Proactive Bot
+- Previous Stable: `v2.3.0`.
+- Canary snapshot: `1a6ba7ad3853f140cc5795c5baf5ae37f78c9a13`.
+- Scope: **87 upstream commits/PRs**, including both #22122 (auto approve) and #22069 (release publication token fix).
+- The release branch starts directly from that Canary snapshot, plus the bot-owned version bump and the Linux packaging repair in #22190. No hotfix cherry-picks or additional application features are layered on top.
 
-Until now a bot answered only when someone @-mentioned it. Bot wake was previewed behind a rollout flag in v2.2.21. In v2.3.0 it is on for every bot: the bot judges each message in the channels it watches and decides for itself whether to speak up, stay quiet or wait.
+## Highlights
 
-- **On by default, with an off switch** — The rollout flag is gone, and every bot speaks up on its own unless its owner turns it off. The switch is the new **Proactive participation** block at the top of the channel settings' Wake policy tab and saves as soon as it changes. With it off, the Duties, Channels and Pace options are hidden, and only watch keywords still wake the bot. (#22024)
-- **Steps in when it can help** — For a bot whose owner wrote duties, the bot no longer waits for a message that falls inside them. It also steps in when someone leaves an open question or problem that nobody has answered and the bot can settle it. A line right after a person goes to the model instead of being skipped, and the bot still stays out of replies addressed to someone else. This adds no extra model call. (#22038)
-- **Wake records** — A new Wake records tab in bot settings lists every message the bot judged. It shows a 30-day summary (woke, skipped, deferred, proactive wakes) and, for each message, the outcome, the model score and a readable reason, with a link back to the message on Discord. Filter by outcome, proactive wakes only or unmarked only, and mark each decision ✓ right or ✗ wrong. (#21934)
-- **Clearer failures in IM** — Replies explain fail-fast sandbox dispatch errors and Feishu error 41050 instead of a bare failure, the generic reply-failure message is clearer, and internal metadata stays out of public replies. (#21973, #21525, #21955, #21899)
+- **Approvals and agent reliability:** switch to auto approve directly from the approval card; prevent duplicate approval submissions, duplicate tool execution on resume, and stuck intervention continuations. (#22122, #22058, #22060, #22068)
+- **Tasks and Linear:** large-list multi-select and batch actions, Linear-style filters, task-group create actions, paged activity, Linear comment sync, completed-issue imports, and background sync reliability. (#22055, #22083, #22136, #22155, #22087, #22086, #22050)
+- **Pages, documents and files:** title/body editing as one document, page-agent rewrite fixes, document favorites, drive downloads and folder ZIPs, and smoother large folders. (#22154, #22141, #22147, #22095, #22106)
+- **Projects, channels and bots:** project avatars and main-agent selection, project deletion confirmation, channel member picking, restore/purge fixes, paged wake records, and nightly bot retrospectives. (#22091, #22101, #22161, #22163, #22081, #22098)
+- **Search, dashboards and models:** DeepSeek search/crawling, sandboxed HTML widget cards, structured-output fixes, usage/cost accounting fixes, and official model-card metadata. (#21298, #22123, #21385, #22071, #22079, #22124)
+- **Desktop and CLI:** Copy Image, desktop shortcut listings, faster desktop packaging, connector restart/update improvements, and CLI v0.0.74. (#22067, #22113, #22121, #22165, #22166, #22179)
+- **Rollouts and infrastructure:** new-tier plan integration and percentage rollout support; the alternate rail layout remains behind `im_layout`. Release publication explicitly uses the App token so downstream publishing workflows can start. (#22115, #22143, #22003, #22069)
 
----
+## Upgrade and release sources
 
-## ✨ Highlights
+- This release includes database migration **`0199_topic_analyses.sql`**, adding the topic-analysis table, foreign keys and indexes. Self-hosted operators should include the normal database backup/migration procedure when upgrading.
+- Use the ordinary release initialization flow: resolve and pin the Cloud revision for this new release. **Do not inherit the v2.3.0 hotfix Cloud pin.**
+- Keep the exact title `🚀 release: v2.3.1` so the version bot and tag workflow agree on the intended version.
 
-- **Real-time page collaboration** — Several people can edit a page at once, page Agent edits run in a sandbox, and a page shows its stored content while the room syncs instead of an empty editor. (#20322, #21924, #21919)
-- **Channel conversations** — Quote a message in a reply, follow Agent replies in their own threads nested under a Discord-style connector line, and write in a compact IM-style composer. Mentions list members and Agents separately. (#22025, #22042, #21994, #22026, #21885)
-- **Channels that open themselves** — Every new Agent gets a direct channel and every new project a General channel. In a group with one Agent, every message goes straight to it. (#22018, #21996, #21927)
-- **Memory as stories** — Legacy contexts are consolidated into contexts and dossiers and shown as stories on the contexts tab, and a stopped consolidation run resumes instead of starting over. (#21968, #22006, #22007)
-- **Dashboards** — Widgets use a declarative card layout with presets and user parameters, dashboards get descriptions and a `createDashboard` tool, and widget approval shows its stages. (#22016, #22049, #21954, #21936)
-- **Tasks** — Pick a task's model from the task tools or the CLI, keep private Agents on public tasks (make the task private or take it over), and use one "Follow the agent" switch for device and working directory. (#21852, #21937, #21932, #21848)
-- **Goals** — Goals can be shared at workspace level, and you can rename them yourself or with smart rename. New goals no longer use the whole instruction as their title. (#22027, #21970)
-- **Persistent sandbox** — The persistent sandbox is out of preview, and paid users default to their drive. (#22032)
-- **Docs, files and Favorites** — Add topics to Favorites, link straight to library folders, pages and files by id, open Docs file links beside the chat, and share files by link. (#21950, #21923, #21913)
-- **Credentials** — Workspace and private credential tabs, with sharing across multiple workspaces. (#21670)
 
----
 
-## 🏗️ Core Agent & Architecture
+#### Test
 
-- One member's run never interrupts another member's live run, and a queued follow-up is no longer resent once its message is written. (#22037, #21777)
-- Agent management searches the MCP marketplace before installing a market plugin, and Agents can be created from the identity form. (#21703, #21987)
-- A generic TTS model type with MiniMax `t2a_v2` speech and a TTS spend label. (#21942)
-- Image generation rejects unsupported parameters with a clear error instead of a ServerError. (#21945)
-- Chinese vendors in the model bank are priced in international USD. (#21808)
-- Verification writes generated criteria and reports in the account's language. (#22035)
-- Model discovery and runtime configuration reach the Agent correctly. (#21895)
+- [x] Release-source and workflow checks run locally
+- [ ] Fresh full-product / packaged-Stable acceptance run
+- The initial release branch matched the selected Canary snapshot. The only subsequent changes are the version bump and the build-tool repair described below.
+- `node --test .github/scripts/desktopRelease*.test.mjs`: **62 passed** on the release branch.
+- Full PR CI and release-bot checks must finish before merging. The earlier hotfix's 86-test result is **not** presented as verification of all 87 upstream changes.
+- Acceptance: existing evidence is attached to the merged upstream PRs; this release promotion does not claim new execution or a blanket pass for the full release. The upstream PR bodies contain acceptance links for **43 of 87 PRs**; that is a link inventory, not a coverage/pass percentage, and some other PRs are tooling/test-only.
+- Auto-approve evidence: https://lobehub.com/acceptance/7e75521b-766a-442e-9fa3-5a7ed89b7b59 — **8/9 criteria passed** upstream; the Cloud approval-takeover continuation remains uncertain and lacks its required video. This limitation is not resolved by this release PR.
+- Representative upstream evidence for other changes:
+  - Page title/body editing (#22154): https://lobehub.com/acceptance/a7d4e45a-331b-4bc2-97ac-efbdf1f7d24f
+  - Task filters (#22083): https://lobehub.com/acceptance/57c99ab3-3e90-48a6-96ab-af5c36f0d38f
+  - Batch task actions (#22055, #22089): https://lobehub.com/acceptance/d2c58f6a-a173-488d-ad0b-0a0303bf615a
+  - Drive downloads (#22095): https://lobehub.com/acceptance/72731c4c-74c8-4368-8da7-17cafc2d21d6
+  - Desktop Copy Image (#22067): https://lobehub.com/acceptance/dce8e0e7-4e32-410d-9c56-bc7896f56ec1
 
-### External Agents
+## Linux packaging repair (#22190)
 
-- Claude Code project memory shows in the workspace panel, and Agent quota picks the Claude Code account per device. (#21234, #21984)
-- Every background-task wake-up stays in the run's reply, and subagent threads stay linear across replicas and resumable after finalize. (#21939, #21917)
-- The CLI status card shows the device the Agent actually runs on. (#21931, #21999)
+The first Linux desktop build failed because electron-builder 26.16.1's template Snap target deleted `chrome-sandbox` from the shared `linux-unpacked` directory while AppImage was reading it. Windows passed; the macOS jobs were cancelled by matrix fail-fast.
 
----
+- Upgraded electron-builder to **26.18.0** and updated the isolated desktop lockfile, including the upstream fix electron-userland/electron-builder#10333.
+- Added an integration regression against the installed packager and real temporary files: **fails with ENOENT on 26.16.1, passes on 26.18.0**. Downloads/compressor execution are stubbed; real staging, filtering and filesystem mutations are exercised. The helper stays intact for other targets but is excluded from Snap inputs.
+- Changed-file lint, the regression and builtin-core packaging tests (**2 passed**), frozen-lockfile installation and `git diff --check` passed.
+- The repair was merged through #22190 because `release/*` branches require PRs; no branch protection was bypassed.
+- No new UI acceptance is needed for this build-tool-only repair. Full multi-platform packaging is being rechecked by the new PR CI run; the local tests do not claim a real installer build or launch.
 
-## 📱 Platforms / Integrations
+## Publication checklist
 
-- **Desktop:** New Window in the File menu opens the current workspace. On macOS 27 the sidebar uses native AppKit glass, and the window background follows system theme switches. (#21928, #21854, #21921, #21894, #21920)
-- **White-label:** distributions can set their own desktop app identity, and the brand is no longer hardcoded in LLM system prompts, tool descriptions, auth emails, the passkey prompt or the default assistant name. (#21890, #21930, #21902, #21882, #21946)
-- **CLI:** `lh topic send` / `lh message reply` wake another conversation, `lh topic send --new` / `lh message send` start a new one, and `lh workspace member update` sets a member's title and responsibilities. (#21938, #21965, #21959)
-- **CLI:** follows Agent runs over the multiplexed gateway socket, and detects system services with clearer upgrade restarts. (#22048, #21869)
-- **API / SDK:** read the caller's credit quota through the API, SDK and `lh`. (#21933)
-- **Browser tool:** key combos work, and `setViewport` is available. (#22011)
+- [x] Release bot commits `package.json` version `2.3.1`.
+- [ ] Required CI and review gates pass; merge this release PR into `main` without bypassing protection.
+- [ ] Auto Tag creates `v2.3.1` and publishes the GitHub Release with ordinary source metadata.
+- [ ] Desktop Stable / Docker publishing completes, including installer and update-feed delivery.
 
----
+A merged PR or a created tag alone is not proof that publication completed. No manual tag or release workflow dispatch was performed while preparing this PR.
 
-## 🖥️ User Experience
+#### 🔗 Related Issue
 
-- Chat keeps its scroll position after you send and loads history again in 500-row pages. (#22030)
-- Device pickers show running topics on hover, and device cards show disk usage next to CPU and memory. (#21915, #21940)
-- Search the skills panel, filter topics to only your own per Agent, and unarchive from the bulk bar. (#21961, #21870, #21876)
-- Project "+" buttons open a blank draft, and project Agents come first when creating a channel. (#21989, #22004)
-- Manage canvas storage from a Works Canvas tab, and insert videos from the page editor's slash menu. (#21831, #21925)
-- Acceptance hover cards open the acceptance in the browser, and a local report can accept or reject the delivery. (#21966, #21947)
-- Eight Agent cover textures, with profile covers on badge cards. (#21868)
-- The boot loading hint appears only on slow boots. (#21941)
+Supersedes #22186 (already closed, not merged). Includes the full Canary range, rather than only #22122 and #22069.
 
----
+**Full change range:** https://github.com/lobehub/lobehub/compare/v2.3.0...1a6ba7ad3853f140cc5795c5baf5ae37f78c9a13
 
-## 🔒 Security & Reliability
-
-- **Security:** the OIDC provider pins its request host to `APP_URL`. (#21985)
-- **Reliability:** pages keep seeding and projecting on serverless builds, file proxy URLs resolve from the page origin, and a late linked-PR lookup no longer crashes the device view. (#21919, #21914, #21960)
-- **Reliability:** quota limits a plan no longer reports are dropped. (#22000)
-
-### Database migrations (self-hosted)
-
-This release adds six migrations (`0193`–`0198`): goal/file share and structured user memory tables, document history attribution, memory columns with subscription logins and device account bindings, indexes on the memory tables, a `(message_id, member_id)` unique index for channel jobs, and goal visibility. They run automatically on startup. (#21844, #21611, #21888, #21672, #21935, #21901, #22027)
-
-> [!NOTE]
-> `0196` builds indexes on the `user_memories_*` tables inside a transaction, which blocks writes to those tables while it runs. If they are large, create the same indexes with `CREATE INDEX CONCURRENTLY IF NOT EXISTS` before upgrading so the migration does nothing.
-
----
-
-## 👥 Contributors
-
-Huge thanks to **7 contributors** who shipped **145 merged PRs** this cycle.
-
-@arvinxx · @AmAzing129 · @Innei · @rdmclin2 · @ONLY-yours · @MarioJames · @tjx666
-
-Plus @lobehub-coder and @lobehubbot for maintenance.
-
----
-
-**Full Changelog**: v2.2.21...v2.3.0
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-<!-- desktop-release-request {"schemaVersion":1,"mode":"initialize","mergeSha":"700c8349e35477cb602975f8089c942e96bc9601","prNumber":22056} -->
+<!-- desktop-release-request {"schemaVersion":1,"mode":"initialize","mergeSha":"658cdedf1e5e35eba161d3c54cd95461c28a4a54","prNumber":22188} -->
