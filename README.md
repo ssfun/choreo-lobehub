@@ -2,84 +2,118 @@
 
 # Version
 
-v2.3.1
+v2.3.2
 
 # Releases
 
-## Release v2.3.1
+## Release v2.3.2
 
-From PR #22188: https://github.com/lobehub/lobehub/pull/22188
+From PR #22430: https://github.com/lobehub/lobehub/pull/22430
 
 ### Summary
 
 Contribution source: AI-assisted
 
-# 🚀 LobeHub Release v2.3.1
+# 🚀 LobeHub Release (20261106)
 
-Promote the complete current `canary` snapshot to `main` for a normal Stable release, replacing the closed, unmerged hotfix proposal #22186. **This is not a two-commit hotfix.**
+**Release Date:** November 6, 2026  
+**Since v2.3.1:** 127 merged PRs · 11 contributors
 
-- Previous Stable: `v2.3.0`.
-- Canary snapshot: `1a6ba7ad3853f140cc5795c5baf5ae37f78c9a13`.
-- Scope: **87 upstream commits/PRs**, including both #22122 (auto approve) and #22069 (release publication token fix).
-- The release branch starts directly from that Canary snapshot, plus the bot-owned version bump and the Linux packaging repair in #22190. No hotfix cherry-picks or additional application features are layered on top.
+> Everyday work gets easier to organize and easier to undo: tasks gain labels and a recycle bin, channels behave like real conversations, and interactive MCP views open right inside the chat.
 
-## Highlights
+---
 
-- **Approvals and agent reliability:** switch to auto approve directly from the approval card; prevent duplicate approval submissions, duplicate tool execution on resume, and stuck intervention continuations. (#22122, #22058, #22060, #22068)
-- **Tasks and Linear:** large-list multi-select and batch actions, Linear-style filters, task-group create actions, paged activity, Linear comment sync, completed-issue imports, and background sync reliability. (#22055, #22083, #22136, #22155, #22087, #22086, #22050)
-- **Pages, documents and files:** title/body editing as one document, page-agent rewrite fixes, document favorites, drive downloads and folder ZIPs, and smoother large folders. (#22154, #22141, #22147, #22095, #22106)
-- **Projects, channels and bots:** project avatars and main-agent selection, project deletion confirmation, channel member picking, restore/purge fixes, paged wake records, and nightly bot retrospectives. (#22091, #22101, #22161, #22163, #22081, #22098)
-- **Search, dashboards and models:** DeepSeek search/crawling, sandboxed HTML widget cards, structured-output fixes, usage/cost accounting fixes, and official model-card metadata. (#21298, #22123, #21385, #22071, #22079, #22124)
-- **Desktop and CLI:** Copy Image, desktop shortcut listings, faster desktop packaging, connector restart/update improvements, and CLI v0.0.74. (#22067, #22113, #22121, #22165, #22166, #22179)
-- **Rollouts and infrastructure:** new-tier plan integration and percentage rollout support; the alternate rail layout remains behind `im_layout`. Release publication explicitly uses the App token so downstream publishing workflows can start. (#22115, #22143, #22003, #22069)
+## ✨ Highlights
 
-## Upgrade and release sources
+- **Task labels** — Label tasks, filter by label and group views by label, from the Web UI, Agent tools or the CLI. (#22176, #22175)
+- **Undo for batch task actions** — Batch actions apply instantly with an undo, and deleted tasks go to a recycle bin. (#22167)
+- **MCP Apps in conversations** — Interactive views from MCP Apps render inside the conversation. (#21231)
+- **Channels in the message list** — Conversations open as channels, messages appear as soon as you send them, mentioned members get notified, and @mentioning someone outside a channel invites them. (#22205, #22325, #22222, #22294)
+- **GitHub Copilot CLI as a heterogeneous Agent** — Run Copilot CLI alongside the existing local Agents. Codex also gains native questions and Speed selection based on what the machine supports. (#22195, #22287, #22264)
+- **Managed cloud devices** — Connect one with `lh connect --managed`, follow its phases in the device list, and let it wake before work is dispatched. (#22269, #22275, #22274, #22276)
+- **Richer chat input** — Drag Agent documents into the input, @mention Agents and Skills from the marketplace, and choose how pasted text converts. (#22104, #22194, #22183)
+- **Project setup checklist** — New projects list their basic steps and offer connections when you need them. (#22279)
 
-- This release includes database migration **`0199_topic_analyses.sql`**, adding the topic-analysis table, foreign keys and indexes. Self-hosted operators should include the normal database backup/migration procedure when upgrading.
-- Use the ordinary release initialization flow: resolve and pin the Cloud revision for this new release. **Do not inherit the v2.3.0 hotfix Cloud pin.**
-- Keep the exact title `🚀 release: v2.3.1` so the version bot and tag workflow agree on the intended version.
+---
 
+## 🏗️ Core Product & Architecture
 
+### Tasks and Goals
+
+- Find text in the task detail page with Mod+F, and search task descriptions and instructions from global search. (#22267, #22256)
+- Archive goals and filter the goal list by Archived; completed goals can be archived without a sign-off and are labeled Completed. (#22172, #22259)
+- The member assignee can change while a task runs, and the Archive button stays usable once a task stops running. (#22181, #22321)
+- Bulk Assign to Agent is grouped and confirms before assigning a private Agent. (#22300)
+
+### Chat and Agents
+
+- Pasted text is sent verbatim instead of being reformatted as markdown. (#22189)
+- Composer uploads stay with their conversation, and a refused Home message stays in the composer. (#22329, #22280)
+- Forwarded topics continue in the source working directory. (#22238)
+- Group runs show per-member progress for parallel tasks. (#22282)
+- Tools still running when you stop a run are marked as aborted. (#22330)
+- The Pi RPC transport now supports Pi 1.x events, and tool-result images from remote device runs can be previewed. (#22324, #22211)
+
+### Models and Generation
+
+- GPT Image models can output animated GIFs. (#22306)
+- DeepSeek V4 thinking is disabled for Anthropic structured output. (#22369)
+
+---
+
+## 📱 Platforms / Integrations
+
+- **Linear:** import issues that belong to no project, see the total issue count in the import picker, optionally include archived issues, and run rule sync rounds in one request. (#22301, #22258, #22340, #22263)
+- **Bots:** the processing placeholder is off by default with a toggle on every platform, and new bots start with status reactions off. (#21981, #22182)
+- **Bots:** bots tell the sender they lack permission when group policy is disabled, and Discord test connection flags an uninstalled bot, a disabled intent or an app ID mismatch. (#22187, #22178)
+- **Desktop:** switch tabs with Ctrl+number, with rapid switching fixed. (#22225)
+- **Page editor:** the header shows who else is on a live page, and the per-page character limit also applies to collaborative pages. (#22174, #22277)
+
+---
+
+## 🖥️ CLI & User Experience
+
+- New `lh connector` command group for MCP connectors. (#22193)
+- `lh whoami` shows the server-reported scope, and `lh doc list` pages through older documents. (#22254, #21720)
+- `lh gen image` lets the server pick the default model. (#22197)
+- Local Agents' `lh` uses the desktop sign-in and names `lh login` when it is missing. (#22114)
+- Browser tabs are titled after the open page or item. (#22228)
+
+---
+
+## 🔧 Tooling
+
+- New worktrees are created under `~/.lobehub/worktrees`. (#22203)
+- Failed desktop canary uploads can now be recovered. (#22312)
+
+---
+
+## 🔒 Reliability & Upgrade
+
+- **Reliability:** a burst of image rehosts no longer deadlocks the database pool, and file storage probes run outside database transactions. (#22290, #22385)
+- **Reliability:** a chat that fails before its first byte returns a structured error. (#22314)
+- **Reliability:** the goal manager claim no longer re-queues itself forever, and long-dead concurrent runs stop re-warning. (#22209, #22208)
+- **Self-hosting:** this release ships migrations `0200`–`0205`, which run automatically on startup. They add `channels.config`, `goals.archived_at`, `project_sites.last_seen_at`, task label tables, reusable workspace invitation links and LobeBench evaluation tables. `0204` also makes `workspace_invitations.expires_at` nullable and adds a check that non-reusable invitations keep an expiry. Take your usual database backup before upgrading. (#22173, #22171, #22175, #22278, #22245, #22157)
+
+---
+
+## 👥 Contributors
+
+Huge thanks to **11 contributors** who shipped **127 merged PRs** this cycle.
+
+@R0BiN00Z · @fzlzjerry · @rdmclin2 · @tjx666 · @arvinxx · @AmAzing129 · @MarioJames · @Innei · @nekomeowww · @ONLY-yours · @canisminor1990
+
+Plus @lobehub-coder and @lobehubbot for maintenance.
+
+---
+
+**Full Changelog**: v2.3.1...release/weekly-20261106-2
 
 #### Test
 
-- [x] Release-source and workflow checks run locally
-- [ ] Fresh full-product / packaged-Stable acceptance run
-- The initial release branch matched the selected Canary snapshot. The only subsequent changes are the version bump and the build-tool repair described below.
-- `node --test .github/scripts/desktopRelease*.test.mjs`: **62 passed** on the release branch.
-- Full PR CI and release-bot checks must finish before merging. The earlier hotfix's 86-test result is **not** presented as verification of all 87 upstream changes.
-- Acceptance: existing evidence is attached to the merged upstream PRs; this release promotion does not claim new execution or a blanket pass for the full release. The upstream PR bodies contain acceptance links for **43 of 87 PRs**; that is a link inventory, not a coverage/pass percentage, and some other PRs are tooling/test-only.
-- Auto-approve evidence: https://lobehub.com/acceptance/7e75521b-766a-442e-9fa3-5a7ed89b7b59 — **8/9 criteria passed** upstream; the Cloud approval-takeover continuation remains uncertain and lacks its required video. This limitation is not resolved by this release PR.
-- Representative upstream evidence for other changes:
-  - Page title/body editing (#22154): https://lobehub.com/acceptance/a7d4e45a-331b-4bc2-97ac-efbdf1f7d24f
-  - Task filters (#22083): https://lobehub.com/acceptance/57c99ab3-3e90-48a6-96ab-af5c36f0d38f
-  - Batch task actions (#22055, #22089): https://lobehub.com/acceptance/d2c58f6a-a173-488d-ad0b-0a0303bf615a
-  - Drive downloads (#22095): https://lobehub.com/acceptance/72731c4c-74c8-4368-8da7-17cafc2d21d6
-  - Desktop Copy Image (#22067): https://lobehub.com/acceptance/dce8e0e7-4e32-410d-9c56-bc7896f56ec1
+- This PR promotes the `canary` snapshot `fb7dfa247fb8933cab19ecf435cef52a1cb8735a` with no extra commits, apart from the bot-owned version bump. It replaces https://github.com/lobehub/lobehub/pull/22415, whose branch cannot be rebased because `release/*` branches reject force pushes.
+- `canary` CI at this snapshot: `Test App`, `Test Server`, `Test Database` and `Test Packages` all passed. Full PR CI must finish before merging.
+- No new product acceptance was run for this promotion. Evidence stays on the upstream PRs, and this PR does not claim a blanket pass for the release.
+- Known intermittent failure, not fixed here: `QuotaMenu.claudeCode.test.tsx` > `keeps the 5-hour row on screen as refilled once its window resets` failed once on `canary` ([run](https://github.com/lobehub/lobehub/actions/runs/42196827055/job/127822820999)). Its fixture calls `Date.now()` separately for each reading, and when the calls land 1 ms apart, `dropRetiredLimits` treats the older reading as retired. Fixed timestamps reproduce this (0 ms apart keeps the row, 1 ms drops it).
 
-## Linux packaging repair (#22190)
-
-The first Linux desktop build failed because electron-builder 26.16.1's template Snap target deleted `chrome-sandbox` from the shared `linux-unpacked` directory while AppImage was reading it. Windows passed; the macOS jobs were cancelled by matrix fail-fast.
-
-- Upgraded electron-builder to **26.18.0** and updated the isolated desktop lockfile, including the upstream fix electron-userland/electron-builder#10333.
-- Added an integration regression against the installed packager and real temporary files: **fails with ENOENT on 26.16.1, passes on 26.18.0**. Downloads/compressor execution are stubbed; real staging, filtering and filesystem mutations are exercised. The helper stays intact for other targets but is excluded from Snap inputs.
-- Changed-file lint, the regression and builtin-core packaging tests (**2 passed**), frozen-lockfile installation and `git diff --check` passed.
-- The repair was merged through #22190 because `release/*` branches require PRs; no branch protection was bypassed.
-- No new UI acceptance is needed for this build-tool-only repair. Full multi-platform packaging is being rechecked by the new PR CI run; the local tests do not claim a real installer build or launch.
-
-## Publication checklist
-
-- [x] Release bot commits `package.json` version `2.3.1`.
-- [ ] Required CI and review gates pass; merge this release PR into `main` without bypassing protection.
-- [ ] Auto Tag creates `v2.3.1` and publishes the GitHub Release with ordinary source metadata.
-- [ ] Desktop Stable / Docker publishing completes, including installer and update-feed delivery.
-
-A merged PR or a created tag alone is not proof that publication completed. No manual tag or release workflow dispatch was performed while preparing this PR.
-
-#### 🔗 Related Issue
-
-Supersedes #22186 (already closed, not merged). Includes the full Canary range, rather than only #22122 and #22069.
-
-**Full change range:** https://github.com/lobehub/lobehub/compare/v2.3.0...1a6ba7ad3853f140cc5795c5baf5ae37f78c9a13
-
-<!-- desktop-release-request {"schemaVersion":1,"mode":"initialize","mergeSha":"658cdedf1e5e35eba161d3c54cd95461c28a4a54","prNumber":22188} -->
+<!-- desktop-release-request {"schemaVersion":1,"mode":"initialize","mergeSha":"47bd681c0b3f91edc5e1bc6ab5d634a4b1311d31","prNumber":22430} -->
