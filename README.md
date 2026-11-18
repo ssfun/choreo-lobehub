@@ -2,86 +2,134 @@
 
 # Version
 
-v2.3.3
+v2.3.4
 
 # Releases
 
-## Release v2.3.3
+## Release v2.3.4
 
-From PR #22891: https://github.com/lobehub/lobehub/pull/22891
+From PR #23286: https://github.com/lobehub/lobehub/pull/23286
 
-# 🚀 LobeHub Release (20261112)
+# 🚀 LobeHub Release (20261118)
 
-**Release Date:** November 12, 2026  
-**Since v2.3.2:** 253 merged PRs · 252 commits · 12 contributors
+**Release Date:** November 18, 2026\
+**Since v2.3.3:** 291 commits · 291 merged PRs · 13 contributors
 
-> A week spent turning chat into a real workspace: direct Channels with their own reply rules, an inbox identity for every agent, and projects that can be created straight from a repository.
+> This weekly release turns Channels into a place where people and Agents work side by side, lets MCP connectors run on your own devices, and makes coding sessions easier to steer while they run.
 
 ---
 
 ## ✨ Highlights
 
-- **Direct Channels** — every agent and group now has an IM-style conversation surface: stacked header avatars, typing in the header, card composer with a `+` menu, day dividers, reply activity on list rows. (#22559, #22583, #22556, #22440)
-- **Per-agent reply strategy** — each Agent decides when to wake: own rules first, follow-ups stay silent, unaddressed messages get one primary responder, and the runtime records why a wake happened. (#22551, #22454, #22847)
-- **Agent identity & mail** — agents get an address, an inbox, and a Profile page under an Identity group; mail-woken runs post what they concluded back to the owner's Channel and only ever see their own mailbox. (#22009, #22010, #22578, #22686)
-- **Projects from GitHub** — create a project from a repository, pick its work location, edit or remove working directories, and link tasks to projects with picker, badges and grouping. (#21552, #22612, #22725, #22383)
-- **Knowledge base ordering** — natural prefix sorting, sort controls and drag-and-drop reordering, plus a caller-scoped business knowledge access seam. (#22866, #22863)
-- **Desktop serves the remote terminal** — the desktop app can now serve a remote terminal to the web and mobile clients, alongside local-file preview for remote devices. (#22852, #22647)
-- **New surfaces behind flags** — Lobe Bench workspace pages (benchmarks, datasets, experiments), a meeting data model with TRPC API, and versioned skill archives. (#22483, #21259, #22590)
+- **Agents in Channels** — Agents can message each other or a person for their requester, answer in place or in a Thread, be muted until @mentioned, and wait for an offline device instead of failing the reply. Agents @mentioned together now gather in one Thread and divide the work. (#23139, #23244, #22911, #23164, #23060, #23103, #23222)
+- **MCP connectors on your devices** — Run stdio and local MCP connectors on `lh connect` devices, route HTTP MCP servers through a device, subscribe to webhook events, and connect multiple accounts per OAuth connector. (#23047, #23056, #23067, #22991, #22988)
+- **Webhooks and automations** — Manage webhooks and automations from the CLI and Agent tools, and deliver their events to Channels. (#23266)
+- **Better Coding Experience lab** — Queue or steer follow-ups while an Agent runs, pick a branch for a new topic, switch or fork a worktree when sending, and link several pull requests to one topic, with the reason each was linked. Worktrees the app created are cleaned up when their topic is archived or trashed. (#23171, #23186, #23175, #23173, #23185, #23248, #23241)
+- **Persistent Sandbox** — Choose a Persistent Sandbox from the execution environment; new conversations keep each Cloud Sandbox's last folder and repository. (#23126, #23122, #23212)
+- **DingTalk and WeCom bots** — Connect DingTalk as an IM bot channel, and run the WeCom AI bot over its long connection with a guided setup. (#22336, #22326, #23089)
+- **Voice and music generation** — Added ElevenLabs, Fish Audio, Doubao Speech and Gemini text-to-speech, plus provider-agnostic music generation and audio file preview. (#22168, #22951, #22977, #23000, #22918)
+- **A simpler composer** — One fixed Send/Stop button, with the send-key choice moved to settings. Sending while files upload queues the message. Pasted and uploaded images show as animated cards, duplicate pastes are skipped, and quoted selections are kept in the message. (#23261, #23095, #23098, #23080, #23096, #23111)
 
 ---
 
-## 🏗️ Channel & Conversations
+## 🏗️ Core Agent & Architecture
 
-- Sidebar channels sort with unread and @mention highlights, and a project's General channel always opens. (#22859, #22870)
-- Threads open as the page instead of a side panel; entity links render and acceptance reports open beside the feed. (#22850, #22584)
-- Composer mentions highlight as text rather than a tag, and the composer reply bar softens while the feed fades into it. (#22846, #22839)
-- Agent profile cards appear on hover in message avatars and join event lines. (#22515, #22836)
+### Agent runtime
 
-## 🤖 Agent Runtime & Identity
+- Agents now park on a long-running shell command instead of polling it, and stop gracefully after repeated unknown tool names. (#22979, #23024)
+- A running sub-agent can be steered with a follow-up or cancelled. (#22377, #22496)
+- Agents can be woken from a generic webhook. (#23128)
+- Runtime status reads no longer load the full state blob, tool-set copies stay out of per-step state, and inline steps read the topic once. (#23210, #23170, #23144)
+- Manual compaction uses the topic-pinned model, and stale tool-result trims persist across warm turns. (#22697, #22981)
+- Deleted Agent documents are no longer sent from topic history. (#23235)
+- Pressing Stop no longer loses the messages of the step it interrupts. (#23269)
 
-- Relayered model runtime: Router attempts run through one lifecycle and stop on cancel, parallel tool-call arguments stay on their own call, and a mid-stream socket drop is classified as `ProviderStreamInterrupted`. (#22819, #22718, #22827)
-- Anthropic, OpenAI and OpenAI-compatible code is organized by protocol, with shared Router helpers extracted. (#22785, #22731, #22818)
-- Gateway steps order by server time, step commits are refused after a lost lock, and background sub-agent results are delivered again. (#22842, #22524, #22530)
-- Memory work stops for banned users, failed extractions record their real cause, and long consolidation merges run in small batches. (#22691, #22797, #22596)
-- Claude Code sessions can be steered with queued follow-ups, OpenCode 2.x is supported, and Copilot / Cursor ACP run with full access by default. (#22575, #22740, #22574)
+### Goals and tasks
 
-## 📱 Projects, Tasks & Goals
+- Goals support marks between runs and evaluator-scored objectives, and a finished goal's report can be shared. (#23108, #22752)
+- Search the Goals page and find goals from the command menu. (#23206)
+- Find in view on the Tasks page with Mod+F; moving an unfiled task tree into a project moves its subtasks too. (#22960, #23214)
 
-- New projects default to a dedicated main agent, the sidebar collapses projects into one link with favorites and sorting, and creating from GitHub can also create that agent. (#22401, #22320, #22696)
-- Code projects run in the sandbox inside the project's own repository. (#22761)
-- Scheduled tasks accept an exact minute; cross-workspace task links open in the side panel; a redelivered completion settles a run once. (#22406, #22473, #22637)
-- Goal fixes throughout: gate-held rounds read as waiting for release, planning-turn stalls close, and `goal:manage` is granted to runs the user sent. (#22750, #22760, #22726)
+### Memory and knowledge
 
-## 🖥️ Desktop & Clients
+- Memory extraction retries transient model outages, stays within the context window, and falls back from retired models. (#22894, #23088)
+- Knowledge items support per-item access lists, enforced on content reads. (#22905)
+- Uploaded-file parsing and chunking now run isolated from the main server. (#23117, #23260)
 
-- AppImage core OTA relaunches through a detached spawn, the titlebar stays draggable over the tab strip, and dev instances are isolated and labelled. (#22793, #22462, #22823)
-- The task topic drawer header leaves the drag region, and the sidebar agent header follows the tab's agent after Home. (#22831, #22825)
-- `lh` gains `--visibility` / `--json` on agent create, a `mcp` alias, meeting commands and CLI requirement editing for goals. (#22801, #22626, #22593, #20568)
+---
+
+## 📱 Channels & Integrations
+
+- Admins can make a group Channel public for the workspace to join; project Channels open to the project with project Agents first. (#23110, #23107)
+- People can pin a conversation, edit their own messages, and move a long direct reply into a Thread. In a group, an Agent opens a long reply's Thread under the request and acknowledges inside it. (#23161, #23155, #23074, #23268)
+- Thread previews appear under root messages and in the Channel list. (#22914, #23204)
+- A message you send no longer counts as unread for you. (#23263)
+- QQ group @mentions now reach LobeHub and get replies in the window. (#22921)
+- A deferred bot message no longer replays itself in a loop, and WeCom keeps replies that arrive during a gateway restart. (#23147, #23092)
+
+---
+
+## 🖥️ Desktop & User Experience
+
+- **Desktop:** Export a diagnostics bundle, write structured logs with a query CLI, and enroll the machine as a private workspace device. (#22966, #22873, #22826)
+- **Desktop:** Reopen closed tabs with Cmd/Ctrl+Shift+T and switch tabs with Cmd+1–9; Recent Pages shows each page's own title. (#23224, #23223)
+- **Desktop:** Staged Core OTA updates are now shown instead of reporting "up to date". (#23018)
+- **Sidebar:** Drag to reorder team and personal pins, hide agent groups, and see task status in compact Favorites rows. Clipped topic titles scroll on hover, and double-clicking a topic no longer opens a new tab. (#23048, #23072, #23203, #23062, #23076)
+- **Working sidebar:** The Overview shows Claude Code background tasks. (#23198)
+- **Projects:** Folder card view, unified project environments with Settings → Environments, and a dedicated main agent for each new project. (#22860, #23150, #23129)
+- **Skills:** Library Skills are opt-in per Agent, and the connector and Skill catalogs have a new layout. (#23188, #23187)
+- **Agent Profile:** Simpler navigation and instruction editing. (#23275)
+- **Agent Share:** Visitors can use the shared Agent's execution environment. (#23240)
+- **Subscription:** Usage and Balance are merged into one settings page, and the Basic plan is available. Personal settings now list Subscription Accounts, split into Workspace and Private tabs. (#22985, #23090, #23270, #23250, #23242, #23245)
+- **Settings:** Data export runs in the background and notifies you when the file is ready. (#23125)
+- Member and Agent hover cards now appear across the app. (#22970, #23054)
+- Long workflows stay responsive when opened and while streaming. (#23176)
+- Answered question cards clear correctly, and avatars crop non-square images instead of stretching them. (#23063, #23064)
+
+---
+
+## 🔧 Tooling & CLI
+
+- `lh agent list --tag`, `lh agent create --tag`, agent transfer and move-group commands. (#23016, #23012, #22923)
+- `lh acceptance delete` removes an acceptance shell. (#23081)
+- Library uploads from the CLI recover with same-account credentials. (#23259)
+- Antigravity is supported as a local agent, and DeepSeek Harness models are discovered over ACP. (#22008, #22542)
+- Follow-ups now steer native Codex runs on connected devices, and Codex warnings are no longer saved as tool calls. A model's weekly quota shows only when that model is selected. (#23264, #23252, #23071)
+- A fixed private workspace Agent's owner can switch it to their private device. (#23230)
+- Added the GPT-6.1 Terra model card and `xhigh` thinking for Gemini 4 Hydrogen. (#22805, #22933)
+
+---
 
 ## 🔒 Security & Reliability
 
-- **Security:** workflow callbacks now fail closed when unauthenticated; a mail-woken run is scoped to its own mailbox; the SWR key registry is frozen so new server data routes to local-replica. (#22864, #22686, #22727)
-- **Reliability:** page collaboration keeps one Yjs tree per page with durable rooms; context engine snapshots are pooled so long-run traces stop growing quadratically; file parsing no longer blocks the event loop. (#22695, #22522, #22796)
+- **Security:** Server-side HTTP MCP requests go through the SSRF-safe fetch. (#23050)
+- **Security:** Uploads now require reservation-backed upload sessions. (#20524)
+- **Security:** The GitHub credential is no longer sent to devices for heterogeneous agents. (#23225)
+- **Reliability:** Expected error conditions return 4xx or fall back instead of surfacing as 500. (#23058)
+- **Reliability:** Refused async tasks fail cleanly, with JWT expiry and image type guards. (#23135)
 
-## 🔧 Tooling & Maintenance
+---
 
-- StyleX migration continues with a style-equivalence verifier that shows where a migrated descendant rule moved. (#22041, #22658)
-- Test consolidation across modules, database coverage back to 100%, and dead v8 fallbacks removed. (#22337, #22719, #21893)
-- Retired the `new_tier_plans` flag, the unused agent stream endpoint and the daily free video quota hint. (#22611, #22601, #22811)
+## ⚙️ Upgrade Notes
+
+- This release includes database migrations for contacts, inbound webhooks, connector visibility, Channel Thread locks, acceptance review rounds and artboard tables. (#23045, #22990, #22996, #23143, #22833, #22772) Self-hosted deployments apply them on startup; back up the database before upgrading.
+- The `im_layout` rail layout and the legacy-plugin CLI create/install subcommands are removed. (#23084, #22372)
 
 ---
 
 ## 👥 Contributors
 
-Huge thanks to **12 contributors** who shipped **253 merged PRs** this cycle.
+Huge thanks to **13 contributors** who shipped **291 merged PRs** this cycle.
 
-@MarioJames · @R0BiN00Z · @IveTian · @arvinxx · @Innei · @tjx666 · @rdmclin2 · @ImSingee · @sudongyuer · @AmAzing129 · @canisminor1990 · @nekomeowww
+@smbslt3 · @Coooolfan · @AleFlyX · @Max-Reisinger · @arvinxx · @tjx666 · @rdmclin2 · @ImSingee · @Innei · @AmAzing129 · @MarioJames · @ONLY-yours
 
-Plus @lobehubbot, @lobehub-coder and renovate[bot] for maintenance.
+Plus @lobehub-coder for agent-authored changes.
 
 ---
 
-**Full Changelog**: v2.3.2...release/weekly-20261112
+**Full Changelog**: v2.3.3...release/weekly-20261118
 
-<!-- desktop-release-request {"schemaVersion":1,"mode":"initialize","mergeSha":"69f8dcdfae1c59a5ffb703b3a0187223987bcd56","prNumber":22891} -->
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+<!-- desktop-release-request {"schemaVersion":1,"mode":"initialize","mergeSha":"4241324b9bd0c01eaea2b33a1360bafced7c20d5","prNumber":23286} -->
