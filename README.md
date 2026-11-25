@@ -2,38 +2,101 @@
 
 # Version
 
-v2.3.5
+v2.3.6
 
 # Releases
 
-## Release v2.3.5
+## Release v2.3.6
 
-From PR #23632: https://github.com/lobehub/lobehub/pull/23632
+From PR #23789: https://github.com/lobehub/lobehub/pull/23789
 
-### Summary
+# 🚀 LobeHub Release (20261124)
 
-Contribution source: AI-assisted
+**Release Date:** November 24, 2026  
+**Since v2.3.5:** 358 merged PRs · 12 contributors
 
-Backport the cyan, green and red agent cover colors from [#23624](https://github.com/lobehub/lobehub/pull/23624) to the community release branch. A fresh install of `main` can resolve `@lobehub/ui@6.19.0` within the declared dependency range. The old seven-entry palette fails type-checking on that version and returns an undefined cover color for some generated avatars.
+> This release makes Agents easier to share and to work with in Channels, regroups Skills and Connectors into one Marketplace, and adds a Compact interface density across the app.
 
-The cover uses the corresponding theme token for each new color. Inferring the lookup's keys also supports older UI versions in the release's existing dependency range.
+---
 
-Also backports the canary test for the transaction-scoped share upload lock. Its query now counts the advisory lock for the share under test, allowing unrelated sessions to hold their own locks concurrently.
+## ✨ Highlights
 
-### Tests
+- **Agent Share for teams and contacts** — Share an Agent by card, open its device to contacts or anyone with the link, and read visitor conversations on their own page. (#23524, #23495, #23738, #23472, #23741)
+- **Channels that Agents can act in** — Agents ask for connectors with one-click cards, list and steer their Threads, and turn `@Name` into real mentions; people can search, mute and delete messages. (#23611, #23699, #23341, #23288, #23293, #23602, #23298)
+- **Marketplace** — Skills, Connectors and Agents now live in one catalog, with 175 official MCP servers, GitHub skill imports and updates for installed skills. (#23509, #23702, #23409, #23453, #23563)
+- **On-demand tools** — Connected tools and skills are opt-in per Agent and load only when a run activates them, keeping prompts short and the prompt cache intact. (#23466, #23329, #23412, #23525, #23629)
+- **Compact density** — A new Compact / Loose interface density, applied to Home, the sidebar, conversations and tasks. (#23406, #23467, #23501, #23542)
+- **Character avatars** — An Agent's avatar can be picked as a character and acts out its runs. (#23671, #23624)
+- **Open API** — New `/api/v1/documents`, a generation API for text, image, video and speech, OAuth discovery metadata and unified errors and pagination. (#23463, #23267, #23679, #23231)
 
-- [x] Added a regression test using the UI library's actual avatar generator. On the original release, a green avatar received `undefined` where the theme specifies `var(--lobe-green)`.
-- [x] Ran lint and the 10 related cover-color tests.
-- [x] Ran the same standalone workspace compatibility check against the original release and this commit with UI 6.19.0. The original failed type-checking with `TS2739`; the fix passed type-checking and all 505 workspace tests.
-- [x] Ran the repository type-check.
-- [x] Held two unrelated advisory locks on a separate connection in a dedicated PostgreSQL instance. The old test saw three locks and failed. With the backport, all 60 agent-share tests passed while the two unrelated locks remained held. The repository lint and related tests also passed.
+---
 
-### Acceptance
+## 🏗️ Core Agent & Architecture
 
-Verified the real `/agents` page against the release base and this commit with UI 6.19.0. On the base, generated cyan, green and red avatars all had the same neutral card background. With the fix, each card has its corresponding theme color. The purple control kept the same background across both builds. [Browser captures and computed styles](https://app.lobehub.com/acceptance/478a1cff-663d-4820-a3fa-cba5a5a79a0a) (testing account access may be required).
+### Agents and projects
 
-### Desktop release baseline
+- Pick visibility when creating an Agent in a Workspace, and see why an Agent is not accessible. (#23528, #23519)
+- Agent authors can delete an Agent that carries teammates' Topics, with a confirmation that lists the impact. (#22313)
+- Permissions, visibility and transfer moved into Agent settings; the Agent settings sidebar is regrouped. (#23753, #23697, #23669)
+- Each project has one environment with any number of repositories, ordered by priority. (#23402, #23532)
+- Topics can have parent Topics, with `lh topic stop / archive / unarchive`. (#23317)
 
-Inherits the delivered sources from [v2.3.4](https://github.com/lobehub/lobehub/releases/tag/v2.3.4).
+### Coding agents
 
-<!-- desktop-release-request {"schemaVersion":1,"mode":"hotfix","baseVersion":"2.3.4","cloudSha":"904f4fae4f6f915f07595426e0b60781345280c0","baseSourcesHash":"342af3b4639f481f8fb098f10226d7ee4f945f9eb75a728c3709577339239157","mergeSha":"538613d2181f33137055c958b28d59f6e812e17a","prNumber":23632,"prBaseSha":"4241324b9bd0c01eaea2b33a1360bafced7c20d5"} -->
+- Claude Code permission modes and plan approval, and a Codex Plan switch, under Better Coding Experience. (#23403, #23675)
+- Antigravity runs over ACP, so follow-ups steer the running turn; model and effort selection are supported. (#23764, #23596)
+- CLI agents installed in WSL and in any install folder are detected and can run. (#23670, #23681)
+- Uploaded images reach live Claude Code and Codex runs. (#23362, #23330)
+
+### Models
+
+- Added GPT-6.2 Astra and Sol, GPT Image 2.6 Flare and Sunburst, and Gemini 4 Neon. (#23287, #22806, #23494)
+
+---
+
+## 📱 Channels & Integrations
+
+- Device owners approve Channel Agents on their private devices, and are asked in their own conversation with the Agent. (#23620, #23656)
+- A failed reply shows as an error card in the Agent's reply slot, including share limits. (#23504, #23707)
+- Queued requests from one person are answered together in one run. (#23634)
+- Bots can limit device access to listed Channels. (#21974, #23544)
+- Share Topics, Agents and AI generations to X, Weibo, Instagram and WeChat Moments. (#23168)
+
+---
+
+## 🖥️ CLI & User Experience
+
+- Settings: chat preferences gather into a Conversation page; environments and the Vault merge into one entry; the Vault list and forms are redesigned. (#23628, #23547, #23645)
+- Tasks: scheduled tasks appear as a tab and a schedule table grouped by health; tasks and goals share one navigation. (#23622, #23661, #23561)
+- Command K finds files by their parsed text. (#23779)
+- Subscription copy: Basic explains that it excludes hosted model usage, and plan-covered usage rows show an included label. (#23640, #23718, #23780)
+- CLI: `lh agent connect`, `lh quota` and `--visibility` for `lh task`. (#23752, #23331, #23539)
+
+---
+
+## 🔒 Security & Reliability
+
+- **Security:** Server-side requests to user-supplied provider endpoints, images and ComfyUI go through the SSRF policy. (#23692, #23676)
+- **Security:** Workspace RBAC is enforced on `POST /responses`; share-link ids come from a CSPRNG; skill ZIP extraction is capped against zip bombs. (#23688, #23677, #23678)
+- **Security:** Email changes to an address another account uses are rejected. (#23590)
+- **Reliability:** Connector OAuth refresh is coordinated across instances. (#23300)
+- **Reliability:** Large chat uploads show why they failed and retry transient part failures. (#23427)
+- **Reliability:** Fewer redundant client polls and topic refetches; Skill Store lists are virtualized. (#23745, #23160, #23744)
+
+---
+
+## 👥 Contributors
+
+Huge thanks to **12 contributors** who shipped **358 merged PRs** this cycle.
+
+@ImSingee · @smbslt3 · @Max-Reisinger · @hezhijie0327 · @ZhuYuxuan9302 · @arvinxx · @AmAzing129 · @tjx666 · @rdmclin2 · @Innei · @MarioJames · @ONLY-yours
+
+Plus @lobehub-coder for maintenance.
+
+---
+
+**Full Changelog**: v2.3.5...release/weekly-20261124-3
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+<!-- desktop-release-request {"schemaVersion":1,"mode":"initialize","mergeSha":"061f4d9fa334d5555b06bd7d95a0ce6078e9153c","prNumber":23789} -->
